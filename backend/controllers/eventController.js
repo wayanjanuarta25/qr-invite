@@ -2,18 +2,25 @@ const db = require('../database/db');
 
 exports.getAllEvents = (req, res) => {
   try {
+    const todayJakarta = new Intl.DateTimeFormat('sv-SE', {
+      timeZone: 'Asia/Jakarta',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    }).format(new Date());
+
     const events = db.prepare(`
       SELECT 
         e.*,
         COUNT(g.id) as total_guests,
         SUM(CASE WHEN g.attendance_status = 'PRESENT' THEN 1 ELSE 0 END) as confirmed_attendance,
         SUM(CASE WHEN g.id IS NOT NULL AND (g.attendance_status != 'PRESENT' OR g.attendance_status IS NULL) THEN 1 ELSE 0 END) as not_arrived,
-        SUM(CASE WHEN g.attendance_status = 'PRESENT' AND date(g.arrival_time) = date('now', 'localtime') THEN 1 ELSE 0 END) as today_attendance
+        SUM(CASE WHEN g.attendance_status = 'PRESENT' AND date(g.arrival_time) = ? THEN 1 ELSE 0 END) as today_attendance
       FROM events e
       LEFT JOIN guests g ON e.id = g.event_id
       GROUP BY e.id
       ORDER BY e.created_at DESC
-    `).all();
+    `).all(todayJakarta);
 
     return res.json({ success: true, events });
   } catch (error) {

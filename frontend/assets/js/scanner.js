@@ -161,9 +161,10 @@ document.addEventListener('alpine:init', () => {
             this.showSuccessScreen(res);
           }
 
-          // Add to local scan history
+          // Add to local scan history in Jakarta WIB time
+          const fallbackWib = new Intl.DateTimeFormat('id-ID', { timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit' }).format(new Date()) + ' WIB';
           this.scanHistory.unshift({
-            time: res.formatted_arrival || new Date().toLocaleTimeString(),
+            time: res.formatted_arrival || fallbackWib,
             guest: res.guest,
             event: res.event,
             category: res.category,

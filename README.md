@@ -16,8 +16,23 @@ Sistem Manajemen Undangan Digital Multi-Acara modern dan berkinerja tinggi denga
 - **Manajemen Tamu Lengkap**:
   - Filter berdasarkan Acara, Kategori (VIP, Family, Friend, General), dan Status Kehadiran
   - Pencarian tamu instan berdasarkan nama, no HP, atau token QR
+  - **Sistem Pagination Cerdas**: Navigasi halaman cepat dengan pilihan jumlah baris (10, 25, 50, 100 per halaman).
   - Tambah, edit, dan hapus tamu
   - Toggle status kehadiran manual
+  - **Import Data Tamu Masal**: Upload file Excel (`.xlsx`, `.xls`) atau `.csv`, deteksi kolom otomatis, pratinjau live sebelum impor, dan auto-generate QR code untuk seluruh tamu baru.
+  - **Template Import Siap Pakai**: Unduh template Excel atau CSV dengan satu klik.
+  - **Export Data Tamu**: Unduh data tamu terfilter ke dalam format Excel (`.xlsx`) rapi atau CSV (`.csv`) universal lengkap dengan link tiket undangan dan token.
+  - **Download Seluruh QR Code Acara (ZIP Archive)**: Ekspor dan unduh semua gambar PNG QR Code tamu per acara dalam 1 arsip `.zip` terstruktur, dilengkapi ringkasan `DAFTAR_TAMU_ACARA.csv`.
+  - **Backup & Restore JSON**: Fitur pengamanan data khusus untuk deployment cloud/container (seperti Hostinger App Platform) agar data tidak hilang saat re-deploy.
+- **Layar Sambutan TV / Videotron Real-time (`/tv`, `/display`, `/live`)**:
+  - Tampilan visual mewah rasio 16:9 yang responsif untuk Smart TV, Videotron panggung, proyektor, atau monitor lobi penerima tamu.
+  - **Instant Pop-up Welcome**: Begitu usher memindai QR tamu menggunakan iPad/tablet, nama tamu, kategori (VIP/Family/VVIP), dan ucapan sambutan langsung muncul di layar TV secara instan (<100ms).
+  - **Dual Real-time Engine**: Menggunakan **Server-Sent Events (SSE)** berkinerja tinggi serta fallback polling otomatis untuk menjamin keandalan koneksi di Smart TV.
+  - **Audio Chime Synthesizer**: Nada lonceng sambutan otomatis (menggunakan Web Audio API tanpa perlu file eksternal).
+  - **Jam Digital WIB**: Jam digital besar dan tanggal real-time zona waktu Jakarta (WIB / UTC+7).
+  - **Ticker Kedatangan Terkini**: Menampilkan daftar tamu yang baru saja tiba di bagian bawah layar secara otomatis.
+- **Zona Waktu Presisi (WIB / Asia/Jakarta)**:
+  - Seluruh pencatatan waktu kehadiran, filter tanggal hari ini, dan jam scanner menggunakan zona waktu resmi Jakarta (UTC+7).
 - **Generasi QR Code Otomatis**:
   - Token unik alfanumerik 12 karakter (contoh: `8HD82KS92JS82`)
   - File gambar PNG QR Code otomatis tersimpan di folder `/qr/`
@@ -38,6 +53,7 @@ Sistem Manajemen Undangan Digital Multi-Acara modern dan berkinerja tinggi denga
   - **Invalid QR Screen**: Peringatan merah *QR TIDAK VALID - Undangan tidak ditemukan*
   - **Feedback Audio Real-time**: Sintesis nada chimes sukses, peringatan, dan error menggunakan Web Audio API
   - **Fallback Input Manual**: Usher/penerima tamu dapat mengetik atau menempelkan token jika kamera smartphone bermasalah
+  - Tombol pintas cepat untuk membuka Layar TV Sambutan.
 - **Halaman Undangan Tamu Publik (`/check/:token`)**:
   - Menampilkan kartu undangan digital personal bagi tamu, detail lokasi, tombol Google Maps, dan tiket QR pass untuk ditunjukkan di lokasi acara.
 
@@ -140,12 +156,16 @@ Server akan aktif di: **`http://localhost:3000`**
 ### Acara (*Events*)
 - `GET /api/events` - Menampilkan semua acara beserta jumlah tamu dan kehadiran.
 - `GET /api/events/:id` - Menampilkan detail 1 acara.
+- `GET /api/events/:id/download-qrs` - Mengunduh seluruh QR Code tamu dalam 1 file `.zip`.
 - `POST /api/events` - Membuat acara baru.
 - `PUT /api/events/:id` - Memperbarui data acara.
 - `DELETE /api/events/:id` - Menghapus acara dan seluruh tamu terkait.
 
 ### Tamu (*Guests*)
 - `GET /api/guests` - Daftar tamu (dukung filter `event_id`, `category`, `status`, `search`).
+- `GET /api/guests/export/csv` - Ekspor data tamu ke file CSV terformat UTF-8 BOM.
+- `GET /api/guests/export/qr-zip?event_id=:id` - Mengunduh file zip seluruh QR Code acara.
+- `POST /api/guests/import` - Batch import data tamu masal & auto-generate QR code.
 - `GET /api/guests/:id` - Detail data tamu.
 - `POST /api/guests` - Menambahkan tamu baru & otomatis membuat token QR dan file gambar QR.
 - `PUT /api/guests/:id` - Memperbarui data tamu.
@@ -187,3 +207,9 @@ Server akan aktif di: **`http://localhost:3000`**
     ```
 - `GET /api/invite/:token` - Mengambil data publik undangan untuk halaman tiket tamu.
 - `GET /api/stats` - Statistik agregat untuk dashboard.
+
+### Layar TV & Live Display Real-Time
+- `GET /tv` (alias `/display`, `/live`) - Tampilan visual Layar Sambutan TV Fullscreen.
+- `GET /api/live/stream` - Endpoint Server-Sent Events (SSE) untuk transmisi data check-in instan (<100ms) ke layar TV/videotron.
+- `GET /api/live/data` - Endpoint status data awal & fallback polling untuk layar TV.
+- `POST /api/guests/restore-backup` - Endpoint pemulihan full backup database dari file JSON.

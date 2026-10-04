@@ -99,6 +99,17 @@
         </select>
       </template>
 
+      <!-- Live TV Display Shortcut -->
+      <a 
+        :href="'/tv' + (selectedEventId !== 'all' ? '?event_id=' + selectedEventId : '')" 
+        target="_blank"
+        title="Buka Layar Sambutan TV / Videotron"
+        class="flex items-center space-x-1 sm:space-x-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/30 text-xs font-bold transition-all cursor-pointer shrink-0"
+      >
+        <i data-lucide="tv" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+        <span class="text-[11px] sm:text-xs hidden xs:inline">Layar TV</span>
+      </a>
+
       <!-- Manual Input Button -->
       <button 
         @click="isManualModalOpen = true; $nextTick(() => { $refs.manualInputRef?.focus(); lucide.createIcons(); })"

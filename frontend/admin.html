@@ -35,6 +35,12 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
+  <!-- SheetJS (XLSX) for Excel & CSV Import/Export -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+  <!-- JSZip for Bulk QR Code Packaging -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
   <!-- Custom CSS -->
   <link rel="stylesheet" href="/assets/css/style.css">
   
@@ -76,6 +82,18 @@
 
         <!-- Right Action Items -->
         <div class="flex items-center space-x-2 sm:space-x-3">
+          <!-- Open Live TV Display Button -->
+          <a 
+            :href="'/tv' + (selectedEventId !== 'all' ? '?event_id=' + selectedEventId : '')" 
+            target="_blank"
+            title="Buka Layar Sambutan TV / Videotron Real-Time"
+            class="inline-flex items-center space-x-1 sm:space-x-1.5 px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-700 hover:to-amber-700 text-white text-xs font-bold shadow-md shadow-red-600/20 transition-all hover:scale-[1.02] cursor-pointer shrink-0"
+          >
+            <i data-lucide="tv" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-200"></i>
+            <span class="hidden sm:inline">Layar TV</span>
+            <span class="sm:hidden text-[11px]">TV</span>
+          </a>
+
           <!-- Open Scanner Button -->
           <a 
             :href="'/scanner' + (selectedEventId !== 'all' ? '?event_id=' + selectedEventId : '')" 
@@ -149,7 +167,7 @@
           <span 
             :class="activeTab === 'guests' ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-600'"
             class="px-1.5 py-0.5 rounded-md text-[10px]" 
-            x-text="stats.total_guests"
+            x-text="stats.total_guests || guests.length"
           ></span>
         </button>
 
@@ -469,8 +487,8 @@
           >
         </div>
 
-        <!-- Filter Dropdowns -->
-        <div class="flex flex-wrap items-center gap-3">
+        <!-- Filter & Action Buttons -->
+        <div class="flex flex-wrap items-center gap-2 sm:gap-3">
           
           <!-- Category Filter -->
           <div class="flex items-center space-x-1.5 text-xs text-slate-500">
@@ -500,10 +518,84 @@
             </select>
           </div>
 
+          <div class="h-5 w-px bg-slate-200 hidden sm:block"></div>
+
+          <!-- Download All QR Codes (ZIP) -->
+          <button 
+            @click="downloadEventQrs()"
+            title="Download Seluruh QR Code Tamu dalam arsip ZIP"
+            class="inline-flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold shadow-sm shadow-amber-500/20 cursor-pointer transition-all"
+          >
+            <i data-lucide="archive" class="w-4 h-4"></i>
+            <span>Unduh QR (ZIP)</span>
+          </button>
+
+          <!-- Export Data Dropdown -->
+          <div class="relative" @click.outside="isExportMenuOpen = false">
+            <button 
+              @click="isExportMenuOpen = !isExportMenuOpen"
+              class="inline-flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold shadow-sm cursor-pointer transition-all"
+            >
+              <i data-lucide="download" class="w-4 h-4 text-slate-500"></i>
+              <span>Export</span>
+              <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400"></i>
+            </button>
+
+            <!-- Export Menu -->
+            <div 
+              x-show="isExportMenuOpen" 
+              x-cloak
+              class="absolute right-0 mt-1.5 w-48 bg-white rounded-xl shadow-xl border border-slate-100 py-1.5 z-20 text-xs animate-in fade-in zoom-in-95 duration-150"
+            >
+              <button 
+                @click="exportGuests('xlsx')"
+                class="w-full px-3.5 py-2 text-left text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 font-semibold flex items-center space-x-2 transition-colors cursor-pointer"
+              >
+                <i data-lucide="file-spreadsheet" class="w-4 h-4 text-emerald-600"></i>
+                <div>
+                  <div class="font-bold">Export Excel (.xlsx)</div>
+                  <div class="text-[10px] text-slate-400 font-normal">Format spreadsheet rapi</div>
+                </div>
+              </button>
+
+              <button 
+                @click="exportGuests('csv')"
+                class="w-full px-3.5 py-2 text-left text-slate-700 hover:bg-blue-50 hover:text-blue-700 font-semibold flex items-center space-x-2 transition-colors cursor-pointer border-t border-slate-100"
+              >
+                <i data-lucide="file-text" class="w-4 h-4 text-blue-600"></i>
+                <div>
+                  <div class="font-bold">Export CSV (.csv)</div>
+                  <div class="text-[10px] text-slate-400 font-normal">Format teks universal</div>
+                </div>
+              </button>
+
+              <button 
+                @click="exportBackupJson()"
+                class="w-full px-3.5 py-2 text-left text-slate-700 hover:bg-purple-50 hover:text-purple-700 font-semibold flex items-center space-x-2 transition-colors cursor-pointer border-t border-slate-100"
+              >
+                <i data-lucide="database" class="w-4 h-4 text-purple-600"></i>
+                <div>
+                  <div class="font-bold">Backup Database (.json)</div>
+                  <div class="text-[10px] text-slate-400 font-normal">Cadangan full aman untuk hosting</div>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <!-- Import Guests Button -->
+          <button 
+            @click="openImportModal()"
+            title="Import daftar tamu dari file Excel (.xlsx) atau CSV"
+            class="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-md shadow-emerald-600/20 cursor-pointer transition-all"
+          >
+            <i data-lucide="upload-cloud" class="w-4 h-4"></i>
+            <span>Import Tamu</span>
+          </button>
+
           <!-- Add Guest Action -->
           <button 
             @click="openAddGuestModal()"
-            class="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold shadow-md shadow-red-600/20 cursor-pointer"
+            class="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold shadow-md shadow-red-600/20 cursor-pointer transition-all"
           >
             <i data-lucide="plus" class="w-4 h-4"></i>
             <span>Tambah Tamu</span>
@@ -531,9 +623,9 @@
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100 text-xs">
-              <template x-for="(g, index) in guests" :key="g.id">
+              <template x-for="(g, index) in paginatedGuests" :key="g.id">
                 <tr class="hover:bg-slate-50/70 transition-colors">
-                  <td class="py-3.5 px-4 text-center text-slate-400 font-mono" x-text="index + 1"></td>
+                  <td class="py-3.5 px-4 text-center text-slate-400 font-mono" x-text="(currentPage - 1) * perPage + index + 1"></td>
                   
                   <!-- Guest Name -->
                   <td class="py-3.5 px-4">
@@ -667,6 +759,77 @@
             </tbody>
           </table>
         </div>
+
+        <!-- Pagination Controls Footer -->
+        <div x-show="guests.length > 0" class="px-4 sm:px-6 py-3.5 bg-slate-50/80 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-600">
+          
+          <!-- Left: Showing range & Per-page selector -->
+          <div class="flex items-center space-x-3 w-full sm:w-auto justify-between sm:justify-start">
+            <span class="text-slate-500">
+              Menampilkan <span class="font-bold text-slate-800" x-text="paginationStartIndex"></span> - <span class="font-bold text-slate-800" x-text="paginationEndIndex"></span> dari <span class="font-bold text-slate-800" x-text="guests.length"></span> tamu
+            </span>
+
+            <div class="flex items-center space-x-1.5">
+              <span class="text-slate-400 text-[11px]">Baris:</span>
+              <select 
+                x-model.number="perPage" 
+                class="bg-white border border-slate-200 rounded-lg px-2 py-1 text-xs font-semibold text-slate-700 focus:outline-none focus:ring-1 focus:ring-red-600 cursor-pointer shadow-sm"
+              >
+                <option :value="10">10</option>
+                <option :value="25">25</option>
+                <option :value="50">50</option>
+                <option :value="100">100</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Right: Page buttons & Next/Prev -->
+          <div class="flex items-center space-x-1">
+            <!-- Prev Page -->
+            <button 
+              type="button"
+              @click="prevPage()"
+              :disabled="currentPage === 1"
+              title="Halaman Sebelumnya"
+              class="w-8 h-8 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center text-slate-600 transition-colors shadow-sm cursor-pointer"
+            >
+              <i data-lucide="chevron-left" class="w-4 h-4"></i>
+            </button>
+
+            <!-- Page Number Buttons -->
+            <div class="flex items-center space-x-1">
+              <template x-for="p in paginationPages" :key="p">
+                <div>
+                  <template x-if="p === '...'">
+                    <span class="px-2 py-1 text-slate-400">...</span>
+                  </template>
+                  <template x-if="p !== '...'">
+                    <button 
+                      type="button"
+                      @click="goToPage(p)"
+                      :class="currentPage === p ? 'bg-red-600 text-white font-bold shadow-sm' : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 font-semibold'"
+                      class="min-w-[32px] h-8 px-2 rounded-lg text-xs flex items-center justify-center transition-all cursor-pointer shadow-sm"
+                      x-text="p"
+                    ></button>
+                  </template>
+                </div>
+              </template>
+            </div>
+
+            <!-- Next Page -->
+            <button 
+              type="button"
+              @click="nextPage()"
+              :disabled="currentPage === totalPages"
+              title="Halaman Berikutnya"
+              class="w-8 h-8 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center text-slate-600 transition-colors shadow-sm cursor-pointer"
+            >
+              <i data-lucide="chevron-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+        </div>
+
       </div>
 
     </div>
@@ -751,7 +914,7 @@
             </div>
 
             <!-- Footer Actions -->
-            <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
+            <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between gap-2 flex-wrap">
               <button 
                 @click="selectedEventId = String(ev.id); activeTab = 'guests'"
                 class="text-xs font-bold text-red-600 hover:text-red-700 flex items-center space-x-1 cursor-pointer"
@@ -760,14 +923,25 @@
                 <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
               </button>
 
-              <a 
-                :href="'/scanner?event_id=' + ev.id" 
-                target="_blank"
-                class="inline-flex items-center space-x-1 text-xs font-bold text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
-              >
-                <i data-lucide="scan" class="w-3.5 h-3.5 text-red-600"></i>
-                <span>Buka Scanner</span>
-              </a>
+              <div class="flex items-center space-x-1.5">
+                <button 
+                  @click="downloadEventQrs(ev)"
+                  title="Unduh Seluruh QR Code Tamu Acara Ini (ZIP)"
+                  class="inline-flex items-center space-x-1 text-xs font-bold text-amber-700 hover:text-amber-800 bg-amber-50 hover:bg-amber-100 border border-amber-200 px-2.5 py-1.5 rounded-lg transition-colors cursor-pointer"
+                >
+                  <i data-lucide="archive" class="w-3.5 h-3.5 text-amber-600"></i>
+                  <span>QR (ZIP)</span>
+                </button>
+
+                <a 
+                  :href="'/scanner?event_id=' + ev.id" 
+                  target="_blank"
+                  class="inline-flex items-center space-x-1 text-xs font-bold text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 px-2.5 py-1.5 rounded-lg transition-colors cursor-pointer"
+                >
+                  <i data-lucide="scan" class="w-3.5 h-3.5 text-red-600"></i>
+                  <span>Scanner</span>
+                </a>
+              </div>
             </div>
 
           </div>
@@ -1097,6 +1271,302 @@
           </button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL 4: IMPORT GUESTS (EXCEL / CSV)           -->
+  <!-- ============================================== -->
+  <div 
+    x-show="isImportModalOpen" 
+    x-cloak 
+    class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/70 backdrop-blur-sm"
+    @keydown.escape.window="if (!importForm.isSubmitting) isImportModalOpen = false"
+  >
+    <div 
+      class="bg-white rounded-2xl sm:rounded-3xl max-w-lg w-full max-h-[92vh] flex flex-col shadow-2xl overflow-hidden border border-slate-100 animate-in fade-in zoom-in-95 duration-200"
+      @click.outside="if (!importForm.isSubmitting) isImportModalOpen = false"
+    >
+      <!-- Header -->
+      <div class="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/60 shrink-0">
+        <div class="flex items-center space-x-2">
+          <div class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center">
+            <i data-lucide="upload-cloud" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-slate-900">Import Data Tamu</h3>
+            <p class="text-[11px] text-slate-500">Mendukung format file Excel (.xlsx, .xls) dan CSV</p>
+          </div>
+        </div>
+        <button 
+          x-show="!importForm.isSubmitting"
+          @click="isImportModalOpen = false" 
+          class="text-slate-400 hover:text-slate-600 p-1 rounded-lg"
+        >
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Body -->
+      <div class="p-4 sm:p-6 space-y-4 flex-1 overflow-y-auto text-xs">
+        
+        <!-- Target Event Selection -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">Acara Tujuan Import</label>
+          <select 
+            x-model="importForm.event_id" 
+            :disabled="importForm.isSubmitting"
+            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-600"
+          >
+            <template x-for="ev in events" :key="ev.id">
+              <option :value="String(ev.id)" x-text="ev.name"></option>
+            </template>
+          </select>
+        </div>
+
+        <!-- Download Template Section -->
+        <div class="p-3 bg-emerald-50/60 border border-emerald-100 rounded-xl flex items-center justify-between gap-3">
+          <div class="flex items-center space-x-2 min-w-0">
+            <i data-lucide="info" class="w-4 h-4 text-emerald-600 shrink-0"></i>
+            <span class="text-[11px] text-emerald-800 truncate">Unduh template kolom (Nama, No HP, Kategori):</span>
+          </div>
+          <div class="flex items-center space-x-1.5 shrink-0">
+            <button 
+              type="button"
+              @click="downloadImportTemplate('xlsx')" 
+              class="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[10px] shadow-sm transition-colors cursor-pointer"
+            >
+              Excel (.xlsx)
+            </button>
+            <button 
+              type="button"
+              @click="downloadImportTemplate('csv')" 
+              class="px-2.5 py-1 rounded-lg bg-white hover:bg-slate-50 border border-emerald-300 text-emerald-800 font-bold text-[10px] shadow-sm transition-colors cursor-pointer"
+            >
+              CSV (.csv)
+            </button>
+          </div>
+        </div>
+
+        <!-- Restore from JSON Backup Option -->
+        <div class="px-3 py-2 bg-blue-50/60 border border-blue-100 rounded-xl flex items-center justify-between text-[11px] text-slate-600">
+          <span class="flex items-center space-x-1.5">
+            <i data-lucide="shield-check" class="w-4 h-4 text-blue-600"></i>
+            <span>Punya file cadangan (.json)?</span>
+          </span>
+          <label class="px-2.5 py-1 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-[10px] shadow-sm transition-colors cursor-pointer flex items-center space-x-1">
+            <i data-lucide="database" class="w-3.5 h-3.5"></i>
+            <span>Restore Backup JSON</span>
+            <input type="file" accept=".json" class="hidden" @change="restoreBackupJson($event)">
+          </label>
+        </div>
+
+        <!-- File Upload Dropzone -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">Pilih File Spreadsheet</label>
+          <input 
+            type="file" 
+            x-ref="importFileInput"
+            accept=".xlsx, .xls, .csv" 
+            class="hidden" 
+            @change="handleImportFileChange($event)"
+          >
+          <div 
+            @click="$refs.importFileInput.click()"
+            @dragover.prevent="$el.classList.add('border-emerald-500', 'bg-emerald-50/40')"
+            @dragleave.prevent="$el.classList.remove('border-emerald-500', 'bg-emerald-50/40')"
+            @drop.prevent="$el.classList.remove('border-emerald-500', 'bg-emerald-50/40'); handleImportFileChange($event)"
+            class="border-2 border-dashed border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/30 rounded-2xl p-6 text-center cursor-pointer transition-all flex flex-col items-center justify-center group"
+          >
+            <div class="w-12 h-12 rounded-2xl bg-slate-100 group-hover:bg-emerald-100 group-hover:text-emerald-700 text-slate-500 flex items-center justify-center mb-2.5 transition-colors">
+              <i data-lucide="file-up" class="w-6 h-6"></i>
+            </div>
+            
+            <div class="font-bold text-slate-800 text-xs" x-show="!importForm.fileName">
+              Klik untuk pilih file atau seret file ke sini
+            </div>
+            <div class="text-[11px] text-slate-400 mt-0.5" x-show="!importForm.fileName">
+              Mendukung file .xlsx, .xls, dan .csv
+            </div>
+
+            <div x-show="importForm.fileName" x-cloak class="flex items-center space-x-2 text-emerald-700 font-bold text-xs bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-200">
+              <i data-lucide="file-check" class="w-4 h-4"></i>
+              <span x-text="importForm.fileName"></span>
+              <span class="text-[10px] text-emerald-600 font-normal" x-text="'(' + importForm.fileSizeText + ')'"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Parsed Data Preview -->
+        <div x-show="importForm.parsedGuests.length > 0" x-cloak class="space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-slate-700 flex items-center space-x-1.5">
+              <span>Preview Data Tamu</span>
+              <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-extrabold" x-text="importForm.parsedGuests.length + ' Tamu Terdeteksi'"></span>
+            </span>
+            <span x-show="importForm.invalidRowsCount > 0" class="text-[10px] text-amber-600 font-semibold" x-text="importForm.invalidRowsCount + ' baris dilewati (nama kosong)'"></span>
+          </div>
+
+          <!-- Preview Table -->
+          <div class="border border-slate-200 rounded-xl overflow-hidden max-h-48 overflow-y-auto">
+            <table class="w-full text-left text-[11px]">
+              <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase tracking-wider sticky top-0">
+                <tr>
+                  <th class="py-1.5 px-3 w-8 text-center">No</th>
+                  <th class="py-1.5 px-3">Nama Tamu</th>
+                  <th class="py-1.5 px-3">No. HP</th>
+                  <th class="py-1.5 px-3">Kategori</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                <template x-for="(g, idx) in importForm.parsedGuests.slice(0, 10)" :key="idx">
+                  <tr class="hover:bg-slate-50">
+                    <td class="py-1.5 px-3 text-center text-slate-400" x-text="idx + 1"></td>
+                    <td class="py-1.5 px-3 font-semibold text-slate-800" x-text="g.name"></td>
+                    <td class="py-1.5 px-3 font-mono text-slate-600" x-text="g.phone || '-'"></td>
+                    <td class="py-1.5 px-3">
+                      <span :class="getCategoryBadgeClass(g.category)" class="px-2 py-0.5 rounded-full text-[9px] font-bold border inline-block" x-text="g.category"></span>
+                    </td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+          </div>
+          <div x-show="importForm.parsedGuests.length > 10" class="text-[10px] text-slate-400 text-center italic">
+            Menampilkan 10 dari total <span x-text="importForm.parsedGuests.length"></span> tamu.
+          </div>
+        </div>
+
+        <!-- Submitting Spinner & Progress -->
+        <div x-show="importForm.isSubmitting" x-cloak class="p-3 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center space-x-3 text-emerald-800">
+          <svg class="animate-spin h-5 w-5 text-emerald-600 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <div class="text-xs font-semibold" x-text="importForm.progressText"></div>
+        </div>
+
+      </div>
+
+      <!-- Footer -->
+      <div class="p-4 sm:p-5 bg-white border-t border-slate-100 flex items-center justify-end space-x-2 shrink-0">
+        <button 
+          type="button" 
+          :disabled="importForm.isSubmitting"
+          @click="isImportModalOpen = false"
+          class="px-4 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 cursor-pointer disabled:opacity-50"
+        >
+          Batal
+        </button>
+        <button 
+          type="button"
+          :disabled="importForm.isSubmitting || importForm.parsedGuests.length === 0"
+          @click="submitImport()"
+          class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-md shadow-emerald-600/20 cursor-pointer disabled:opacity-50 flex items-center space-x-1.5 transition-all"
+        >
+          <i data-lucide="check" class="w-4 h-4"></i>
+          <span x-text="'Mulai Import (' + importForm.parsedGuests.length + ' Tamu)'"></span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==================================================== -->
+  <!-- MODAL 5: PILIH ACARA UNTUK DOWNLOAD BATCH QR (ZIP)   -->
+  <!-- ==================================================== -->
+  <div 
+    x-show="isQrSelectEventModalOpen" 
+    x-cloak 
+    class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/70 backdrop-blur-sm"
+    @keydown.escape.window="isQrSelectEventModalOpen = false"
+  >
+    <div 
+      class="bg-white rounded-2xl sm:rounded-3xl max-w-md w-full shadow-2xl overflow-hidden border border-slate-100 animate-in fade-in zoom-in-95 duration-200"
+      @click.outside="isQrSelectEventModalOpen = false"
+    >
+      <div class="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/60 shrink-0">
+        <div class="flex items-center space-x-2">
+          <div class="w-8 h-8 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center">
+            <i data-lucide="archive" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-slate-900">Download QR Code by Acara</h3>
+            <p class="text-[11px] text-slate-500">Pilih acara yang ingin diunduh seluruh QR Code-nya</p>
+          </div>
+        </div>
+        <button @click="isQrSelectEventModalOpen = false" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="p-5 space-y-4 text-xs">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">Pilih Acara</label>
+          <select 
+            x-model="selectedBatchQrEventId" 
+            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 font-semibold focus:outline-none focus:ring-2 focus:ring-amber-500"
+          >
+            <template x-for="ev in events" :key="ev.id">
+              <option :value="String(ev.id)" x-text="ev.name + ' (' + (ev.total_guests || 0) + ' tamu)'"></option>
+            </template>
+          </select>
+        </div>
+
+        <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-[11px] text-amber-800 flex items-start space-x-2">
+          <i data-lucide="sparkles" class="w-4 h-4 text-amber-600 shrink-0 mt-0.5"></i>
+          <span>File ZIP akan berisi seluruh gambar QR Code (.png) siap cetak dan file ringkasan daftar tamu acara.</span>
+        </div>
+      </div>
+
+      <div class="p-4 sm:p-5 bg-white border-t border-slate-100 flex items-center justify-end space-x-2">
+        <button 
+          type="button" 
+          @click="isQrSelectEventModalOpen = false"
+          class="px-4 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 cursor-pointer"
+        >
+          Batal
+        </button>
+        <button 
+          type="button"
+          @click="downloadEventQrs(selectedBatchQrEventId)"
+          class="px-5 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold shadow-md shadow-amber-500/20 cursor-pointer flex items-center space-x-1.5 transition-all"
+        >
+          <i data-lucide="download" class="w-4 h-4"></i>
+          <span>Download File ZIP</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL 6: ZIP PACKAGING PROGRESS OVERLAY        -->
+  <!-- ============================================== -->
+  <div 
+    x-show="isDownloadingZip" 
+    x-cloak 
+    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200"
+  >
+    <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl text-center flex flex-col items-center space-y-4 border border-slate-100">
+      <div class="w-16 h-16 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center relative">
+        <i data-lucide="archive" class="w-8 h-8"></i>
+        <div class="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-amber-500 animate-ping"></div>
+      </div>
+
+      <div>
+        <h4 class="text-sm font-bold text-slate-900">Menyiapkan File ZIP QR Code</h4>
+        <p class="text-xs text-slate-500 mt-1" x-text="zipProgress.text || 'Memproses seluruh data QR Code tamu...'"></p>
+      </div>
+
+      <!-- Progress Bar -->
+      <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+        <div 
+          class="bg-amber-500 h-2.5 rounded-full transition-all duration-300"
+          :style="'width: ' + (zipProgress.percent || 15) + '%'"
+        ></div>
+      </div>
+
+      <div class="text-[11px] font-mono text-slate-400" x-text="(zipProgress.percent || 0) + '% Selesai'"></div>
     </div>
   </div>
 

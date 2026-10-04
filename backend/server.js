@@ -10,6 +10,7 @@ const authRoutes = require('./routes/auth');
 const eventRoutes = require('./routes/events');
 const guestRoutes = require('./routes/guests');
 const scannerRoutes = require('./routes/scanner');
+const liveRoutes = require('./routes/live');
 const authController = require('./controllers/authController');
 
 const app = express();
@@ -39,6 +40,8 @@ app.use('/api/events', eventRoutes);
 app.use('/api/guests', guestRoutes);
 // Mount scanner at /api and /api/check
 app.use('/api', scannerRoutes);
+// Mount live TV display stream & data
+app.use('/api/live', liveRoutes);
 
 // Frontend Page Routes
 app.get('/', (req, res) => {
@@ -55,6 +58,19 @@ app.get('/admin', (req, res) => {
 
 app.get('/scanner', (req, res) => {
   res.sendFile(path.join(frontendPath, 'scanner.html'));
+});
+
+// Live TV Welcome Screen Display
+app.get('/tv', (req, res) => {
+  res.sendFile(path.join(frontendPath, 'tv.html'));
+});
+
+app.get('/display', (req, res) => {
+  res.sendFile(path.join(frontendPath, 'tv.html'));
+});
+
+app.get('/live', (req, res) => {
+  res.sendFile(path.join(frontendPath, 'tv.html'));
 });
 
 // Public digital invitation / check route for guests

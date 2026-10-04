@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live TV Welcome Display - Digital Invitation System</title>
+  <link rel="icon" type="image/png" href="/assets/images/logo-shield-satsiber.png">
+
+  <!-- Google Fonts: Outfit & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Outfit', 'Plus Jakarta Sans', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              gold: '#D4AF37',
+              red: '#DC2626',
+              navy: '#0A1128'
+            }
+          },
+          animation: {
+            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'float': 'float 6s ease-in-out infinite',
+            'glow': 'glow 2s ease-in-out infinite alternate',
+          },
+          keyframes: {
+            float: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-10px)' },
+            },
+            glow: {
+              '0%': { boxShadow: '0 0 25px rgba(212, 175, 55, 0.3)' },
+              '100%': { boxShadow: '0 0 50px rgba(212, 175, 55, 0.7)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Alpine.js -->
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+  <style>
+    [x-cloak] { display: none !important; }
+    
+    body {
+      font-family: 'Outfit', sans-serif;
+      overflow: hidden;
+      user-select: none;
+      background-color: #030712;
+    }
+
+    /* Ambient background glowing orbs */
+    .ambient-glow-1 {
+      position: absolute;
+      width: 650px;
+      height: 650px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(220, 38, 38, 0.18) 0%, rgba(0,0,0,0) 70%);
+      top: -150px;
+      left: -150px;
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .ambient-glow-2 {
+      position: absolute;
+      width: 700px;
+      height: 700px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(212, 175, 55, 0.16) 0%, rgba(0,0,0,0) 70%);
+      bottom: -150px;
+      right: -150px;
+      filter: blur(90px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .gold-gradient-text {
+      background: linear-gradient(135deg, #FFF7D6 0%, #D4AF37 50%, #AA8010 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .silver-gradient-text {
+      background: linear-gradient(135deg, #FFFFFF 0%, #E2E8F0 60%, #94A3B8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Custom scrollbar for horizontal attendee feed */
+    .hide-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .hide-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="text-white min-h-screen flex flex-col justify-between relative bg-slate-950 overflow-x-hidden" x-data="tvDisplayApp()" @mousemove="onMouseMove()" @click="onMouseMove()">
+
+  <!-- Background Video Player (Looping) -->
+  <video 
+    x-ref="bgVideoRef"
+    x-show="videoMode && videoUrl"
+    class="fixed inset-0 w-full h-full object-cover z-0 pointer-events-none transition-all duration-700"
+    :class="currentPopupGuest ? 'opacity-35 brightness-50 scale-105' : 'opacity-100 brightness-95 scale-100'"
+    autoplay
+    loop
+    muted
+    playsinline
+  ></video>
+
+  <!-- Video Ambient Contrast Overlay -->
+  <div 
+    x-show="videoMode && videoUrl"
+    class="fixed inset-0 pointer-events-none z-0 transition-all duration-500"
+    :class="currentPopupGuest ? 'bg-slate-950/75 backdrop-blur-[2px]' : (cinematicMode && !mouseActive ? 'bg-transparent' : 'bg-gradient-to-t from-slate-950/70 via-transparent to-slate-950/50')"
+  ></div>
+
+  <!-- Ambient Glow Backgrounds (Active when video is disabled) -->
+  <div x-show="!videoMode || !videoUrl" class="ambient-glow-1"></div>
+  <div x-show="!videoMode || !videoUrl" class="ambient-glow-2"></div>
+
+  <!-- Subtle Animated Grid Pattern -->
+  <div x-show="!videoMode || !videoUrl" class="absolute inset-0 bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:32px_32px] opacity-25 pointer-events-none"></div>
+
+  <!-- ============================================== -->
+  <!-- TOP BAR / HEADER (16:9 TV OPTIMIZED)           -->
+  <!-- ============================================== -->
+  <header 
+    class="relative z-20 px-8 py-5 flex items-center justify-between border-b border-slate-800/80 bg-slate-950/70 backdrop-blur-md transition-all duration-500"
+    :class="cinematicMode && !mouseActive && !currentPopupGuest ? 'opacity-0 -translate-y-full pointer-events-none' : 'opacity-100 translate-y-0'"
+  >
+    
+    <!-- Left: Logo & Event Title -->
+    <div class="flex items-center space-x-4">
+      <div class="p-2 rounded-2xl bg-white/10 border border-white/15 backdrop-blur-md shadow-lg flex items-center justify-center">
+        <img src="/assets/images/logo-shield-satsiber.png" alt="Logo" class="h-10 w-auto object-contain">
+      </div>
+      <div>
+        <div class="flex items-center space-x-2">
+          <span class="px-2 py-0.5 rounded-md bg-red-600/30 border border-red-500/40 text-[10px] font-extrabold uppercase tracking-widest text-red-300">Live Presensi</span>
+          <span class="text-xs font-semibold text-slate-400" x-text="activeEvent?.location || 'Digital Invitation System'"></span>
+        </div>
+        <h1 class="text-xl md:text-2xl font-black tracking-tight text-white mt-0.5 truncate max-w-xl" x-text="activeEvent?.name || 'Selamat Datang Para Tamu Undangan'"></h1>
+      </div>
+    </div>
+
+    <!-- Right: Clock, Live Badge & Controls -->
+    <div class="flex items-center space-x-4">
+      
+      <!-- Event Filter Selector -->
+      <div class="hidden lg:flex items-center space-x-2 bg-slate-900/80 px-3 py-1.5 rounded-xl border border-slate-700/80">
+        <i data-lucide="calendar" class="w-3.5 h-3.5 text-amber-400"></i>
+        <select 
+          x-model="selectedEventId"
+          class="bg-transparent text-xs font-bold text-slate-200 focus:outline-none cursor-pointer max-w-xs truncate"
+        >
+          <option value="all" class="bg-slate-900 text-white">Semua Acara (Live Feed)</option>
+          <template x-for="ev in events" :key="ev.id">
+            <option :value="String(ev.id)" class="bg-slate-900 text-white" x-text="ev.name"></option>
+          </template>
+        </select>
+      </div>
+
+      <!-- Realtime Jakarta Digital Clock -->
+      <div class="text-right pl-3 border-l border-slate-800">
+        <div class="text-xl md:text-2xl font-black font-mono tracking-tight text-amber-300" x-text="jakartaTime"></div>
+        <div class="text-[11px] font-medium text-slate-400" x-text="jakartaDate"></div>
+      </div>
+
+      <!-- Live Connection Indicator -->
+      <div class="flex items-center space-x-2 px-3 py-1.5 rounded-full bg-emerald-950/60 border border-emerald-500/40 text-emerald-400 text-xs font-extrabold shadow-sm">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+        <span class="tracking-wider">LIVE</span>
+      </div>
+
+      <!-- Video Looping Settings Button -->
+      <button 
+        @click="isVideoModalOpen = true; $nextTick(() => lucide.createIcons())"
+        :title="videoMode && videoUrl ? 'Pengaturan Video Looping (Aktif)' : 'Atur Video Background Looping'"
+        :class="videoMode && videoUrl ? 'bg-amber-500/20 border-amber-500/60 text-amber-300' : 'bg-slate-900/90 border-slate-700 text-slate-300'"
+        class="w-10 h-10 rounded-xl border hover:border-amber-400 flex items-center justify-center transition-all cursor-pointer relative"
+      >
+        <i data-lucide="video" class="w-5 h-5"></i>
+        <span x-show="videoMode && videoUrl" class="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-amber-400 ring-2 ring-slate-950 animate-pulse"></span>
+      </button>
+
+      <!-- Sound Mute/Unmute Toggle -->
+      <button 
+        @click="toggleAudio()"
+        :title="audioEnabled ? 'Matikan Suara Chime' : 'Nyalakan Suara Chime'"
+        class="w-10 h-10 rounded-xl bg-slate-900/90 border border-slate-700 hover:border-slate-500 flex items-center justify-center text-slate-300 hover:text-white transition-all cursor-pointer"
+      >
+        <i :data-lucide="audioEnabled ? 'volume-2' : 'volume-x'" class="w-5 h-5"></i>
+      </button>
+
+      <!-- Fullscreen Toggle Button -->
+      <button 
+        @click="toggleFullScreen()"
+        title="Layar Penuh (F11)"
+        class="w-10 h-10 rounded-xl bg-slate-900/90 border border-slate-700 hover:border-slate-500 flex items-center justify-center text-slate-300 hover:text-white transition-all cursor-pointer"
+      >
+        <i data-lucide="maximize" class="w-5 h-5"></i>
+      </button>
+
+    </div>
+
+  </header>
+
+  <!-- ============================================== -->
+  <!-- MAIN DISPLAY AREA (SWITCHES STATES)            -->
+  <!-- ============================================== -->
+  <main class="relative z-10 flex-1 flex items-center justify-center px-6 py-6 md:px-12">
+    
+    <!-- ========================================== -->
+    <!-- STATE A: POP-UP SAMBUTAN KEDATANGAN TAMU   -->
+    <!-- ========================================== -->
+    <div 
+      x-show="currentPopupGuest !== null"
+      x-transition:enter="transition ease-out duration-500"
+      x-transition:enter-start="opacity-0 scale-90 translate-y-8"
+      x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+      x-transition:leave="transition ease-in duration-300"
+      x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+      x-transition:leave-end="opacity-0 scale-95 -translate-y-6"
+      x-cloak
+      class="w-full max-w-4xl"
+    >
+      <div class="relative bg-gradient-to-b from-slate-900/90 via-slate-950/95 to-slate-950 rounded-3xl p-8 md:p-12 border-2 border-amber-400/60 shadow-[0_0_80px_rgba(212,175,55,0.35)] backdrop-blur-2xl text-center overflow-hidden animate-glow">
+        
+        <!-- Top Ornamental Ribbon -->
+        <div class="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-red-600 via-amber-400 to-red-600"></div>
+
+        <!-- Glowing Star Badge -->
+        <div class="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-amber-500/20 via-amber-400/30 to-amber-500/20 border border-amber-400/50 mb-6 shadow-sm">
+          <i data-lucide="sparkles" class="w-4 h-4 text-amber-300 animate-spin" style="animation-duration: 6s;"></i>
+          <span class="text-xs md:text-sm font-extrabold uppercase tracking-widest text-amber-200">Selamat Datang</span>
+          <i data-lucide="sparkles" class="w-4 h-4 text-amber-300 animate-spin" style="animation-duration: 6s;"></i>
+        </div>
+
+        <!-- Greeting Header -->
+        <div class="text-base md:text-lg font-bold text-slate-300 tracking-wide uppercase">
+          Dengan Hormat Menyambut Kehadiran
+        </div>
+
+        <!-- Huge Guest Name -->
+        <div class="my-4 md:my-6">
+          <h2 
+            class="text-4xl md:text-6xl lg:text-7xl font-black tracking-tight text-white drop-shadow-[0_4px_16px_rgba(0,0,0,0.8)] leading-tight"
+            x-text="currentPopupGuest?.name"
+          ></h2>
+        </div>
+
+        <!-- Category & Time Badges -->
+        <div class="flex flex-wrap items-center justify-center gap-3 md:gap-4 mt-6">
+          
+          <!-- Category Badge -->
+          <div 
+            :class="getCategoryBadgeStyle(currentPopupGuest?.category)"
+            class="px-5 py-2 rounded-2xl text-sm md:text-base font-black tracking-wide border shadow-lg flex items-center space-x-2"
+          >
+            <i data-lucide="award" class="w-4 h-4 md:w-5 md:h-5"></i>
+            <span x-text="currentPopupGuest?.category || 'General'"></span>
+          </div>
+
+          <!-- Event Name -->
+          <div class="px-5 py-2 rounded-2xl bg-white/10 border border-white/20 text-slate-200 text-sm md:text-base font-bold shadow-lg flex items-center space-x-2">
+            <i data-lucide="calendar" class="w-4 h-4 md:w-5 md:h-5 text-red-400"></i>
+            <span x-text="currentPopupGuest?.event_name"></span>
+          </div>
+
+          <!-- Arrival Time -->
+          <div class="px-5 py-2 rounded-2xl bg-emerald-950/80 border border-emerald-500/50 text-emerald-300 text-sm md:text-base font-mono font-bold shadow-lg flex items-center space-x-2">
+            <i data-lucide="clock" class="w-4 h-4 md:w-5 md:h-5 text-emerald-400"></i>
+            <span x-text="currentPopupGuest?.formatted_arrival || 'Hadir Sekarang'"></span>
+          </div>
+
+        </div>
+
+        <!-- Auto Countdown Bar -->
+        <div class="w-full bg-slate-800/80 rounded-full h-1.5 mt-8 overflow-hidden">
+          <div 
+            class="h-1.5 bg-gradient-to-r from-amber-400 to-red-500 rounded-full transition-all duration-100 ease-linear"
+            :style="'width: ' + popupProgressPercent + '%'"
+          ></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- STATE B: STANDBY / IDLE AMBIENT WELCOME    -->
+    <!-- ========================================== -->
+    <div 
+      x-show="currentPopupGuest === null && (!videoMode || !hideStandbyText)"
+      x-transition:enter="transition ease-out duration-700"
+      x-transition:enter-start="opacity-0 scale-95"
+      x-transition:enter-end="opacity-100 scale-100"
+      x-cloak
+      class="text-center max-w-4xl space-y-6"
+    >
+      
+      <!-- Emblem Logo -->
+      <div class="inline-block relative">
+        <div class="w-24 h-24 md:w-28 md:h-28 rounded-3xl bg-gradient-to-b from-white/15 to-white/5 border border-white/20 shadow-2xl backdrop-blur-md flex items-center justify-center mx-auto p-4 animate-float">
+          <img src="/assets/images/logo-shield-satsiber.png" alt="Logo" class="w-full h-full object-contain">
+        </div>
+        <div class="absolute -bottom-2 -right-2 w-8 h-8 rounded-full bg-amber-500/30 border border-amber-400 flex items-center justify-center text-amber-300 shadow-md">
+          <i data-lucide="sparkles" class="w-4 h-4"></i>
+        </div>
+      </div>
+
+      <!-- Welcome Banner -->
+      <div>
+        <div class="text-xs md:text-sm uppercase tracking-[0.3em] font-extrabold text-amber-300/90 mb-2">
+          Selamat Datang Di Acara
+        </div>
+        <h2 class="text-4xl md:text-6xl font-black tracking-tight gold-gradient-text drop-shadow-xl" x-text="activeEvent?.name || 'Resepsi & Acara Resmi'"></h2>
+      </div>
+
+      <!-- Event Details Card -->
+      <div class="inline-flex flex-wrap items-center justify-center gap-4 p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md text-xs md:text-sm text-slate-200">
+        <span class="flex items-center space-x-2">
+          <i data-lucide="calendar" class="w-4 h-4 text-amber-400"></i>
+          <span x-text="formatDateId(activeEvent?.date)"></span>
+        </span>
+        <span class="text-slate-600">•</span>
+        <span class="flex items-center space-x-2">
+          <i data-lucide="map-pin" class="w-4 h-4 text-red-400"></i>
+          <span x-text="activeEvent?.location || 'Lokasi Acara'"></span>
+        </span>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ============================================== -->
+  <!-- BOTTOM BAR: RECENT ATTENDEES TICKER            -->
+  <!-- ============================================== -->
+  <footer 
+    class="relative z-20 px-8 py-4 bg-slate-950/80 border-t border-slate-800/80 backdrop-blur-md flex items-center justify-between gap-4 transition-all duration-500"
+    :class="cinematicMode && !mouseActive && !currentPopupGuest ? 'opacity-0 translate-y-full pointer-events-none' : 'opacity-100 translate-y-0'"
+  >
+    
+    <!-- Total Present Pill -->
+    <div class="flex items-center space-x-3 shrink-0">
+      <div class="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-400 flex items-center justify-center">
+        <i data-lucide="users" class="w-5 h-5"></i>
+      </div>
+      <div>
+        <div class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Tamu Telah Hadir</div>
+        <div class="text-lg font-black text-white">
+          <span class="text-amber-400" x-text="stats.total_present || 0"></span>
+          <span class="text-xs text-slate-500 font-semibold" x-text="'/ ' + (stats.total_guests || 0) + ' Terdaftar'"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="h-8 w-px bg-slate-800 hidden md:block"></div>
+
+    <!-- Horizontal Scrolling Feed of Recent Attendees -->
+    <div class="flex-1 overflow-x-auto hide-scrollbar flex items-center space-x-3 py-1">
+      <div class="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 shrink-0 flex items-center space-x-1 pl-2">
+        <i data-lucide="user-check" class="w-3.5 h-3.5 text-emerald-400"></i>
+        <span>Baru Hadir:</span>
+      </div>
+
+      <template x-for="att in recentAttendees" :key="att.id">
+        <div class="flex items-center space-x-2 bg-slate-900/90 border border-slate-800 hover:border-slate-700 px-3 py-1.5 rounded-xl shrink-0 transition-colors shadow-sm">
+          <span :class="getCategoryBadgeSmall(att.category)" class="w-2 h-2 rounded-full"></span>
+          <span class="text-xs font-bold text-slate-200" x-text="att.name"></span>
+          <span class="text-[10px] font-mono text-emerald-400 font-semibold" x-text="formatTimeShort(att.arrival_time)"></span>
+        </div>
+      </template>
+
+      <div x-show="recentAttendees.length === 0" class="text-xs text-slate-500 italic pl-2">
+        Menunggu kedatangan tamu pertama...
+      </div>
+    </div>
+
+    <!-- Instruction Footer -->
+    <div class="hidden lg:flex items-center space-x-2 text-[11px] text-slate-400 font-medium shrink-0 bg-white/5 px-3 py-1.5 rounded-lg border border-white/10">
+      <i data-lucide="scan-line" class="w-3.5 h-3.5 text-amber-400"></i>
+      <span>Tunjukkan tiket QR di meja penerima tamu</span>
+    </div>
+
+  </footer>
+
+  <!-- ============================================== -->
+  <!-- MODAL PENGATURAN VIDEO LOOPING BACKGROUND      -->
+  <!-- ============================================== -->
+  <div 
+    x-show="isVideoModalOpen" 
+    x-cloak 
+    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md"
+    @keydown.escape.window="isVideoModalOpen = false"
+  >
+    <div 
+      @click.away="isVideoModalOpen = false"
+      class="bg-slate-900 border border-slate-700/80 rounded-3xl p-6 md:p-8 max-w-lg w-full shadow-2xl text-left space-y-5 animate-scale-up"
+    >
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-2xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400">
+            <i data-lucide="video" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-base md:text-lg font-black text-white">Video Looping Layar TV</h3>
+            <p class="text-xs text-slate-400">Putar video teaser / bumper berulang di latar belakang</p>
+          </div>
+        </div>
+        <button 
+          @click="isVideoModalOpen = false" 
+          class="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center cursor-pointer transition-colors"
+        >
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Toggle Video Mode -->
+      <div class="flex items-center justify-between p-4 rounded-2xl bg-slate-950/70 border border-slate-800">
+        <div>
+          <div class="text-sm font-bold text-white">Aktifkan Video Looping</div>
+          <div class="text-xs text-slate-400">Putar video MP4 secara terus-menerus</div>
+        </div>
+        <button 
+          @click="toggleVideoMode()" 
+          type="button" 
+          :class="videoMode ? 'bg-amber-500' : 'bg-slate-800'"
+          class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none"
+        >
+          <span 
+            :class="videoMode ? 'translate-x-5 bg-slate-950' : 'translate-x-0 bg-slate-400'"
+            class="pointer-events-none inline-block h-5 w-5 transform rounded-full shadow ring-0 transition duration-200 ease-in-out"
+          ></span>
+        </button>
+      </div>
+
+      <!-- Video Source Selection -->
+      <div class="space-y-3">
+        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400">Sumber File Video (.mp4 / .webm)</label>
+
+        <!-- Hidden File Input -->
+        <input 
+          type="file" 
+          x-ref="videoFileInput" 
+          accept="video/mp4,video/webm" 
+          class="hidden" 
+          @change="handleVideoFileSelect($event)"
+        >
+
+        <!-- Current Video Status / Choose File Button -->
+        <div class="p-4 rounded-2xl bg-slate-950/90 border border-dashed border-slate-700 space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2.5 truncate mr-2">
+              <i data-lucide="film" class="w-4 h-4 text-amber-400 shrink-0"></i>
+              <div class="text-xs font-bold text-slate-200 truncate" x-text="videoFileName || 'Belum ada file video dipilih'"></div>
+            </div>
+            <span x-show="videoUrl && videoMode" class="px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold shrink-0">Memutar</span>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2 pt-1">
+            <button 
+              @click="$refs.videoFileInput.click()" 
+              type="button"
+              class="flex-1 py-2 px-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-extrabold flex items-center justify-center space-x-1.5 shadow-md shadow-amber-500/20 transition-all cursor-pointer"
+            >
+              <i data-lucide="upload" class="w-3.5 h-3.5"></i>
+              <span>Pilih File Video dari Laptop / PC</span>
+            </button>
+
+            <button 
+              x-show="videoUrl"
+              @click="removeVideo()" 
+              type="button"
+              class="py-2 px-3 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 border border-rose-500/40 text-rose-300 text-xs font-bold transition-all cursor-pointer"
+            >
+              Hapus
+            </button>
+          </div>
+          <div class="text-[11px] text-slate-500 leading-normal">
+            *File video tersimpan otomatis di browser ini (IndexedDB). Tidak perlu upload ulang saat refresh browser atau restart laptop.
+          </div>
+        </div>
+
+        <!-- Optional URL Input -->
+        <div class="space-y-1.5 pt-1">
+          <div class="text-xs font-semibold text-slate-400">Atau Masukkan Link URL Video:</div>
+          <div class="flex items-center space-x-2">
+            <input 
+              type="text" 
+              x-model="videoUrlInput"
+              placeholder="/assets/videos/background.mp4 atau https://..."
+              class="flex-1 bg-slate-950 text-xs text-white px-3 py-2 rounded-xl border border-slate-800 focus:outline-none focus:border-amber-400 font-mono"
+            >
+            <button 
+              @click="applyVideoUrl()"
+              type="button"
+              class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-200 transition-colors cursor-pointer shrink-0"
+            >
+              Terapkan
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Display Options Checkboxes -->
+      <div class="space-y-2.5 pt-2 border-t border-slate-800 text-xs">
+        <label class="flex items-center space-x-2.5 cursor-pointer">
+          <input 
+            type="checkbox" 
+            x-model="hideStandbyText" 
+            @change="saveVideoSettings()"
+            class="rounded border-slate-700 bg-slate-950 text-amber-500 focus:ring-amber-500"
+          >
+          <span class="text-slate-300 font-medium">Sembunyikan Logo & Teks Tengah (Tampilan 100% Video Murni)</span>
+        </label>
+
+        <label class="flex items-center space-x-2.5 cursor-pointer">
+          <input 
+            type="checkbox" 
+            x-model="cinematicMode" 
+            @change="saveVideoSettings()"
+            class="rounded border-slate-700 bg-slate-950 text-amber-500 focus:ring-amber-500"
+          >
+          <span class="text-slate-300 font-medium">Mode Sinematik (Auto-Hide Bar Atas & Bawah saat mouse diam)</span>
+        </label>
+      </div>
+
+      <!-- Footer Info -->
+      <div class="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-[11px] text-amber-200/90 leading-relaxed flex items-start space-x-2">
+        <i data-lucide="sparkles" class="w-4 h-4 text-amber-400 shrink-0 mt-0.5"></i>
+        <span>Saat ada tamu di-scan di scanner tablet, video otomatis meredup halus dan pop-up ucapan selamat datang tamu VIP/Umum akan tampil di atas video selama 7 detik!</span>
+      </div>
+
+      <div class="flex justify-end pt-1">
+        <button 
+          @click="isVideoModalOpen = false" 
+          class="px-5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black transition-colors cursor-pointer"
+        >
+          Selesai & Tutup
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Audio Prompt Notice (Click anywhere to enable browser audio) -->
+  <div 
+    x-show="showAudioPrompt" 
+    @click="enableAudio()"
+    class="fixed top-20 right-8 z-50 p-4 rounded-2xl bg-amber-500 text-slate-950 font-bold text-xs shadow-2xl flex items-center space-x-3 cursor-pointer animate-bounce"
+  >
+    <i data-lucide="volume-2" class="w-5 h-5"></i>
+    <span>Klik di sini untuk mengaktifkan nada lonceng penyambutan TV!</span>
+  </div>
+
+  <!-- TV DISPLAY SCRIPT LOGIC -->
+  <script>
+    // IndexedDB Persistent Video Storage Helper
+    const VideoStorage = {
+      DB_NAME: 'TV_Video_DB',
+      STORE_NAME: 'videos',
+      open() {
+        return new Promise((resolve, reject) => {
+          const req = indexedDB.open(this.DB_NAME, 1);
+          req.onupgradeneeded = (e) => {
+            const db = e.target.result;
+            if (!db.objectStoreNames.contains(this.STORE_NAME)) {
+              db.createObjectStore(this.STORE_NAME);
+            }
+          };
+          req.onsuccess = () => resolve(req.result);
+          req.onerror = () => reject(req.error);
+        });
+      },
+      async save(file) {
+        try {
+          const db = await this.open();
+          return new Promise((resolve, reject) => {
+            const tx = db.transaction(this.STORE_NAME, 'readwrite');
+            tx.objectStore(this.STORE_NAME).put(file, 'active_video');
+            tx.oncomplete = () => resolve();
+            tx.onerror = () => reject(tx.error);
+          });
+        } catch (e) {
+          console.warn('VideoStorage save error:', e);
+        }
+      },
+      async get() {
+        try {
+          const db = await this.open();
+          return new Promise((resolve) => {
+            const tx = db.transaction(this.STORE_NAME, 'readonly');
+            const req = tx.objectStore(this.STORE_NAME).get('active_video');
+            req.onsuccess = () => resolve(req.result || null);
+            req.onerror = () => resolve(null);
+          });
+        } catch {
+          return null;
+        }
+      },
+      async clear() {
+        try {
+          const db = await this.open();
+          const tx = db.transaction(this.STORE_NAME, 'readwrite');
+          tx.objectStore(this.STORE_NAME).delete('active_video');
+        } catch {}
+      }
+    };
+
+    document.addEventListener('alpine:init', () => {
+      Alpine.data('tvDisplayApp', () => ({
+        // Event data
+        events: [],
+        selectedEventId: 'all',
+        activeEvent: null,
+
+        // Statistics & Attendees
+        stats: { total_guests: 0, total_present: 0 },
+        recentAttendees: [],
+
+        // Current Welcome Screen Popup
+        currentPopupGuest: null,
+        popupQueue: [],
+        popupDurationMs: 8000,
+        popupStartTime: 0,
+        popupProgressPercent: 100,
+        popupInterval: null,
+
+        // Video Looping State
+        videoMode: localStorage.getItem('tv_video_mode') !== 'false',
+        videoUrl: localStorage.getItem('tv_video_url') || '',
+        videoUrlInput: localStorage.getItem('tv_video_url') || '',
+        videoFileName: localStorage.getItem('tv_video_name') || '',
+        hideStandbyText: localStorage.getItem('tv_hide_standby_text') !== 'false',
+        cinematicMode: localStorage.getItem('tv_cinematic_mode') === 'true',
+        isVideoModalOpen: false,
+        mouseActive: true,
+        mouseTimeout: null,
+
+        // Realtime Clock (Asia/Jakarta WIB)
+        jakartaTime: '--:--:-- WIB',
+        jakartaDate: '',
+
+        // Audio System (Synthesized Chimes using Web Audio API)
+        audioCtx: null,
+        audioEnabled: false,
+        showAudioPrompt: true,
+
+        // SSE Connection
+        eventSource: null,
+
+        async init() {
+          // Check query parameters
+          const params = new URLSearchParams(window.location.search);
+          if (params.has('event_id')) {
+            this.selectedEventId = params.get('event_id');
+          }
+
+          // Start Realtime Clock (1 second tick)
+          this.updateClock();
+          setInterval(() => this.updateClock(), 1000);
+
+          // Load Events List
+          await this.loadEvents();
+
+          // Load Initial Display Data & Stats
+          await this.loadInitialData();
+
+          // Connect SSE Live Stream
+          this.connectLiveStream();
+
+          // Polling Fallback (every 3 seconds in case SSE drops on Smart TV)
+          setInterval(() => this.pollLatestData(), 3000);
+
+          // Watch for event filter changes
+          this.$watch('selectedEventId', async () => {
+            await this.loadInitialData();
+            if (this.eventSource) {
+              this.eventSource.close();
+            }
+            this.connectLiveStream();
+          });
+
+          // User interaction listener to allow Web Audio API and Video autoplay
+          window.addEventListener('click', () => {
+            this.enableAudio();
+            this.playVideo();
+          }, { once: true });
+          window.addEventListener('keydown', () => {
+            this.enableAudio();
+            this.playVideo();
+          }, { once: true });
+
+          // Initialize Video from IndexedDB if saved
+          try {
+            const savedBlob = await VideoStorage.get();
+            if (savedBlob) {
+              this.videoUrl = URL.createObjectURL(savedBlob);
+              this.videoMode = true;
+              this.playVideo();
+            } else if (this.videoUrl) {
+              this.playVideo();
+            }
+          } catch (e) {
+            console.warn('Video init error:', e);
+          }
+
+          this.$nextTick(() => lucide.createIcons());
+        },
+
+        // Clock in Asia/Jakarta (WIB)
+        updateClock() {
+          const now = new Date();
+          const timeFmt = new Intl.DateTimeFormat('id-ID', {
+            timeZone: 'Asia/Jakarta',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false
+          });
+          this.jakartaTime = timeFmt.format(now).replace(/\./g, ':') + ' WIB';
+
+          const dateFmt = new Intl.DateTimeFormat('id-ID', {
+            timeZone: 'Asia/Jakarta',
+            weekday: 'long',
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+          });
+          this.jakartaDate = dateFmt.format(now);
+        },
+
+        async loadEvents() {
+          try {
+            const res = await fetch('/api/events');
+            const data = await res.json();
+            this.events = data.events || [];
+            if (this.events.length > 0 && this.selectedEventId !== 'all') {
+              this.activeEvent = this.events.find(e => String(e.id) === String(this.selectedEventId)) || this.events[0];
+            } else if (this.events.length > 0) {
+              this.activeEvent = this.events[0];
+            }
+          } catch (e) {
+            console.warn('Events load error:', e);
+          }
+        },
+
+        async loadInitialData() {
+          try {
+            const res = await fetch(`/api/live/data?event_id=${this.selectedEventId}`);
+            const data = await res.json();
+            if (data.success) {
+              if (data.event) this.activeEvent = data.event;
+              this.stats = data.stats || { total_guests: 0, total_present: 0 };
+              this.recentAttendees = data.recent_attendees || [];
+            }
+          } catch (e) {
+            console.error('Initial data error:', e);
+          }
+          this.$nextTick(() => lucide.createIcons());
+        },
+
+        // Connect Server-Sent Events (SSE) Stream
+        connectLiveStream() {
+          const url = `/api/live/stream?event_id=${encodeURIComponent(this.selectedEventId)}`;
+          this.eventSource = new EventSource(url);
+
+          this.eventSource.onmessage = (event) => {
+            try {
+              const payload = JSON.parse(event.data);
+              if (payload.type === 'checkin') {
+                this.handleIncomingCheckin(payload.data);
+              }
+            } catch (err) {
+              console.error('SSE parse error:', err);
+            }
+          };
+
+          this.eventSource.onerror = (err) => {
+            console.warn('SSE disconnected, waiting for auto-reconnect...', err);
+          };
+        },
+
+        // Polling fallback to ensure reliability
+        async pollLatestData() {
+          try {
+            const res = await fetch(`/api/live/data?event_id=${this.selectedEventId}`);
+            const data = await res.json();
+            if (data.success) {
+              this.stats = data.stats || this.stats;
+              // Detect newly arrived guest from polling if not yet in recentAttendees
+              if (data.recent_attendees && data.recent_attendees.length > 0) {
+                const latest = data.recent_attendees[0];
+                const alreadySeen = this.recentAttendees.some(a => String(a.id) === String(latest.id));
+                if (!alreadySeen && (!this.currentPopupGuest || String(this.currentPopupGuest.id) !== String(latest.id))) {
+                  this.handleIncomingCheckin(latest);
+                }
+                this.recentAttendees = data.recent_attendees;
+              }
+            }
+          } catch (e) {
+            // silent polling error
+          }
+        },
+
+        // Incoming Check-in Handler
+        handleIncomingCheckin(guest) {
+          // Check if guest matches current event filter
+          if (this.selectedEventId !== 'all' && String(guest.event_id) !== String(this.selectedEventId)) {
+            return;
+          }
+
+          // Add to recent attendees list (top)
+          const exists = this.recentAttendees.some(a => String(a.id) === String(guest.id));
+          if (!exists) {
+            this.recentAttendees.unshift(guest);
+            if (this.recentAttendees.length > 20) this.recentAttendees.pop();
+            this.stats.total_present = (this.stats.total_present || 0) + 1;
+          }
+
+          // Enqueue for Welcome Popup display
+          this.popupQueue.push(guest);
+          if (this.currentPopupGuest === null) {
+            this.showNextInQueue();
+          }
+        },
+
+        showNextInQueue() {
+          if (this.popupQueue.length === 0) {
+            this.currentPopupGuest = null;
+            return;
+          }
+
+          this.currentPopupGuest = this.popupQueue.shift();
+          this.popupProgressPercent = 100;
+          this.popupStartTime = Date.now();
+
+          // Play Luxury Chime Sound
+          this.playWelcomeChime();
+
+          this.$nextTick(() => lucide.createIcons());
+
+          // Progress bar countdown
+          if (this.popupInterval) clearInterval(this.popupInterval);
+          this.popupInterval = setInterval(() => {
+            const elapsed = Date.now() - this.popupStartTime;
+            const remaining = Math.max(0, this.popupDurationMs - elapsed);
+            this.popupProgressPercent = (remaining / this.popupDurationMs) * 100;
+
+            if (remaining <= 0) {
+              clearInterval(this.popupInterval);
+              this.showNextInQueue();
+            }
+          }, 50);
+        },
+
+        // Web Audio API Synthesizer (Crystal Chimes)
+        enableAudio() {
+          if (!this.audioCtx) {
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            if (AudioCtx) this.audioCtx = new AudioCtx();
+          }
+          if (this.audioCtx && this.audioCtx.state === 'suspended') {
+            this.audioCtx.resume();
+          }
+          this.audioEnabled = true;
+          this.showAudioPrompt = false;
+        },
+
+        toggleAudio() {
+          if (!this.audioEnabled) {
+            this.enableAudio();
+          } else {
+            this.audioEnabled = false;
+          }
+        },
+
+        playWelcomeChime() {
+          if (!this.audioEnabled) return;
+          this.enableAudio();
+          const ctx = this.audioCtx;
+          if (!ctx) return;
+
+          const now = ctx.currentTime;
+          // Harmonious celebratory notes: C5, E5, G5, C6 (Major Arpeggio)
+          const notes = [523.25, 659.25, 783.99, 1046.50];
+
+          notes.forEach((freq, idx) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, now + idx * 0.12);
+
+            gain.gain.setValueAtTime(0, now + idx * 0.12);
+            gain.gain.linearRampToValueAtTime(0.22, now + idx * 0.12 + 0.04);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.12 + 1.2);
+
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+
+            osc.start(now + idx * 0.12);
+            osc.stop(now + idx * 0.12 + 1.3);
+          });
+        },
+
+        // Fullscreen Toggle
+        toggleFullScreen() {
+          if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(() => {});
+          } else {
+            if (document.exitFullscreen) {
+              document.exitFullscreen();
+            }
+          }
+        },
+
+        // Category Badge Styling Helper
+        getCategoryBadgeStyle(category) {
+          switch ((category || '').toLowerCase()) {
+            case 'vip':
+              return 'bg-gradient-to-r from-amber-500/30 to-yellow-600/30 text-amber-200 border-amber-400/60 shadow-amber-500/20';
+            case 'family':
+              return 'bg-gradient-to-r from-purple-500/30 to-indigo-600/30 text-purple-200 border-purple-400/60 shadow-purple-500/20';
+            case 'friend':
+              return 'bg-gradient-to-r from-blue-500/30 to-cyan-600/30 text-blue-200 border-blue-400/60 shadow-blue-500/20';
+            default:
+              return 'bg-white/10 text-slate-200 border-white/20';
+          }
+        },
+
+        getCategoryBadgeSmall(category) {
+          switch ((category || '').toLowerCase()) {
+            case 'vip': return 'bg-amber-400';
+            case 'family': return 'bg-purple-400';
+            case 'friend': return 'bg-blue-400';
+            default: return 'bg-slate-400';
+          }
+        },
+
+        formatDateId(dateStr) {
+          if (!dateStr) return 'Tanggal Acara';
+          try {
+            const cleanStr = String(dateStr).trim();
+            const d = new Date(cleanStr.replace(' ', 'T'));
+            if (isNaN(d.getTime())) {
+              return cleanStr;
+            }
+            return d.toLocaleDateString('id-ID', {
+              weekday: 'long',
+              day: 'numeric',
+              month: 'long',
+              year: 'numeric'
+            });
+          } catch (e) {
+            return dateStr;
+          }
+        },
+
+        formatTimeShort(dtStr) {
+          if (!dtStr) return '';
+          try {
+            const parts = dtStr.trim().split(' ');
+            if (parts.length >= 2) {
+              return parts[1].substring(0, 5) + ' WIB';
+            }
+            return dtStr;
+          } catch (e) {
+            return dtStr;
+          }
+        },
+
+        // Video Looping Methods
+        onMouseMove() {
+          this.mouseActive = true;
+          clearTimeout(this.mouseTimeout);
+          this.mouseTimeout = setTimeout(() => {
+            this.mouseActive = false;
+          }, 3500);
+        },
+
+        playVideo() {
+          this.$nextTick(() => {
+            const vid = this.$refs.bgVideoRef;
+            if (vid && this.videoUrl) {
+              if (vid.src !== this.videoUrl) {
+                vid.src = this.videoUrl;
+              }
+              vid.play().catch(e => console.log('Autoplay deferred:', e));
+            }
+          });
+        },
+
+        async handleVideoFileSelect(event) {
+          const file = event.target.files[0];
+          if (!file) return;
+          this.videoUrl = URL.createObjectURL(file);
+          this.videoFileName = file.name;
+          this.videoMode = true;
+          this.hideStandbyText = true;
+          this.saveVideoSettings();
+          await VideoStorage.save(file);
+          this.playVideo();
+          event.target.value = '';
+          this.$nextTick(() => lucide.createIcons());
+        },
+
+        applyVideoUrl() {
+          if (!this.videoUrlInput.trim()) return;
+          this.videoUrl = this.videoUrlInput.trim();
+          this.videoFileName = this.videoUrl.split('/').pop() || 'Video Online';
+          this.videoMode = true;
+          this.hideStandbyText = true;
+          this.saveVideoSettings();
+          this.playVideo();
+          this.$nextTick(() => lucide.createIcons());
+        },
+
+        async removeVideo() {
+          this.videoMode = false;
+          this.videoUrl = '';
+          this.videoFileName = '';
+          this.videoUrlInput = '';
+          await VideoStorage.clear();
+          this.saveVideoSettings();
+          if (this.$refs.bgVideoRef) {
+            this.$refs.bgVideoRef.pause();
+            this.$refs.bgVideoRef.src = '';
+          }
+          this.$nextTick(() => lucide.createIcons());
+        },
+
+        toggleVideoMode() {
+          this.videoMode = !this.videoMode;
+          this.saveVideoSettings();
+          if (this.videoMode && this.videoUrl) {
+            this.playVideo();
+          }
+        },
+
+        saveVideoSettings() {
+          localStorage.setItem('tv_video_mode', this.videoMode);
+          if (this.videoUrl && !this.videoUrl.startsWith('blob:')) {
+            localStorage.setItem('tv_video_url', this.videoUrl);
+          } else if (!this.videoUrl) {
+            localStorage.removeItem('tv_video_url');
+          }
+          localStorage.setItem('tv_video_name', this.videoFileName);
+          localStorage.setItem('tv_hide_standby_text', this.hideStandbyText);
+          localStorage.setItem('tv_cinematic_mode', this.cinematicMode);
+        }
+      }));
+    });
+  </script>
+</body>
+</html>

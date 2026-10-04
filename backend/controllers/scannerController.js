@@ -1,9 +1,29 @@
 const db = require('../database/db');
+const liveController = require('./liveController');
 
-// Helper to format time into "HH:MM WIB" or nice Indonesian format
+// Helper to get formatted date string in Asia/Jakarta (WIB) timezone: "YYYY-MM-DD HH:mm:ss"
+function getJakartaTimeString() {
+  const formatter = new Intl.DateTimeFormat('sv-SE', {
+    timeZone: 'Asia/Jakarta',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false
+  });
+  return formatter.format(new Date()).replace('T', ' ');
+}
+
+// Helper to format time into "HH:MM WIB" accurately in Asia/Jakarta
 function formatWib(dateStr) {
   if (!dateStr) return '';
   try {
+    const parts = dateStr.trim().split(' ');
+    if (parts.length >= 2) {
+      return `${parts[1].substring(0, 5)} WIB`;
+    }
     const d = new Date(dateStr.replace(' ', 'T'));
     const hours = String(d.getHours()).padStart(2, '0');
     const minutes = String(d.getMinutes()).padStart(2, '0');
@@ -80,13 +100,29 @@ exports.checkAndRecordAttendance = (req, res) => {
       });
     }
 
-    // Record attendance now
-    const nowLocal = new Date().toISOString().replace('T', ' ').substring(0, 19);
+    // Record attendance now in Jakarta WIB timezone
+    const nowLocal = getJakartaTimeString();
     db.prepare(`
       UPDATE guests 
       SET attendance_status = 'PRESENT', arrival_time = ?
       WHERE id = ?
     `).run(nowLocal, guest.id);
+
+    // Broadcast checkin event to live TV display screens in real-time
+    try {
+      liveController.broadcastCheckin({
+        id: guest.id,
+        name: guest.name,
+        category: guest.category,
+        event_id: guest.event_id,
+        event_name: guest.event_name,
+        event_location: guest.event_location,
+        arrival_time: nowLocal,
+        formatted_arrival: formatWib(nowLocal)
+      });
+    } catch (e) {
+      console.error('Failed to broadcast live checkin:', e);
+    }
 
     return res.json({
       valid: true,
@@ -162,8 +198,15 @@ exports.getStats = (req, res) => {
 
     const totalGuests = db.prepare(`SELECT COUNT(*) as count FROM guests ${filter}`).get(...params).count;
     const confirmedAttendance = db.prepare(`SELECT COUNT(*) as count FROM guests ${filter ? filter + ' AND' : ' WHERE'} attendance_status = 'PRESENT'`).get(...params).count;
-    const notArrived = totalGuests - confirmedAttendance;
-    const todayAttendance = db.prepare(`SELECT COUNT(*) as count FROM guests ${filter ? filter + ' AND' : ' WHERE'} attendance_status = 'PRESENT' AND date(arrival_time) = date('now', 'localtime')`).get(...params).count;
+    const notArrived = Math.max(0, totalGuests - confirmedAttendance);
+    const todayJakarta = new Intl.DateTimeFormat('sv-SE', {
+      timeZone: 'Asia/Jakarta',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    }).format(new Date());
+
+    const todayAttendance = db.prepare(`SELECT COUNT(*) as count FROM guests ${filter ? filter + ' AND' : ' WHERE'} attendance_status = 'PRESENT' AND date(arrival_time) = ?`).get(...params, todayJakarta).count;
 
     // Category breakdown
     const categoryStats = db.prepare(`
