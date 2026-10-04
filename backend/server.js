@@ -15,6 +15,9 @@ const authController = require('./controllers/authController');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Trust proxy for proper https & host detection behind reverse proxy
+app.set('trust proxy', 1);
+
 // Middleware
 app.use(cors());
 app.use(express.json());

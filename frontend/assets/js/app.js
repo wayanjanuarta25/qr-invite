@@ -42,9 +42,15 @@ const App = {
   },
 
   getBaseUrl() {
-    if (window.location.protocol === 'file:' || !window.location.port || window.location.port !== '3000') {
+    // Jika dibuka langsung via file protocol di browser
+    if (window.location.protocol === 'file:') {
       return 'http://localhost:3000';
     }
+    // Jika dibuka lewat live-server lokal di port selain 3000 (misal: 5500)
+    if ((window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && window.location.port && window.location.port !== '3000') {
+      return `http://${window.location.hostname}:3000`;
+    }
+    // Di domain online (production) atau Express server langsung, gunakan path relatif
     return '';
   },
 
