@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+
+# Environment Variables
+.env
+.env.local
+
+# Database files
+backend/database/*.sqlite
+backend/database/*.sqlite-journal
+backend/database/*.sqlite-wal
+backend/database/*.sqlite-shm
+*.db
+
+# Generated QR Codes
+qr/*.png
+qr/*.jpg
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# OS & Editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Scratch & test outputs
+scratch/
