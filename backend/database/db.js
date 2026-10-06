@@ -6,6 +6,7 @@ const QRCode = require('qrcode');
 
 const dbPath = path.join(__dirname, 'database.sqlite');
 const schemaPath = path.join(__dirname, 'schema.sql');
+const seedDataPath = path.join(__dirname, 'seed_data.json');
 const qrDir = path.join(__dirname, '..', '..', 'qr');
 
 if (!fs.existsSync(qrDir)) {
