@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8">
@@ -718,9 +718,24 @@
                   <td class="py-3.5 px-4 text-center text-slate-400 font-mono" x-text="(currentPage - 1) * perPage + index + 1"></td>
                   
                   <!-- Guest Name -->
-                  <td class="py-3.5 px-4">
-                    <div class="font-bold text-slate-900 whitespace-pre-line leading-snug" x-text="g.name"></div>
-                    <div class="text-[10px] text-slate-400 font-mono mt-0.5" x-text="'ID: #' + g.id + ' • Token: ' + g.qr_token"></div>
+                  <td class="py-3.5 px-4 cursor-pointer select-none group" @dblclick="startInlineEdit(g, 'name')" title="Klik 2x untuk edit cepat">
+                    <template x-if="editingCell && editingCell.guestId === g.id && editingCell.field === 'name'">
+                      <textarea 
+                        x-model="editingCell.value" 
+                        @blur="saveInlineEdit(g)" 
+                        @keydown.enter.exact.prevent="saveInlineEdit(g)" 
+                        @keydown.escape="cancelInlineEdit()"
+                        x-init="$nextTick(() => { $el.focus(); $el.select(); })"
+                        rows="2"
+                        class="w-full p-1.5 text-xs font-bold text-slate-900 bg-amber-50/80 border-2 border-amber-400 rounded-lg focus:outline-none shadow-inner"
+                      ></textarea>
+                    </template>
+                    <template x-if="!editingCell || editingCell.guestId !== g.id || editingCell.field !== 'name'">
+                      <div class="group-hover:bg-amber-50/50 p-1 -m-1 rounded transition-colors">
+                        <div class="font-bold text-slate-900 whitespace-pre-line leading-snug" x-text="g.name"></div>
+                        <div class="text-[10px] text-slate-400 font-mono mt-0.5" x-text="'ID: #' + g.id + ' � Token: ' + g.qr_token"></div>
+                      </div>
+                    </template>
                   </td>
 
                   <!-- Category Badge (Internal) -->
@@ -732,26 +747,71 @@
                     ></span>
                   </td>
 
-                  <!-- Sumber -->
-                  <td class="py-3.5 px-4 text-xs text-slate-700 whitespace-nowrap">
-                    <span x-text="g.source || '-'"></span>
+                  <!-- Sumber (Inline Editable) -->
+                  <td class="py-3.5 px-4 text-xs text-slate-700 whitespace-nowrap cursor-pointer select-none group" @dblclick="startInlineEdit(g, 'source')" title="Klik 2x untuk edit cepat">
+                    <template x-if="editingCell && editingCell.guestId === g.id && editingCell.field === 'source'">
+                      <input 
+                        type="text" 
+                        x-model="editingCell.value" 
+                        @blur="saveInlineEdit(g)" 
+                        @keydown.enter="saveInlineEdit(g)" 
+                        @keydown.escape="cancelInlineEdit()"
+                        x-init="$nextTick(() => { $el.focus(); $el.select(); })"
+                        class="w-full p-1 text-xs font-semibold text-slate-800 bg-amber-50/80 border-2 border-amber-400 rounded focus:outline-none shadow-inner"
+                      >
+                    </template>
+                    <template x-if="!editingCell || editingCell.guestId !== g.id || editingCell.field !== 'source'">
+                      <div class="group-hover:bg-amber-50/50 p-1 -m-1 rounded transition-colors">
+                        <span x-text="g.source || '-'"></span>
+                      </div>
+                    </template>
                   </td>
 
-                  <!-- Contact Person -->
-                  <td class="py-3.5 px-4 text-xs text-slate-700 whitespace-nowrap">
-                    <span x-text="g.contact_person || '-'"></span>
+                  <!-- Contact Person (Inline Editable) -->
+                  <td class="py-3.5 px-4 text-xs text-slate-700 whitespace-nowrap cursor-pointer select-none group" @dblclick="startInlineEdit(g, 'contact_person')" title="Klik 2x untuk edit cepat">
+                    <template x-if="editingCell && editingCell.guestId === g.id && editingCell.field === 'contact_person'">
+                      <input 
+                        type="text" 
+                        x-model="editingCell.value" 
+                        @blur="saveInlineEdit(g)" 
+                        @keydown.enter="saveInlineEdit(g)" 
+                        @keydown.escape="cancelInlineEdit()"
+                        x-init="$nextTick(() => { $el.focus(); $el.select(); })"
+                        class="w-full p-1 text-xs font-semibold text-slate-800 bg-amber-50/80 border-2 border-amber-400 rounded focus:outline-none shadow-inner"
+                      >
+                    </template>
+                    <template x-if="!editingCell || editingCell.guestId !== g.id || editingCell.field !== 'contact_person'">
+                      <div class="group-hover:bg-amber-50/50 p-1 -m-1 rounded transition-colors">
+                        <span x-text="g.contact_person || '-'"></span>
+                      </div>
+                    </template>
                   </td>
 
-                  <!-- Nomor Telfon -->
-                  <td class="py-3.5 px-4 text-slate-600 font-mono text-xs whitespace-nowrap">
-                    <span x-text="g.phone || '-'"></span>
+                  <!-- Nomor Telfon (Inline Editable) -->
+                  <td class="py-3.5 px-4 text-slate-600 font-mono text-xs whitespace-nowrap cursor-pointer select-none group" @dblclick="startInlineEdit(g, 'phone')" title="Klik 2x untuk edit cepat">
+                    <template x-if="editingCell && editingCell.guestId === g.id && editingCell.field === 'phone'">
+                      <input 
+                        type="text" 
+                        x-model="editingCell.value" 
+                        @blur="saveInlineEdit(g)" 
+                        @keydown.enter="saveInlineEdit(g)" 
+                        @keydown.escape="cancelInlineEdit()"
+                        x-init="$nextTick(() => { $el.focus(); $el.select(); })"
+                        class="w-full p-1 text-xs font-mono font-semibold text-slate-800 bg-amber-50/80 border-2 border-amber-400 rounded focus:outline-none shadow-inner"
+                      >
+                    </template>
+                    <template x-if="!editingCell || editingCell.guestId !== g.id || editingCell.field !== 'phone'">
+                      <div class="group-hover:bg-amber-50/50 p-1 -m-1 rounded transition-colors">
+                        <span x-text="g.phone || '-'"></span>
+                      </div>
+                    </template>
                   </td>
 
                   <!-- Status Undangan (Belum Dikirim, Terkirim, Sudah Dijawab) -->
                   <td class="py-3.5 px-4 whitespace-nowrap">
                     <select 
                       :value="g.invitation_status || 'Belum Dikirim'"
-                      @change="updateGuestField(g, 'invitation_status', $event$event.target.value)"
+                      @change="updateGuestField(g, 'invitation_status', $event.target.value)"
                       class="text-[11px] font-bold rounded-lg px-2.5 py-1.5 border cursor-pointer focus:outline-none focus:ring-1 focus:ring-red-600 transition-all"
                       :class="{
                         'bg-slate-50 text-slate-600 border-slate-200': !g.invitation_status || g.invitation_status === 'Belum Dikirim',
@@ -769,7 +829,7 @@
                   <td class="py-3.5 px-4 whitespace-nowrap">
                     <select 
                       :value="g.rsvp_status || 'Belum Konfirmasi'"
-                      @change="updateGuestField(g, 'rsvp_status', .target.value)"
+                      @change="updateGuestField(g, 'rsvp_status', $event.target.value)"
                       class="text-[11px] font-bold rounded-lg px-2.5 py-1.5 border cursor-pointer focus:outline-none focus:ring-1 focus:ring-red-600 transition-all"
                       :class="{
                         'bg-slate-50 text-slate-600 border-slate-200': !g.rsvp_status || g.rsvp_status === 'Belum Konfirmasi',
@@ -785,9 +845,24 @@
                     </select>
                   </td>
 
-                  <!-- Keterangan -->
-                  <td class="py-3.5 px-4 text-xs text-slate-600 max-w-[150px] truncate" :title="g.notes || ''">
-                    <span x-text="g.notes || '-'"></span>
+                  <!-- Keterangan (Inline Editable) -->
+                  <td class="py-3.5 px-4 text-xs text-slate-600 max-w-[150px] cursor-pointer select-none group" @dblclick="startInlineEdit(g, 'notes')" title="Klik 2x untuk edit cepat">
+                    <template x-if="editingCell && editingCell.guestId === g.id && editingCell.field === 'notes'">
+                      <input 
+                        type="text" 
+                        x-model="editingCell.value" 
+                        @blur="saveInlineEdit(g)" 
+                        @keydown.enter="saveInlineEdit(g)" 
+                        @keydown.escape="cancelInlineEdit()"
+                        x-init="$nextTick(() => { $el.focus(); $el.select(); })"
+                        class="w-full p-1 text-xs text-slate-800 bg-amber-50/80 border-2 border-amber-400 rounded focus:outline-none shadow-inner"
+                      >
+                    </template>
+                    <template x-if="!editingCell || editingCell.guestId !== g.id || editingCell.field !== 'notes'">
+                      <div class="group-hover:bg-amber-50/50 p-1 -m-1 rounded transition-colors truncate" :title="g.notes || ''">
+                        <span x-text="g.notes || '-'"></span>
+                      </div>
+                    </template>
                   </td>
 
                   <!-- QR Code Preview -->
@@ -1184,11 +1259,7 @@
             <span>Unduh PDF</span>
           </button>
 
-          <!-- Download Undangan Resmi di Modal -->
-          <button @click="downloadFullInvitationPdf(currentQrGuest)" class="w-full col-span-3 py-2.5 px-3 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-600 hover:to-yellow-700 text-white text-xs font-bold shadow-md shadow-amber-500/20 flex items-center justify-center space-x-2 transition-all cursor-pointer mt-1">
-            <i data-lucide="file-text" class="w-4 h-4"></i>
-            <span>Unduh Undangan Resmi (PDF 3 Halaman HUT SS)</span>
-          </button>
+          
           <!-- Print QR Card -->
           <button 
             @click="printQrCard()"
@@ -1219,6 +1290,12 @@
             <span>Kirim WhatsApp</span>
           </button>
         </div>
+
+        <!-- Unduh Undangan Resmi (PDF 3 Halaman) di Paling Bawah Modal -->
+        <button @click="downloadFullInvitationPdf(currentQrGuest)" class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-amber-500 via-amber-600 to-yellow-600 hover:from-amber-600 hover:to-yellow-700 text-white text-xs font-bold shadow-md shadow-amber-500/20 flex items-center justify-center space-x-2 transition-all cursor-pointer mt-3">
+          <i data-lucide="file-text" class="w-4 h-4"></i>
+          <span>Unduh Undangan Resmi (PDF 3 Halaman HUT SS)</span>
+        </button>
 
       </div>
 
@@ -1851,3 +1928,5 @@
   <script src="/assets/js/admin.js"></script>
 </body>
 </html>
+
+
