@@ -789,14 +789,14 @@
                           x-init="$nextTick(() => { $el.focus(); $el.select(); })"
                           rows="3"
                           placeholder="Tekan Alt+Enter untuk baris baru"
-                          class="w-full p-2 text-sm font-bold text-slate-900 bg-amber-50/90 border-2 border-amber-400 rounded-lg focus:outline-none shadow-inner resize-y min-h-[70px]"
+                          class="w-full p-2 text-xs sm:text-[13px] font-semibold text-slate-900 bg-amber-50/90 border-2 border-amber-400 rounded-lg focus:outline-none shadow-inner resize-y min-h-[65px]"
                         ></textarea>
                         <div class="text-[9px] text-amber-700/80 mt-0.5 font-medium italic">Tekan <strong>Alt + Enter</strong> untuk baris baru, <strong>Enter</strong> untuk simpan</div>
                       </div>
                     </template>
                     <template x-if="!editingCell || editingCell.guestId !== g.id || editingCell.field !== 'name'">
                       <div class="group-hover:bg-amber-50/50 p-1 -m-1 rounded transition-colors">
-                        <div class="font-bold text-slate-900 text-sm sm:text-base whitespace-pre-line leading-snug tracking-tight" x-text="g.name"></div>
+                        <div class="font-semibold text-slate-900 text-[13px] sm:text-sm whitespace-pre-line leading-snug" x-text="g.name"></div>
                         <div class="text-[10px] text-slate-400 font-mono mt-0.5" x-text="'ID: #' + g.id + ' � Token: ' + g.qr_token"></div>
                       </div>
                     </template>
