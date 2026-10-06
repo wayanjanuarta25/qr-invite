@@ -611,15 +611,18 @@
         <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse">
             <thead>
-              <tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+              <tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">
                 <th class="py-3.5 px-4 w-12 text-center">No</th>
                 <th class="py-3.5 px-4">Nama Tamu</th>
-                <th class="py-3.5 px-4">Nomor HP</th>
-                <th class="py-3.5 px-4">Acara</th>
-                <th class="py-3.5 px-4">Kategori</th>
+                <th class="py-3.5 px-4">Kategori (Internal)</th>
+                <th class="py-3.5 px-4">Sumber</th>
+                <th class="py-3.5 px-4">Contact Person</th>
+                <th class="py-3.5 px-4">Nomor Telfon</th>
+                <th class="py-3.5 px-4">Status Undangan</th>
+                <th class="py-3.5 px-4">Konfirmasi Kehadiran</th>
+                <th class="py-3.5 px-4">Keterangan</th>
                 <th class="py-3.5 px-4 text-center">QR Code</th>
                 <th class="py-3.5 px-4">Status Kehadiran</th>
-                <th class="py-3.5 px-4">Waktu Kedatangan</th>
                 <th class="py-3.5 px-4 text-center">Aksi</th>
               </tr>
             </thead>
@@ -634,24 +637,71 @@
                     <div class="text-[10px] text-slate-400 font-mono" x-text="'ID: #' + g.id + ' • Token: ' + g.qr_token"></div>
                   </td>
 
-                  <!-- Phone Number -->
-                  <td class="py-3.5 px-4 text-slate-600 font-mono">
-                    <span x-text="g.phone || '-'"></span>
-                  </td>
-
-                  <!-- Event Name -->
-                  <td class="py-3.5 px-4 text-slate-700">
-                    <div class="font-semibold" x-text="g.event_name"></div>
-                    <div class="text-[10px] text-slate-400" x-text="formatDateTime(g.event_date)"></div>
-                  </td>
-
-                  <!-- Category Badge -->
-                  <td class="py-3.5 px-4">
+                  <!-- Category Badge (Internal) -->
+                  <td class="py-3.5 px-4 whitespace-nowrap">
                     <span 
                       :class="getCategoryBadgeClass(g.category)"
                       class="px-2.5 py-1 rounded-full text-[10px] font-bold border inline-block" 
-                      x-text="g.category"
+                      x-text="g.category || 'General'"
                     ></span>
+                  </td>
+
+                  <!-- Sumber -->
+                  <td class="py-3.5 px-4 text-xs text-slate-700 whitespace-nowrap">
+                    <span x-text="g.source || '-'"></span>
+                  </td>
+
+                  <!-- Contact Person -->
+                  <td class="py-3.5 px-4 text-xs text-slate-700 whitespace-nowrap">
+                    <span x-text="g.contact_person || '-'"></span>
+                  </td>
+
+                  <!-- Nomor Telfon -->
+                  <td class="py-3.5 px-4 text-slate-600 font-mono text-xs whitespace-nowrap">
+                    <span x-text="g.phone || '-'"></span>
+                  </td>
+
+                  <!-- Status Undangan (Belum Dikirim, Terkirim, Sudah Dijawab) -->
+                  <td class="py-3.5 px-4 whitespace-nowrap">
+                    <select 
+                      :value="g.invitation_status || 'Belum Dikirim'"
+                      @change="updateGuestField(g, 'invitation_status', $event$event.target.value)"
+                      class="text-[11px] font-bold rounded-lg px-2.5 py-1.5 border cursor-pointer focus:outline-none focus:ring-1 focus:ring-red-600 transition-all"
+                      :class="{
+                        'bg-slate-50 text-slate-600 border-slate-200': !g.invitation_status || g.invitation_status === 'Belum Dikirim',
+                        'bg-blue-50 text-blue-700 border-blue-300': g.invitation_status === 'Terkirim',
+                        'bg-emerald-50 text-emerald-800 border-emerald-300': g.invitation_status === 'Sudah Dijawab'
+                      }"
+                    >
+                      <option value="Belum Dikirim">Belum Dikirim</option>
+                      <option value="Terkirim">Terkirim</option>
+                      <option value="Sudah Dijawab">Sudah Dijawab</option>
+                    </select>
+                  </td>
+
+                  <!-- Konfirmasi Kehadiran (Belum Konfirmasi, Hadir, Tidak Hadir, Belum Dapat Memastikan) -->
+                  <td class="py-3.5 px-4 whitespace-nowrap">
+                    <select 
+                      :value="g.rsvp_status || 'Belum Konfirmasi'"
+                      @change="updateGuestField(g, 'rsvp_status', .target.value)"
+                      class="text-[11px] font-bold rounded-lg px-2.5 py-1.5 border cursor-pointer focus:outline-none focus:ring-1 focus:ring-red-600 transition-all"
+                      :class="{
+                        'bg-slate-50 text-slate-600 border-slate-200': !g.rsvp_status || g.rsvp_status === 'Belum Konfirmasi',
+                        'bg-emerald-50 text-emerald-800 border-emerald-300': g.rsvp_status === 'Hadir',
+                        'bg-rose-50 text-rose-700 border-rose-300': g.rsvp_status === 'Tidak Hadir',
+                        'bg-amber-50 text-amber-800 border-amber-300': g.rsvp_status === 'Belum Dapat Memastikan'
+                      }"
+                    >
+                      <option value="Belum Konfirmasi">Belum Konfirmasi</option>
+                      <option value="Hadir">Hadir</option>
+                      <option value="Tidak Hadir">Tidak Hadir</option>
+                      <option value="Belum Dapat Memastikan">Belum Dapat Memastikan</option>
+                    </select>
+                  </td>
+
+                  <!-- Keterangan -->
+                  <td class="py-3.5 px-4 text-xs text-slate-600 max-w-[150px] truncate" :title="g.notes || ''">
+                    <span x-text="g.notes || '-'"></span>
                   </td>
 
                   <!-- QR Code Preview -->
@@ -689,10 +739,7 @@
                     </template>
                   </td>
 
-                  <!-- Arrival Time -->
-                  <td class="py-3.5 px-4 text-slate-600 font-mono text-[11px]">
-                    <span x-text="formatTimeOnly(g.arrival_time)"></span>
-                  </td>
+
 
                   <!-- Action Buttons -->
                   <td class="py-3.5 px-4 text-center">
@@ -754,7 +801,7 @@
 
               <template x-if="guests.length === 0 && !isLoadingGuests">
                 <tr>
-                  <td colspan="9" class="py-12 text-center text-slate-400">
+                  <td colspan="12" class="py-12 text-center text-slate-400">
                     <i data-lucide="users" class="w-8 h-8 mx-auto mb-2 text-slate-300"></i>
                     <p class="font-semibold text-slate-600">Tidak ada tamu yang ditemukan</p>
                     <p class="text-[11px] text-slate-400 mt-1">Coba ubah kata kunci pencarian atau tambahkan tamu baru.</p>
