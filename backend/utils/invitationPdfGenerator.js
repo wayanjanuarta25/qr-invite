@@ -55,13 +55,14 @@ async function cropQrCodeBuffer(rawQrBuffer) {
 
 /**
  * Menghitung ukuran font dan baris teks.
- * Selalu mengikuti jumlah baris sesuai penamaan user (dari Alt+Enter).
- * Untuk 3 baris teks, ukuran font dibuat paling kecil 24pt (atau 24.5pt jika muat).
+ * - Selalu mengikuti jumlah baris sesuai penamaan user (dari Alt+Enter).
+ * - Untuk nama yang hanya 1 baris dan 1-2 kata: ukuran font dibuat lebih besar (28 - 33 pt).
+ * - Untuk 3 baris: ukuran font minimal 24 pt (sampai 25 pt jika muat).
  */
 function fitNameToLines(name, maxW = 460) {
   if (!font) {
     const rawLines = name.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
-    return { lines: rawLines.length > 0 ? rawLines : [name.trim()], fontSize: 24 };
+    return { lines: rawLines.length > 0 ? rawLines : [name.trim()], fontSize: 28 };
   }
   const getWidth = (str, sz) => (font.layout(str).advanceWidth / font.unitsPerEm) * sz;
 
@@ -75,8 +76,14 @@ function fitNameToLines(name, maxW = 460) {
     let minSize = 24;
 
     if (lineCount === 1) {
-      startingSize = 29;
-      minSize = 24;
+      const words = explicitLines[0].trim().split(/\s+/);
+      if (words.length <= 2) {
+        startingSize = 33;
+        minSize = 28;
+      } else {
+        startingSize = 30;
+        minSize = 25;
+      }
     } else if (lineCount === 2) {
       startingSize = 27;
       minSize = 24;
@@ -97,21 +104,35 @@ function fitNameToLines(name, maxW = 460) {
       }
       sz -= 0.5;
     }
-    // Jika mencapai minSize, tetap gunakan minimal font size (24pt)
     return { lines: explicitLines, fontSize: minSize };
   }
 
   // Jika 1 baris tanpa enter manual:
+  const trimmedName = name.trim();
+  const words = trimmedName.split(/\s+/);
+
+  // Jika hanya terdiri dari 1 atau 2 kata: font size dibuat agak besar (28 - 33 pt)
+  if (words.length <= 2) {
+    let sz = 33;
+    while (sz >= 28) {
+      if (getWidth(trimmedName, sz) <= maxW) {
+        return { lines: [trimmedName], fontSize: sz };
+      }
+      sz -= 0.5;
+    }
+    return { lines: [trimmedName], fontSize: 28 };
+  }
+
+  // Jika 3 kata atau lebih (1 baris):
   let singleSz = 29;
-  while (singleSz >= 24) {
-    if (getWidth(name.trim(), singleSz) <= maxW) {
-      return { lines: [name.trim()], fontSize: singleSz };
+  while (singleSz >= 25) {
+    if (getWidth(trimmedName, singleSz) <= maxW) {
+      return { lines: [trimmedName], fontSize: singleSz };
     }
     singleSz -= 0.5;
   }
 
-  // Jika terlalu panjang, auto-wrap jadi 2 baris seimbang
-  const words = name.trim().split(/\s+/);
+  // Jika terlalu panjang untuk 1 baris, auto-wrap jadi 2 baris seimbang
   let sz = 27;
   while (sz >= 24) {
     let bestSplit = null;
@@ -134,13 +155,13 @@ function fitNameToLines(name, maxW = 460) {
     }
     sz -= 0.5;
   }
-  return { lines: [name.trim()], fontSize: 24 };
+  return { lines: [trimmedName], fontSize: 24 };
 }
 
 /**
  * Render guest name with Alice font, gradient -180 deg (#fff6de -> #ead296)
  */
-async function renderNameVectorImage(lines, fontSize = 24, lineHeightMul = 1.05) {
+async function renderNameVectorImage(lines, fontSize = 28, lineHeightMul = 1.05) {
   if (!font) {
     const textSvg = '<svg width="600" height="100" xmlns="http://www.w3.org/2000/svg"><text x="300" y="50" font-size="' + fontSize + '" fill="#FFF6DE" text-anchor="middle">' + lines.join(' ') + '</text></svg>';
     const buf = await sharp(Buffer.from(textSvg)).png().toBuffer();
