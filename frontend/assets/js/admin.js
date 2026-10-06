@@ -814,6 +814,19 @@ document.addEventListener('alpine:init', () => {
       };
     },
 
+    insertLineBreak(event) {
+      const textarea = event.target;
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const val = textarea.value;
+      textarea.value = val.substring(0, start) + '
+' + val.substring(end);
+      this.editingCell.value = textarea.value;
+      this.$nextTick(() => {
+        textarea.selectionStart = textarea.selectionEnd = start + 1;
+      });
+    },
+
     cancelInlineEdit() {
       this.editingCell = null;
     },
@@ -821,7 +834,7 @@ document.addEventListener('alpine:init', () => {
     async saveInlineEdit(guest) {
       if (!this.editingCell || this.editingCell.guestId !== guest.id) return;
       const field = this.editingCell.field;
-      const val = typeof this.editingCell.value === 'string' ? this.editingCell.value.trim() : this.editingCell.value;
+      const val = typeof this.editingCell.value === 'string' ? (this.editingCell.field === 'name' ? this.editingCell.value.replace(/\r\n/g, '\n') : this.editingCell.value.trim()) : this.editingCell.value;
       const orig = this.editingCell.originalValue;
 
       this.editingCell = null;

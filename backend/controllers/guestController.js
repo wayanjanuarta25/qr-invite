@@ -257,7 +257,7 @@ exports.updateGuest = (req, res) => {
       WHERE g.id = ?
     `).get(id);
 
-    logActivity(req, 'GUEST_UPDATED', `Memperbarui data tamu: ${currentGuest.name} (ID: #${id})`);
+    logActivity(req, 'GUEST_UPDATED', `Memperbarui data tamu: ${guest.name} (ID: #${id})`);
     return res.json({
       success: true,
       message: 'Data tamu berhasil diperbarui.',

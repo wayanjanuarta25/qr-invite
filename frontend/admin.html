@@ -779,15 +779,20 @@
                   <!-- Guest Name -->
                   <td class="py-3.5 px-5 cursor-pointer select-none group min-w-[280px] lg:min-w-[340px]" @dblclick="startInlineEdit(g, 'name')" title="Klik 2x untuk edit cepat">
                     <template x-if="editingCell && editingCell.guestId === g.id && editingCell.field === 'name'">
-                      <textarea 
-                        x-model="editingCell.value" 
-                        @blur="saveInlineEdit(g)" 
-                        @keydown.enter.exact.prevent="saveInlineEdit(g)" 
-                        @keydown.escape="cancelInlineEdit()"
-                        x-init="$nextTick(() => { $el.focus(); $el.select(); })"
-                        rows="2"
-                        class="w-full p-2 text-sm font-bold text-slate-900 bg-amber-50/80 border-2 border-amber-400 rounded-lg focus:outline-none shadow-inner"
-                      ></textarea>
+                      <div class="relative">
+                        <textarea 
+                          x-model="editingCell.value" 
+                          @blur="saveInlineEdit(g)" 
+                          @keydown.enter.exact.prevent="saveInlineEdit(g)" 
+                          @keydown.alt.enter.prevent="insertLineBreak($event)"
+                          @keydown.escape="cancelInlineEdit()"
+                          x-init="$nextTick(() => { $el.focus(); $el.select(); })"
+                          rows="3"
+                          placeholder="Tekan Alt+Enter untuk baris baru"
+                          class="w-full p-2 text-sm font-bold text-slate-900 bg-amber-50/90 border-2 border-amber-400 rounded-lg focus:outline-none shadow-inner resize-y min-h-[70px]"
+                        ></textarea>
+                        <div class="text-[9px] text-amber-700/80 mt-0.5 font-medium italic">Tekan <strong>Alt + Enter</strong> untuk baris baru, <strong>Enter</strong> untuk simpan</div>
+                      </div>
                     </template>
                     <template x-if="!editingCell || editingCell.guestId !== g.id || editingCell.field !== 'name'">
                       <div class="group-hover:bg-amber-50/50 p-1 -m-1 rounded transition-colors">
@@ -1066,6 +1071,7 @@
                 <option :value="25">25</option>
                 <option :value="50">50</option>
                 <option :value="100">100</option>
+                <option :value="300">300</option>
               </select>
             </div>
           </div>

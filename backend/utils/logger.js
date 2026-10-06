@@ -7,8 +7,10 @@ function logActivity(req, action, details = '') {
     const userName = user.name || (req.body && req.body.email ? req.body.email : 'Anonymous');
     const userEmail = user.email || (req.body && req.body.email ? req.body.email : '-');
 
-    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || req.ip || '-';
-    const userAgent = req.headers['user-agent'] || '-';
+    const headers = req.headers || {};
+    const socket = req.socket || {};
+    const ip = headers['x-forwarded-for'] || socket.remoteAddress || req.ip || '-';
+    const userAgent = headers['user-agent'] || '-';
 
     const stmt = db.prepare(`
       INSERT INTO activity_logs (user_id, user_name, user_email, action, details, ip_address, user_agent)
