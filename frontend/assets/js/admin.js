@@ -75,6 +75,11 @@ document.addEventListener('alpine:init', () => {
     isExportMenuOpen: false,
 
     // Batch QR Download State
+        // Name similarity detection state
+    similarGuestsNotice: [],
+    detectedDuplicatesCount: 0,
+    isFilterDuplicatesActive: false,
+    allGuestsCache: [],
     isQrSelectEventModalOpen: false,
     selectedBatchQrEventId: '',
     isDownloadingZip: false,
@@ -348,6 +353,7 @@ document.addEventListener('alpine:init', () => {
 
         const res = await App.api(`/api/guests?${params.toString()}`);
         this.guests = res.guests || [];
+        this.evaluateGlobalDuplicates();
       } catch (err) {
         App.toast('Gagal memuat daftar tamu: ' + err.message, 'error');
       } finally {
@@ -572,6 +578,118 @@ document.addEventListener('alpine:init', () => {
       App.toast("Memulai pengunduhan file ZIP undangan... Browser sedang mengunduh.", "info");
       const token = App.getToken();
       window.location.href = "/api/guests/export/invitations-zip?event_id=" + eventId + "&token=" + (token || "");
+    },
+
+        // Helper: Hitung kemiripan string (0 - 100%) menggunakan Levenshtein distance & token overlap
+    calculateNameSimilarity(str1, str2) {
+      if (!str1 || !str2) return 0;
+      const s1 = str1.toLowerCase().replace(/[^a-z0-9 ]/g, '').trim();
+      const s2 = str2.toLowerCase().replace(/[^a-z0-9 ]/g, '').trim();
+      if (s1 === s2) return 100;
+      if (s1.length === 0 || s2.length === 0) return 0;
+
+      // Cek apakah satu nama termuat utuh dalam nama lainnya
+      if (s1.includes(s2) || s2.includes(s1)) {
+        const minLen = Math.min(s1.length, s2.length);
+        const maxLen = Math.max(s1.length, s2.length);
+        return Math.round((minLen / maxLen) * 95);
+      }
+
+      // Levenshtein distance
+      const track = Array(s2.length + 1).fill(null).map(() =>
+        Array(s1.length + 1).fill(null)
+      );
+      for (let i = 0; i <= s1.length; i += 1) track[0][i] = i;
+      for (let j = 0; j <= s2.length; j += 1) track[j][0] = j;
+      for (let j = 1; j <= s2.length; j += 1) {
+        for (let i = 1; i <= s1.length; i += 1) {
+          const indicator = s1[i - 1] === s2[j - 1] ? 0 : 1;
+          track[j][i] = Math.min(
+            track[j][i - 1] + 1,
+            track[j - 1][i] + 1,
+            track[j - 1][i - 1] + indicator
+          );
+        }
+      }
+      const distance = track[s2.length][s1.length];
+      const maxLen = Math.max(s1.length, s2.length);
+      return Math.round(((maxLen - distance) / maxLen) * 100);
+    },
+
+    // Cek kemiripan nama tamu saat input/edit form tamu
+    checkSimilarGuestNames() {
+      const inputName = (this.guestForm.name || '').trim();
+      if (inputName.length < 3) {
+        this.similarGuestsNotice = [];
+        return;
+      }
+
+      const currentId = this.guestForm.id;
+      const results = [];
+      const guestsToCheck = this.guests || [];
+
+      for (const g of guestsToCheck) {
+        if (currentId && g.id === currentId) continue;
+        const sim = this.calculateNameSimilarity(inputName, g.name);
+        if (sim >= 70) {
+          results.push({
+            name: g.name,
+            category: g.category,
+            phone: g.phone,
+            similarity: sim
+          });
+        }
+      }
+
+      results.sort((a, b) => b.similarity - a.similarity);
+      this.similarGuestsNotice = results.slice(0, 5);
+      this.$nextTick(() => { if (window.lucide) lucide.createIcons(); });
+    },
+
+    // Evaluasi kemiripan nama secara global pada list tamu
+    evaluateGlobalDuplicates() {
+      const list = this.guests || [];
+      let dupCount = 0;
+      const seen = new Set();
+
+      for (let i = 0; i < list.length; i++) {
+        for (let j = i + 1; j < list.length; j++) {
+          const sim = this.calculateNameSimilarity(list[i].name, list[j].name);
+          if (sim >= 80) {
+            seen.add(list[i].id);
+            seen.add(list[j].id);
+          }
+        }
+      }
+      this.detectedDuplicatesCount = seen.size;
+    },
+
+    // Filter toggle untuk menampilkan hanya nama yang mirip/duplikat
+    filterDuplicateNames() {
+      if (this.isFilterDuplicatesActive) {
+        this.isFilterDuplicatesActive = false;
+        if (this.allGuestsCache && this.allGuestsCache.length > 0) {
+          this.guests = [...this.allGuestsCache];
+        }
+      } else {
+        this.allGuestsCache = [...(this.guests || [])];
+        const list = this.guests || [];
+        const duplicateIds = new Set();
+
+        for (let i = 0; i < list.length; i++) {
+          for (let j = i + 1; j < list.length; j++) {
+            const sim = this.calculateNameSimilarity(list[i].name, list[j].name);
+            if (sim >= 80) {
+              duplicateIds.add(list[i].id);
+              duplicateIds.add(list[j].id);
+            }
+          }
+        }
+
+        this.guests = list.filter(g => duplicateIds.has(g.id));
+        this.isFilterDuplicatesActive = true;
+      }
+      this.$nextTick(() => { if (window.lucide) lucide.createIcons(); });
     },
 
     printQrCard() {
