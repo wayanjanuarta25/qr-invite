@@ -54,50 +54,56 @@ async function cropQrCodeBuffer(rawQrBuffer) {
 }
 
 /**
- * Split name into lines fitting strictly within maxAllowedWidth (430 pt)
- * Adjusts font size automatically if 3 lines or more so it stays comfortably inside the golden border
+ * Menghitung ukuran font dan baris teks.
+ * Selalu mengikuti jumlah baris sesuai penamaan user (dari Alt+Enter).
+ * Untuk 3 baris teks, ukuran font dibuat paling kecil 24pt (atau 24.5pt jika muat).
  */
-function fitNameToLines(name, maxW = 430) {
+function fitNameToLines(name, maxW = 460) {
   if (!font) {
     const rawLines = name.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
-    return { lines: rawLines.length > 0 ? rawLines : [name.trim()], fontSize: 22 };
+    return { lines: rawLines.length > 0 ? rawLines : [name.trim()], fontSize: 24 };
   }
   const getWidth = (str, sz) => (font.layout(str).advanceWidth / font.unitsPerEm) * sz;
 
   // Jika user secara manual memecah baris (dengan Alt+Enter / Enter di textarea nama)
+  // Tetap pertahankan persis jumlah baris yang ditentukan user!
   if (name.includes('\n')) {
     const explicitLines = name.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
     const lineCount = explicitLines.length;
 
-    // Skala ukuran font berdasarkan jumlah baris:
-    // 1 baris: 29 pt
-    // 2 baris: 26 pt
-    // 3 baris: 20 pt (agar pas proporsional & tidak mepet tepi kotak)
-    // >= 4 baris: 16.5 pt
-    let startingSize = 29;
-    if (lineCount === 2) {
-      startingSize = 26;
+    let startingSize = 28;
+    let minSize = 24;
+
+    if (lineCount === 1) {
+      startingSize = 29;
+      minSize = 24;
+    } else if (lineCount === 2) {
+      startingSize = 27;
+      minSize = 24;
     } else if (lineCount === 3) {
-      startingSize = 20;
-    } else if (lineCount >= 4) {
-      startingSize = 16.5;
+      // Untuk 3 baris, mulai dari 25pt dan batas bawah (paling kecil) adalah 24pt
+      startingSize = 25;
+      minSize = 24;
+    } else {
+      startingSize = 24;
+      minSize = 20;
     }
 
     let sz = startingSize;
-    while (sz >= 12) {
+    while (sz > minSize) {
       const allFit = explicitLines.every(l => getWidth(l, sz) <= maxW);
       if (allFit) {
         return { lines: explicitLines, fontSize: sz };
       }
       sz -= 0.5;
     }
-    return { lines: explicitLines, fontSize: sz };
+    // Jika mencapai minSize, tetap gunakan minimal font size (24pt)
+    return { lines: explicitLines, fontSize: minSize };
   }
 
   // Jika 1 baris tanpa enter manual:
-  // Coba muat 1 baris jika pas dalam batas aman (430 pt)
   let singleSz = 29;
-  while (singleSz >= 23) {
+  while (singleSz >= 24) {
     if (getWidth(name.trim(), singleSz) <= maxW) {
       return { lines: [name.trim()], fontSize: singleSz };
     }
@@ -106,8 +112,8 @@ function fitNameToLines(name, maxW = 430) {
 
   // Jika terlalu panjang, auto-wrap jadi 2 baris seimbang
   const words = name.trim().split(/\s+/);
-  let sz = 26;
-  while (sz >= 15) {
+  let sz = 27;
+  while (sz >= 24) {
     let bestSplit = null;
     let bestDiff = Infinity;
     for (let i = 1; i < words.length; i++) {
@@ -128,13 +134,13 @@ function fitNameToLines(name, maxW = 430) {
     }
     sz -= 0.5;
   }
-  return { lines: [name.trim()], fontSize: 18 };
+  return { lines: [name.trim()], fontSize: 24 };
 }
 
 /**
  * Render guest name with Alice font, gradient -180 deg (#fff6de -> #ead296)
  */
-async function renderNameVectorImage(lines, fontSize = 26, lineHeightMul = 1.08) {
+async function renderNameVectorImage(lines, fontSize = 24, lineHeightMul = 1.05) {
   if (!font) {
     const textSvg = '<svg width="600" height="100" xmlns="http://www.w3.org/2000/svg"><text x="300" y="50" font-size="' + fontSize + '" fill="#FFF6DE" text-anchor="middle">' + lines.join(' ') + '</text></svg>';
     const buf = await sharp(Buffer.from(textSvg)).png().toBuffer();
@@ -209,10 +215,8 @@ async function generateInvitationPdf(guest, checkUrl) {
   page1.drawImage(embeddedQr, { x: qrX, y: qrY, width: qrW, height: qrH });
 
   // 2. Render Name with Alice font & gold gradient
-  // Max width diturunkan ke 430 pt agar tetap berada aman di dalam bingkai kotak emas (tidak over kanan-kiri)
-  const maxAllowedWidth = 430;
-  const fit = fitNameToLines(guest.name, maxAllowedWidth);
-  const nameImg = await renderNameVectorImage(fit.lines, fit.fontSize, 1.08);
+  const fit = fitNameToLines(guest.name, 460);
+  const nameImg = await renderNameVectorImage(fit.lines, fit.fontSize, 1.05);
   const embeddedName = await pdfDoc.embedPng(nameImg.buffer);
 
   const namePdfX = (pW - nameImg.width) / 2;
