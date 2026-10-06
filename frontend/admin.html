@@ -530,6 +530,11 @@
             <span>Unduh QR (ZIP)</span>
           </button>
 
+          <!-- Download Undangan ZIP -->
+          <button @click="downloadBatchInvitationsPdf()" title="Download Seluruh Undangan PDF Acara (ZIP)" class="inline-flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-gradient-to-r from-amber-600 to-yellow-600 hover:from-amber-700 hover:to-yellow-700 text-white text-xs font-bold shadow-sm shadow-amber-600/20 cursor-pointer transition-all">
+            <i data-lucide="file-text" class="w-4 h-4"></i>
+            <span>Unduh Undangan (ZIP)</span>
+          </button>
           <!-- Export Data Dropdown -->
           <div class="relative" @click.outside="isExportMenuOpen = false">
             <button 
@@ -697,6 +702,10 @@
                   <td class="py-3.5 px-4 text-center">
                     <div class="flex items-center justify-center space-x-1.5">
                       
+                      <!-- Download PDF Undangan -->
+                      <button @click="downloadFullInvitationPdf(g)" title="Unduh Undangan Resmi (PDF 3 Halaman)" class="p-1.5 rounded-lg bg-amber-50 text-amber-700 hover:bg-amber-100 transition-colors cursor-pointer border border-amber-200">
+                        <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+                      </button>
                       <!-- View QR Modal -->
                       <button 
                         @click="openQrModal(g)"
@@ -1046,6 +1055,11 @@
             <span>Unduh PDF</span>
           </button>
 
+          <!-- Download Undangan Resmi di Modal -->
+          <button @click="downloadFullInvitationPdf(currentQrGuest)" class="w-full col-span-3 py-2.5 px-3 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-600 hover:to-yellow-700 text-white text-xs font-bold shadow-md shadow-amber-500/20 flex items-center justify-center space-x-2 transition-all cursor-pointer mt-1">
+            <i data-lucide="file-text" class="w-4 h-4"></i>
+            <span>Unduh Undangan Resmi (PDF 3 Halaman HUT SS)</span>
+          </button>
           <!-- Print QR Card -->
           <button 
             @click="printQrCard()"
