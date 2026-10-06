@@ -82,6 +82,9 @@ document.addEventListener('alpine:init', () => {
     // Batch QR Download State
         // Name similarity detection state
     similarGuestsNotice: [],
+    editingCell: null, // { guestId, field, value, originalValue }
+    undoStack: [],
+    redoStack: [],
     sortBy: 'created_at',
     sortDir: 'desc',
     detectedDuplicatesCount: 0,
@@ -729,9 +732,22 @@ document.addEventListener('alpine:init', () => {
       this.$nextTick(() => { if (window.lucide) lucide.createIcons(); });
     },
 
-        // Quick inline update for guest table fields (Status Undangan, RSVP)
-    async updateGuestField(guest, fieldName, newValue) {
+        // Quick inline update for guest table fields with Undo support
+    async updateGuestField(guest, fieldName, newValue, skipUndo = false) {
+      const oldValue = guest[fieldName];
+      if (oldValue === newValue) return;
+
       try {
+        if (!skipUndo) {
+          this.undoStack.push({
+            guestId: guest.id,
+            fieldName: fieldName,
+            oldValue: oldValue,
+            newValue: newValue
+          });
+          this.redoStack = []; // Reset redo
+        }
+
         guest[fieldName] = newValue;
         const payload = {
           name: guest.name,
@@ -746,15 +762,80 @@ document.addEventListener('alpine:init', () => {
         };
         payload[fieldName] = newValue;
 
-        await App.api('/api/guests/' + guest.id, {
+        const res = await App.api('/api/guests/' + guest.id, {
           method: 'PUT',
           body: JSON.stringify(payload)
         });
-        App.toast('Berhasil memperbarui ' + fieldName.replace('_', ' ') + '!', 'success');
+
+        if (res.guest) {
+          Object.assign(guest, res.guest);
+        }
+
+        App.toast('Perubahan ' + fieldName.replace('_', ' ') + ' tersimpan.', 'success');
+        this.$nextTick(() => { if (window.lucide) lucide.createIcons(); });
       } catch (err) {
         console.error('Update guest field error:', err);
-        App.toast('Gagal memperbarui data tamu: ' + err.message, 'error');
-        await this.loadGuests();
+        App.toast('Gagal menyimpan: ' + err.message, 'error');
+        guest[fieldName] = oldValue;
+      }
+    },
+
+    // Excel-like Inline Edit Methods
+    startInlineEdit(guest, field) {
+      this.editingCell = {
+        guestId: guest.id,
+        field: field,
+        value: guest[field] || '',
+        originalValue: guest[field] || ''
+      };
+    },
+
+    cancelInlineEdit() {
+      this.editingCell = null;
+    },
+
+    async saveInlineEdit(guest) {
+      if (!this.editingCell || this.editingCell.guestId !== guest.id) return;
+      const field = this.editingCell.field;
+      const val = typeof this.editingCell.value === 'string' ? this.editingCell.value.trim() : this.editingCell.value;
+      const orig = this.editingCell.originalValue;
+
+      this.editingCell = null;
+      if (val !== orig) {
+        await this.updateGuestField(guest, field, val);
+      }
+    },
+
+    // Refresh Data Tombol (⟳)
+    async refreshData() {
+      App.toast('Memuat ulang data terbaru...', 'info');
+      await this.loadGuests();
+      await this.loadStats();
+      await this.loadEvents();
+      App.toast('Data berhasil diperbarui!', 'success');
+    },
+
+    // Undo Terakhir (↶)
+    async undoLastAction() {
+      if (this.undoStack.length === 0) return;
+      const action = this.undoStack.pop();
+      const guest = (this.guests || []).find(g => g.id === action.guestId);
+      if (guest) {
+        this.redoStack.push({ ...action });
+        await this.updateGuestField(guest, action.fieldName, action.oldValue, true);
+        App.toast('Perubahan dibatalkan (Undo).', 'info');
+      }
+    },
+
+    // Redo Terakhir (↷)
+    async redoLastAction() {
+      if (this.redoStack.length === 0) return;
+      const action = this.redoStack.pop();
+      const guest = (this.guests || []).find(g => g.id === action.guestId);
+      if (guest) {
+        this.undoStack.push({ ...action });
+        await this.updateGuestField(guest, action.fieldName, action.newValue, true);
+        App.toast('Perubahan diterapkan kembali (Redo).', 'info');
       }
     },
 

@@ -89,9 +89,20 @@ exports.getAllGuests = (req, res) => {
     }
 
     if (search && search.trim()) {
-      query += ` AND (g.name LIKE ? OR g.phone LIKE ? OR g.qr_token LIKE ?)`;
+      query += ` AND (
+        g.name LIKE ? OR 
+        g.phone LIKE ? OR 
+        g.qr_token LIKE ? OR 
+        g.source LIKE ? OR 
+        g.contact_person LIKE ? OR 
+        g.invitation_status LIKE ? OR 
+        g.rsvp_status LIKE ? OR 
+        g.notes LIKE ? OR 
+        g.category LIKE ? OR
+        e.name LIKE ?
+      )`;
       const term = `%${search.trim()}%`;
-      params.push(term, term, term);
+      params.push(term, term, term, term, term, term, term, term, term, term);
     }
 
     query += ` ORDER BY g.created_at DESC`;
@@ -448,9 +459,20 @@ exports.exportGuestsCsv = (req, res) => {
     }
 
     if (search && search.trim()) {
-      query += ` AND (g.name LIKE ? OR g.phone LIKE ? OR g.qr_token LIKE ?)`;
+      query += ` AND (
+        g.name LIKE ? OR 
+        g.phone LIKE ? OR 
+        g.qr_token LIKE ? OR 
+        g.source LIKE ? OR 
+        g.contact_person LIKE ? OR 
+        g.invitation_status LIKE ? OR 
+        g.rsvp_status LIKE ? OR 
+        g.notes LIKE ? OR 
+        g.category LIKE ? OR
+        e.name LIKE ?
+      )`;
       const term = `%${search.trim()}%`;
-      params.push(term, term, term);
+      params.push(term, term, term, term, term, term, term, term, term, term);
     }
 
     query += ` ORDER BY g.created_at DESC`;
