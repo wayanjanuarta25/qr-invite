@@ -580,7 +580,7 @@ exports.downloadEventQrsZip = async (req, res) => {
     }
 
     const zip = new JSZip();
-    const safeEventName = event.name.replace(/[/\\?%*:|"<>]/g, '').trim().replace(/\s+/g, '_');
+    const safeEventName = event.name.replace(/[\r\n]+/g, ' ').replace(/[/\\?%*:|"<>]/g, '').trim().replace(/\s+/g, '_');
     const folder = zip.folder(`QR_${safeEventName}`);
 
     // Summary CSV inside zip
@@ -598,7 +598,7 @@ exports.downloadEventQrsZip = async (req, res) => {
 
       if (fs.existsSync(qrFilePath)) {
         const fileData = fs.readFileSync(qrFilePath);
-        const cleanGuestName = g.name.replace(/[/\\?%*:|"<>]/g, '').trim().replace(/\s+/g, '_');
+        const cleanGuestName = (g.name || 'Tamu').replace(/[\r\n]+/g, ' ').replace(/[^a-zA-Z0-9_\- ]/g, '').trim().replace(/\s+/g, '_');
         const zipImageName = `${g.category}_${cleanGuestName}_${g.qr_token}.png`;
         folder.file(zipImageName, fileData);
 
@@ -718,7 +718,7 @@ exports.downloadGuestInvitationPdf = async (req, res) => {
 
     const pdfBuffer = await generateInvitationPdf(guest, checkUrl);
 
-    const safeName = guest.name.replace(/[/\\\\?%*:|"<>]/g, '').trim().replace(/\\s+/g, '_');
+    const safeName = (guest.name || 'Tamu').replace(/[\r\n]+/g, ' ').replace(/[^a-zA-Z0-9_\- ]/g, '').trim().replace(/\s+/g, '_');
     const filename = 'Undangan_' + safeName + '_' + guest.qr_token + '.pdf';
 
     res.setHeader('Content-Type', 'application/pdf');
@@ -745,7 +745,7 @@ exports.downloadGuestInvitationPdfByToken = async (req, res) => {
 
     const pdfBuffer = await generateInvitationPdf(guest, checkUrl);
 
-    const safeName = guest.name.replace(/[/\\\\?%*:|"<>]/g, '').trim().replace(/\\s+/g, '_');
+    const safeName = (guest.name || 'Tamu').replace(/[\r\n]+/g, ' ').replace(/[^a-zA-Z0-9_\- ]/g, '').trim().replace(/\s+/g, '_');
     const filename = 'Undangan_' + safeName + '_' + guest.qr_token + '.pdf';
 
     res.setHeader('Content-Type', 'application/pdf');
@@ -799,7 +799,7 @@ exports.downloadEventInvitationsZip = async (req, res) => {
       const g = guests[i];
       const checkUrl = protocol + '://' + host + '/check/' + g.qr_token;
       const pdfBuffer = await generateInvitationPdf(g, checkUrl);
-      const cleanGuestName = g.name.replace(/[/\\\\?%*:|"<>]/g, '').trim().replace(/\\s+/g, '_');
+      const cleanGuestName = (g.name || 'Tamu').replace(/[\r\n]+/g, ' ').replace(/[^a-zA-Z0-9_\- ]/g, '').trim().replace(/\s+/g, '_');
       const pdfFileName = 'Undangan_' + g.category + '_' + cleanGuestName + '_' + g.qr_token + '.pdf';
       folder.file(pdfFileName, pdfBuffer);
     }
