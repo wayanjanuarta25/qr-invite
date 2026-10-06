@@ -232,6 +232,12 @@
           }
         },
 
+                downloadOfficialPdf() {
+          if (!this.invite || !this.invite.qr_token) return;
+          App.toast("Sedang mengunduh dokumen PDF resmi...", "info");
+          window.location.href = "/api/guests/token/" + this.invite.qr_token + "/invitation-pdf";
+        },
+
         downloadTicketPass() {
           const card = document.getElementById('invitation-ticket-card');
           if (!card) return;

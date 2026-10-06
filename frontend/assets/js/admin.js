@@ -89,7 +89,81 @@ document.addEventListener('alpine:init', () => {
     attendanceChart: null,
     categoryChart: null,
 
-    async init() {
+    async     // Download official 3-page invitation PDF for a single guest
+    async downloadFullInvitationPdf(guest) {
+      if (!guest || !guest.id) return;
+      App.toast("Sedang membuat file PDF undangan resmi...", "info");
+      try {
+        const token = localStorage.getItem("token");
+        const res = await fetch("/api/guests/" + guest.id + "/invitation-pdf", {
+          headers: { "Authorization": "Bearer " + token }
+        });
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.error || "Gagal mengunduh file PDF");
+        }
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        const cleanName = (guest.name || "Tamu").replace(/[/\\?%*:|"<>]/g, "").trim().replace(/\s+/g, "_");
+        a.download = "Undangan_" + cleanName + "_" + (guest.qr_token || "") + ".pdf";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+        App.toast("Undangan PDF resmi berhasil diunduh!", "success");
+      } catch (err) {
+        console.error("Download PDF error:", err);
+        App.toast(err.message || "Gagal mengunduh undangan PDF resmi.", "error");
+      }
+    },
+
+    // Download batch ZIP of all invitation PDFs
+    async downloadBatchInvitationsPdf() {
+      const activeEventId = this.filters.event_id;
+      if (!activeEventId || activeEventId === "all") {
+        if (this.events && this.events.length > 0) {
+          this.selectedBatchQrEventId = String(this.events[0].id);
+          this.isQrSelectEventModalOpen = true;
+          App.toast("Silakan pilih acara terlebih dahulu untuk download undangan.", "info");
+          return;
+        } else {
+          App.toast("Belum ada acara tersedia.", "warning");
+          return;
+        }
+      }
+      this.executeDownloadInvitationsZip(activeEventId);
+    },
+
+    async executeDownloadInvitationsZip(eventId) {
+      App.toast("Sedang memproses seluruh undangan PDF...", "info");
+      try {
+        const token = localStorage.getItem("token");
+        const res = await fetch("/api/guests/export/invitations-zip?event_id=" + eventId, {
+          headers: { "Authorization": "Bearer " + token }
+        });
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.error || "Gagal membuat arsip ZIP undangan.");
+        }
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "Undangan_Lengkap_Acara_" + Date.now() + ".zip";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+        App.toast("Arsip ZIP Undangan berhasil diunduh!", "success");
+      } catch (err) {
+        console.error("ZIP Invitations error:", err);
+        App.toast(err.message || "Gagal mengunduh arsip ZIP undangan.", "error");
+      }
+    },
+
+    init() {
       if (!App.requireAuth()) return;
       this.currentUser = App.getUser() || { name: 'Administrator', email: 'admin@digitalinvite.com' };
 

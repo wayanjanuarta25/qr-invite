@@ -1,3 +1,4 @@
+const { generateInvitationPdf } = require('../utils/invitationPdfGenerator');
 const db = require('../database/db');
 const path = require('path');
 const fs = require('fs');
@@ -641,4 +642,106 @@ exports.restoreFullBackup = async (req, res) => {
   }
 };
 
+exports.downloadGuestInvitationPdf = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const guest = db.prepare('SELECT g.*, e.name as event_name FROM guests g JOIN events e ON g.event_id = e.id WHERE g.id = ?').get(id);
+    if (!guest) {
+      return res.status(404).json({ error: 'Tamu tidak ditemukan.' });
+    }
 
+    const protocol = req.headers['x-forwarded-proto'] || req.protocol || 'http';
+    const host = req.get('host') || 'localhost:3000';
+    const checkUrl = protocol + '://' + host + '/check/' + guest.qr_token;
+
+    const pdfBuffer = await generateInvitationPdf(guest, checkUrl);
+
+    const safeName = guest.name.replace(/[/\\\\?%*:|"<>]/g, '').trim().replace(/\\s+/g, '_');
+    const filename = 'Undangan_' + safeName + '_' + guest.qr_token + '.pdf';
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename="' + filename + '"');
+    res.setHeader('Content-Length', pdfBuffer.length);
+    return res.send(pdfBuffer);
+  } catch (error) {
+    console.error('Download guest invitation error:', error);
+    return res.status(500).json({ error: 'Gagal membuat file PDF undangan: ' + error.message });
+  }
+};
+
+exports.downloadGuestInvitationPdfByToken = async (req, res) => {
+  try {
+    const { token } = req.params;
+    const guest = db.prepare('SELECT g.*, e.name as event_name FROM guests g JOIN events e ON g.event_id = e.id WHERE g.qr_token = ?').get(token);
+    if (!guest) {
+      return res.status(404).json({ error: 'Undangan tidak ditemukan.' });
+    }
+
+    const protocol = req.headers['x-forwarded-proto'] || req.protocol || 'http';
+    const host = req.get('host') || 'localhost:3000';
+    const checkUrl = protocol + '://' + host + '/check/' + guest.qr_token;
+
+    const pdfBuffer = await generateInvitationPdf(guest, checkUrl);
+
+    const safeName = guest.name.replace(/[/\\\\?%*:|"<>]/g, '').trim().replace(/\\s+/g, '_');
+    const filename = 'Undangan_' + safeName + '_' + guest.qr_token + '.pdf';
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename="' + filename + '"');
+    res.setHeader('Content-Length', pdfBuffer.length);
+    return res.send(pdfBuffer);
+  } catch (error) {
+    console.error('Download guest invitation by token error:', error);
+    return res.status(500).json({ error: 'Gagal membuat file PDF undangan: ' + error.message });
+  }
+};
+
+exports.downloadEventInvitationsZip = async (req, res) => {
+  try {
+    const eventId = req.params.id || req.query.event_id;
+    if (!eventId || eventId === 'all') {
+      return res.status(400).json({ error: 'Pilih acara tertentu untuk mengunduh Undangan.' });
+    }
+
+    const event = db.prepare('SELECT * FROM events WHERE id = ?').get(eventId);
+    if (!event) {
+      return res.status(404).json({ error: 'Acara tidak ditemukan.' });
+    }
+
+    const guests = db.prepare('SELECT * FROM guests WHERE event_id = ? ORDER BY name ASC').all(eventId);
+    if (!guests || guests.length === 0) {
+      return res.status(400).json({ error: 'Belum ada tamu terdaftar pada acara "' + event.name + '".' });
+    }
+
+    const zip = new JSZip();
+    const safeEventName = event.name.replace(/[/\\\\?%*:|"<>]/g, '').trim().replace(/\\s+/g, '_');
+    const folder = zip.folder('Undangan_' + safeEventName);
+
+    const protocol = req.headers['x-forwarded-proto'] || req.protocol || 'http';
+    const host = req.get('host') || 'localhost:3000';
+
+    for (let i = 0; i < guests.length; i++) {
+      const g = guests[i];
+      const checkUrl = protocol + '://' + host + '/check/' + g.qr_token;
+      const pdfBuffer = await generateInvitationPdf(g, checkUrl);
+      const cleanGuestName = g.name.replace(/[/\\\\?%*:|"<>]/g, '').trim().replace(/\\s+/g, '_');
+      const pdfFileName = 'Undangan_' + g.category + '_' + cleanGuestName + '_' + g.qr_token + '.pdf';
+      folder.file(pdfFileName, pdfBuffer);
+    }
+
+    const zipBuffer = await zip.generateAsync({
+      type: 'nodebuffer',
+      compression: 'DEFLATE',
+      compressionOptions: { level: 6 }
+    });
+
+    const downloadFileName = 'Undangan_Lengkap_' + safeEventName + '_' + Date.now() + '.zip';
+    res.setHeader('Content-Type', 'application/zip');
+    res.setHeader('Content-Disposition', 'attachment; filename="' + downloadFileName + '"');
+    res.setHeader('Content-Length', zipBuffer.length);
+    return res.send(zipBuffer);
+  } catch (error) {
+    console.error('Download invitations zip error:', error);
+    return res.status(500).json({ error: 'Gagal membuat file ZIP undangan: ' + error.message });
+  }
+};
