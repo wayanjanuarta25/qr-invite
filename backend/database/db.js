@@ -99,6 +99,17 @@ async function initSeed() {
         VALUES (?, ?, ?, ?, ?)
       `);
 
+      // Clean up obsolete events
+      const obsoleteEvents = ['Company Gathering 2027', 'National Seminar on AI', 'acara tambahan', 'Wedding Ahmad ' + String.fromCharCode(38) + ' Siti'];
+      for (const obsName of obsoleteEvents) {
+        const obs = db.prepare('SELECT id FROM events WHERE name = ?').get(obsName);
+        if (obs) {
+          db.prepare('DELETE FROM guests WHERE event_id = ?').run(obs.id);
+          db.prepare('DELETE FROM events WHERE id = ?').run(obs.id);
+          console.log('[DB SYNC] Cleaned up obsolete event: ' + obsName);
+        }
+      }
+
       for (const ev of (data.events || [])) {
         const exist = db.prepare('SELECT id FROM events WHERE name = ? OR id = ?').get(ev.name, ev.id);
         if (!exist) {
