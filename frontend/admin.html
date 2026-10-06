@@ -540,18 +540,6 @@
             >
           </div>
 
-          <!-- Tombol Cepat Komparasi Data -->
-          <button 
-            type="button" 
-            @click="openComparisonPage()" 
-            title="Buka Halaman Komparasi & Deteksi Duplikat Otomatis"
-            class="inline-flex items-center space-x-1.5 px-3 py-2.5 rounded-xl border border-amber-300 bg-amber-50 hover:bg-amber-100 text-amber-800 text-xs font-bold shadow-sm transition-all cursor-pointer whitespace-nowrap"
-          >
-            <i data-lucide="git-compare" class="w-4 h-4 text-amber-600"></i>
-            <span class="hidden sm:inline">Komparasi Data</span>
-            <span class="px-1.5 py-0.5 rounded-full bg-amber-200/80 text-[10px] text-amber-900 font-extrabold" x-text="comparedPairs.length"></span>
-          </button>
-
           <!-- Tombol Refresh (⟳) -->
           <button 
             type="button" 
