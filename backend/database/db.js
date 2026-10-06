@@ -166,15 +166,22 @@ async function initSeed() {
       }
     }
 
-    // 2. Ensure default Administrator user exists
-    const userCount = db.prepare('SELECT COUNT(*) as count FROM users').get().count;
-    if (userCount === 0) {
+    // 2. Ensure admin@digitalinvite.com exists and is always an active Administrator
+    const existingAdmin = db.prepare('SELECT id, role, status FROM users WHERE LOWER(email) = ?').get('admin@digitalinvite.com');
+    if (!existingAdmin) {
       const hashedPassword = bcrypt.hashSync('admin123', 10);
       db.prepare(`
         INSERT INTO users (name, email, password, role, status)
         VALUES (?, ?, ?, 'Admin', 'ACTIVE')
       `).run('Administrator', 'admin@digitalinvite.com', hashedPassword);
-      console.log('[DB SYNC] Created default Administrator user.');
+      console.log('[DB SYNC] Created default Administrator user: admin@digitalinvite.com');
+    } else if (existingAdmin.role !== 'Admin' || existingAdmin.status !== 'ACTIVE') {
+      db.prepare(`
+        UPDATE users 
+        SET role = 'Admin', status = 'ACTIVE' 
+        WHERE LOWER(email) = ?
+      `).run('admin@digitalinvite.com');
+      console.log('[DB SYNC] Ensured admin@digitalinvite.com has role Admin and ACTIVE status.');
     }
   } catch (err) {
     console.error('[DB SYNC ERROR]', err);
