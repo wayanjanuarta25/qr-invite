@@ -171,6 +171,21 @@
           ></span>
         </button>
 
+        <!-- Tab Komparasi Data (Halaman Terpisah) -->
+        <button 
+          @click="openComparisonPage()"
+          :class="activeTab === 'compare' ? 'bg-red-600 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'"
+          class="flex items-center space-x-1.5 sm:space-x-2 px-3 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap"
+        >
+          <i data-lucide="git-compare" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+          <span>Komparasi Data</span>
+          <span 
+            :class="activeTab === 'compare' ? 'bg-white/20 text-white' : (comparedPairs.length > 0 ? 'bg-amber-100 text-amber-800' : 'bg-slate-100 text-slate-600')"
+            class="px-1.5 py-0.5 rounded-md text-[10px] font-bold" 
+            x-text="comparedPairs.length"
+          ></span>
+        </button>
+
         <button 
           @click="switchTab('events'); $nextTick(() => lucide.createIcons())"
           :class="activeTab === 'events' ? 'bg-red-600 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'"
@@ -524,6 +539,18 @@
               class="w-full pl-11 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm font-medium text-slate-800 placeholder-slate-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-red-600 transition-all"
             >
           </div>
+
+          <!-- Tombol Cepat Komparasi Data -->
+          <button 
+            type="button" 
+            @click="openComparisonPage()" 
+            title="Buka Halaman Komparasi & Deteksi Duplikat Otomatis"
+            class="inline-flex items-center space-x-1.5 px-3 py-2.5 rounded-xl border border-amber-300 bg-amber-50 hover:bg-amber-100 text-amber-800 text-xs font-bold shadow-sm transition-all cursor-pointer whitespace-nowrap"
+          >
+            <i data-lucide="git-compare" class="w-4 h-4 text-amber-600"></i>
+            <span class="hidden sm:inline">Komparasi Data</span>
+            <span class="px-1.5 py-0.5 rounded-full bg-amber-200/80 text-[10px] text-amber-900 font-extrabold" x-text="comparedPairs.length"></span>
+          </button>
 
           <!-- Tombol Refresh (⟳) -->
           <button 
@@ -1127,6 +1154,268 @@
 
     </div>
 
+    <!-- TAB KHUSUS: KOMPARASI DATA & FILTER OTOMATIS (HALAMAN TERPISAH) -->
+    <div x-show="activeTab === 'compare'" x-cloak class="space-y-6">
+      
+      <!-- Header Banner & Kontrol Filter Otomatis -->
+      <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-2xl p-6 text-white shadow-xl border border-slate-800">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          <div class="space-y-1.5">
+            <div class="inline-flex items-center space-x-2 px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[11px] font-bold">
+              <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+              <span>Sistem Analisis & Filter Otomatis Kemiripan Data</span>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-black tracking-tight flex items-center space-x-2.5">
+              <span>Halaman Komparasi Data Tamu</span>
+              <span class="text-xs px-2.5 py-0.5 rounded-lg bg-red-600 text-white font-bold" x-text="comparedPairs.length + ' Pasangan Terdeteksi'"></span>
+            </h2>
+            <p class="text-xs text-slate-300 max-w-2xl leading-relaxed">
+              Membandingkan seluruh nama tamu di database secara real-time menggunakan filter kemiripan otomatis (fuzzy matching). Membantu panitia memeriksa potensi nama ganda atau duplikat tanpa risiko mengubah data yang sudah ada.
+            </p>
+          </div>
+
+          <!-- Tombol Aksi Cepat -->
+          <div class="flex items-center space-x-3 shrink-0">
+            <button 
+              type="button" 
+              @click="switchTab('guests')" 
+              class="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold border border-white/20 transition-all flex items-center space-x-1.5 cursor-pointer backdrop-blur-sm"
+            >
+              <i data-lucide="arrow-left" class="w-4 h-4"></i>
+              <span>Kembali ke Daftar Tamu</span>
+            </button>
+            <button 
+              type="button" 
+              @click="refreshData()" 
+              class="px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold shadow-lg shadow-red-600/30 transition-all flex items-center space-x-1.5 cursor-pointer"
+            >
+              <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+              <span>Scan Ulang Database</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter Otomatis Toolbar -->
+        <div class="mt-6 pt-5 border-t border-slate-800 grid grid-cols-1 sm:grid-cols-3 gap-4 text-slate-900">
+          
+          <!-- Slider / Pilih Tingkat Kemiripan Minimal -->
+          <div class="bg-white/95 rounded-xl p-3 border border-white/30 shadow-sm flex flex-col justify-between">
+            <div class="flex items-center justify-between text-xs font-bold text-slate-700 mb-1.5">
+              <span class="flex items-center space-x-1.5">
+                <i data-lucide="sliders" class="w-3.5 h-3.5 text-indigo-600"></i>
+                <span>Tingkat Kemiripan Minimal</span>
+              </span>
+              <span class="px-2 py-0.5 rounded-md bg-indigo-100 text-indigo-700 font-extrabold font-mono" x-text="compareThreshold + '%'"></span>
+            </div>
+            <input 
+              type="range" 
+              min="50" 
+              max="95" 
+              step="5" 
+              x-model="compareThreshold" 
+              class="w-full accent-indigo-600 cursor-pointer"
+            >
+            <div class="flex justify-between text-[10px] text-slate-400 mt-1 font-medium">
+              <span>50% (Sangat Sensitif)</span>
+              <span>65% (Standar Ideal)</span>
+              <span>95% (Hampir Identik)</span>
+            </div>
+          </div>
+
+          <!-- Pencarian Nama / Token dalam Hasil Komparasi -->
+          <div class="bg-white/95 rounded-xl p-3 border border-white/30 shadow-sm flex flex-col justify-between">
+            <label class="block text-xs font-bold text-slate-700 mb-1.5 flex items-center space-x-1.5">
+              <i data-lucide="search" class="w-3.5 h-3.5 text-indigo-600"></i>
+              <span>Cari Nama / Token</span>
+            </label>
+            <input 
+              type="text" 
+              x-model="compareSearchQuery" 
+              placeholder="Ketik nama atau token..."
+              class="w-full px-3 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-600"
+            >
+          </div>
+
+          <!-- Filter Kategori -->
+          <div class="bg-white/95 rounded-xl p-3 border border-white/30 shadow-sm flex flex-col justify-between">
+            <label class="block text-xs font-bold text-slate-700 mb-1.5 flex items-center space-x-1.5">
+              <i data-lucide="filter" class="w-3.5 h-3.5 text-indigo-600"></i>
+              <span>Filter Kategori</span>
+            </label>
+            <select 
+              x-model="compareCategoryFilter"
+              class="w-full px-3 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-600 font-semibold cursor-pointer"
+            >
+              <option value="all">Semua Kategori</option>
+              <option value="Pejabat TNI">Pejabat TNI</option>
+              <option value="Pejabat Luar">Pejabat Luar</option>
+              <option value="Sahabat Satsiber">Sahabat Satsiber</option>
+              <option value="VIP">VIP</option>
+              <option value="General">General</option>
+            </select>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Tampilan Jika Database Bersih / Tidak Ditemukan Pasangan Kemiripan -->
+      <template x-if="comparedPairs.length === 0">
+        <div class="bg-white rounded-2xl p-12 text-center border border-slate-200 shadow-sm space-y-3">
+          <div class="w-14 h-14 mx-auto rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+            <i data-lucide="check-circle-2" class="w-8 h-8"></i>
+          </div>
+          <h3 class="text-base font-bold text-slate-800">Database Bersih & Tidak Ditemukan Duplikat</h3>
+          <p class="text-xs text-slate-500 max-w-md mx-auto">
+            Dengan tingkat kemiripan <strong x-text="compareThreshold + '%'"></strong>, seluruh data tamu saat ini unik dan tidak ada indikasi nama ganda.
+          </p>
+          <div class="pt-2">
+            <button 
+              type="button" 
+              @click="compareThreshold = 55" 
+              class="text-xs font-bold text-indigo-600 hover:text-indigo-800 hover:underline cursor-pointer"
+            >
+              Coba turunkan batas ke 55% &rarr;
+            </button>
+          </div>
+        </div>
+      </template>
+
+      <!-- Daftar Card Pasangan Tamu Hasil Komparasi -->
+      <div class="grid grid-cols-1 gap-4" x-show="comparedPairs.length > 0">
+        <template x-for="(pair, pIdx) in comparedPairs" :key="pair.guestA.id + '-' + pair.guestB.id">
+          <div class="bg-white rounded-2xl border transition-all duration-200 p-5 shadow-sm hover:shadow-md"
+               :class="pair.isExact ? 'border-red-400 bg-red-50/20' : (pair.isHigh ? 'border-amber-300 bg-amber-50/15' : 'border-slate-200')">
+            
+            <!-- Header Kartu: Skor Kemiripan -->
+            <div class="flex flex-wrap items-center justify-between pb-3.5 mb-4 border-b border-slate-100 gap-2">
+              <div class="flex items-center space-x-2.5">
+                <span class="w-6 h-6 rounded-full bg-slate-100 text-slate-600 text-xs font-extrabold flex items-center justify-center font-mono" x-text="pIdx + 1"></span>
+                <span class="text-xs font-extrabold text-slate-700">Komparasi Pasangan Tamu</span>
+              </div>
+
+              <!-- Badge Skor Kemiripan -->
+              <div class="flex items-center space-x-2">
+                <span 
+                  :class="pair.isExact ? 'bg-red-600 text-white' : (pair.isHigh ? 'bg-amber-500 text-white' : 'bg-indigo-600 text-white')"
+                  class="px-3 py-1 rounded-full text-xs font-black shadow-sm flex items-center space-x-1"
+                >
+                  <i data-lucide="activity" class="w-3.5 h-3.5"></i>
+                  <span x-text="pair.similarity + '% Tingkat Kemiripan'"></span>
+                </span>
+                <span x-show="pair.isExact" class="px-2 py-0.5 rounded-md bg-red-100 text-red-800 text-[10px] font-bold border border-red-200">
+                  Potensi Duplikat Tinggi!
+                </span>
+              </div>
+            </div>
+
+            <!-- Perbandingan Side-by-Side (Data A vs Data B) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              
+              <!-- Tamu A -->
+              <div class="bg-slate-50/80 rounded-xl p-4 border border-slate-200 relative group hover:border-slate-300 transition-colors">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-[10px] font-extrabold px-2 py-0.5 rounded bg-slate-200 text-slate-700">Tamu #A (ID: #<span x-text="pair.guestA.id"></span>)</span>
+                  <span :class="getCategoryBadgeClass(pair.guestA.category)" class="px-2 py-0.5 rounded-full text-[10px] font-bold" x-text="pair.guestA.category || 'General'"></span>
+                </div>
+                <h4 class="text-sm font-bold text-slate-900 whitespace-pre-line leading-snug" x-text="pair.guestA.name"></h4>
+                
+                <div class="mt-3 pt-3 border-t border-slate-200/80 grid grid-cols-2 gap-2 text-[11px] text-slate-600">
+                  <div>
+                    <span class="text-slate-400 block text-[9px] uppercase font-bold">Token QR</span>
+                    <span class="font-mono font-bold text-slate-800" x-text="pair.guestA.qr_token"></span>
+                  </div>
+                  <div>
+                    <span class="text-slate-400 block text-[9px] uppercase font-bold">Status Kehadiran</span>
+                    <span :class="pair.guestA.attendance_status === 'PRESENT' ? 'text-emerald-700 font-bold' : 'text-amber-700 font-bold'" x-text="pair.guestA.attendance_status"></span>
+                  </div>
+                  <div>
+                    <span class="text-slate-400 block text-[9px] uppercase font-bold">Dibuat Pada</span>
+                    <span class="font-mono text-[10px]" x-text="formatDateTime(pair.guestA.created_at)"></span>
+                  </div>
+                  <div>
+                    <span class="text-slate-400 block text-[9px] uppercase font-bold">RSVP</span>
+                    <span class="text-[10px]" x-text="pair.guestA.rsvp_status || 'Belum Konfirmasi'"></span>
+                  </div>
+                </div>
+
+                <!-- Aksi Tamu A -->
+                <div class="mt-3 pt-2.5 flex items-center justify-end space-x-2 border-t border-slate-200/60">
+                  <button 
+                    type="button" 
+                    @click="downloadFullInvitationPdf(pair.guestA)" 
+                    class="px-2.5 py-1 rounded-lg bg-amber-100 hover:bg-amber-200 text-amber-800 text-[10px] font-bold flex items-center space-x-1 cursor-pointer transition-colors"
+                  >
+                    <i data-lucide="file-text" class="w-3 h-3"></i>
+                    <span>Cek Undangan</span>
+                  </button>
+                  <button 
+                    type="button" 
+                    @click="openQrModal(pair.guestA)" 
+                    class="px-2.5 py-1 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-700 text-[10px] font-bold flex items-center space-x-1 cursor-pointer transition-colors"
+                  >
+                    <i data-lucide="qr-code" class="w-3 h-3"></i>
+                    <span>Lihat QR</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Tamu B -->
+              <div class="bg-slate-50/80 rounded-xl p-4 border border-slate-200 relative group hover:border-slate-300 transition-colors">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-[10px] font-extrabold px-2 py-0.5 rounded bg-slate-200 text-slate-700">Tamu #B (ID: #<span x-text="pair.guestB.id"></span>)</span>
+                  <span :class="getCategoryBadgeClass(pair.guestB.category)" class="px-2 py-0.5 rounded-full text-[10px] font-bold" x-text="pair.guestB.category || 'General'"></span>
+                </div>
+                <h4 class="text-sm font-bold text-slate-900 whitespace-pre-line leading-snug" x-text="pair.guestB.name"></h4>
+                
+                <div class="mt-3 pt-3 border-t border-slate-200/80 grid grid-cols-2 gap-2 text-[11px] text-slate-600">
+                  <div>
+                    <span class="text-slate-400 block text-[9px] uppercase font-bold">Token QR</span>
+                    <span class="font-mono font-bold text-slate-800" x-text="pair.guestB.qr_token"></span>
+                  </div>
+                  <div>
+                    <span class="text-slate-400 block text-[9px] uppercase font-bold">Status Kehadiran</span>
+                    <span :class="pair.guestB.attendance_status === 'PRESENT' ? 'text-emerald-700 font-bold' : 'text-amber-700 font-bold'" x-text="pair.guestB.attendance_status"></span>
+                  </div>
+                  <div>
+                    <span class="text-slate-400 block text-[9px] uppercase font-bold">Dibuat Pada</span>
+                    <span class="font-mono text-[10px]" x-text="formatDateTime(pair.guestB.created_at)"></span>
+                  </div>
+                  <div>
+                    <span class="text-slate-400 block text-[9px] uppercase font-bold">RSVP</span>
+                    <span class="text-[10px]" x-text="pair.guestB.rsvp_status || 'Belum Konfirmasi'"></span>
+                  </div>
+                </div>
+
+                <!-- Aksi Tamu B -->
+                <div class="mt-3 pt-2.5 flex items-center justify-end space-x-2 border-t border-slate-200/60">
+                  <button 
+                    type="button" 
+                    @click="downloadFullInvitationPdf(pair.guestB)" 
+                    class="px-2.5 py-1 rounded-lg bg-amber-100 hover:bg-amber-200 text-amber-800 text-[10px] font-bold flex items-center space-x-1 cursor-pointer transition-colors"
+                  >
+                    <i data-lucide="file-text" class="w-3 h-3"></i>
+                    <span>Cek Undangan</span>
+                  </button>
+                  <button 
+                    type="button" 
+                    @click="openQrModal(pair.guestB)" 
+                    class="px-2.5 py-1 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-700 text-[10px] font-bold flex items-center space-x-1 cursor-pointer transition-colors"
+                  >
+                    <i data-lucide="qr-code" class="w-3 h-3"></i>
+                    <span>Lihat QR</span>
+                  </button>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </template>
+      </div>
+
+    </div>
+
+    
     <!-- TAB 3: EVENT MANAGEMENT -->
     <div x-show="activeTab === 'events'" x-cloak class="space-y-6">
       

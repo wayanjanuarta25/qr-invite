@@ -92,6 +92,11 @@ document.addEventListener('alpine:init', () => {
     detectedDuplicatesCount: 0,
     isFilterDuplicatesActive: false,
     allGuestsCache: [],
+    // Komparasi & Deteksi Otomatis State
+    compareThreshold: 65,
+    compareSearchQuery: '',
+    compareCategoryFilter: 'all',
+    compareSelectedPair: null,
     isQrSelectEventModalOpen: false,
     selectedBatchQrEventId: '',
     isDownloadingZip: false,
@@ -726,6 +731,55 @@ document.addEventListener('alpine:init', () => {
         }
       }
       this.detectedDuplicatesCount = seen.size;
+    },
+
+    // Getter: Daftar pasangan data tamu hasil komparasi & filter otomatis kemiripan
+    get comparedPairs() {
+      const list = this.guests || [];
+      if (list.length < 2) return [];
+
+      const threshold = parseInt(this.compareThreshold, 10) || 65;
+      const search = (this.compareSearchQuery || '').toLowerCase().trim();
+      const cat = this.compareCategoryFilter;
+
+      const pairs = [];
+
+      for (let i = 0; i < list.length; i++) {
+        const gA = list[i];
+        if (cat !== 'all' && gA.category !== cat) continue;
+
+        for (let j = i + 1; j < list.length; j++) {
+          const gB = list[j];
+          if (cat !== 'all' && gB.category !== cat) continue;
+
+          const sim = this.calculateNameSimilarity(gA.name, gB.name);
+          if (sim >= threshold) {
+            // Filter pencarian nama/instansi/token
+            if (search) {
+              const matchA = (gA.name || '').toLowerCase().includes(search) || (gA.qr_token || '').toLowerCase().includes(search);
+              const matchB = (gB.name || '').toLowerCase().includes(search) || (gB.qr_token || '').toLowerCase().includes(search);
+              if (!matchA && !matchB) continue;
+            }
+
+            pairs.push({
+              guestA: gA,
+              guestB: gB,
+              similarity: sim,
+              isExact: sim >= 99,
+              isHigh: sim >= 80
+            });
+          }
+        }
+      }
+
+      // Urutkan dari kemiripan tertinggi ke terendah
+      return pairs.sort((a, b) => b.similarity - a.similarity);
+    },
+
+    // Aksi Navigasi langsung ke Tab Komparasi Data
+    openComparisonPage() {
+      this.switchTab('compare');
+      this.$nextTick(() => { if (window.lucide) lucide.createIcons(); });
     },
 
     // Filter toggle untuk menampilkan hanya nama yang mirip/duplikat
