@@ -880,28 +880,30 @@ document.addEventListener('alpine:init', () => {
     formatDateTime(dtStr) {
       if (!dtStr) return '-';
       try {
-        const cleanStr = String(dtStr).replace('T', ' ').trim();
-        const [datePart, timePart] = cleanStr.split(' ');
-        if (datePart && datePart.includes('-') && /^\d{4}-\d{2}-\d{2}$/.test(datePart)) {
-          const [y, m, d] = datePart.split('-');
-          const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
-          const mIdx = parseInt(m, 10) - 1;
-          const monthName = months[mIdx] || m;
-          const timeFormatted = timePart ? ' ' + timePart.substring(0, 5) + ' WIB' : '';
-          return `${parseInt(d, 10)} ${monthName} ${y}${timeFormatted}`;
+        let str = String(dtStr).trim();
+        // Normalize SQLite 'YYYY-MM-DD HH:MM:SS' into UTC ISO string so JavaScript correctly adds +7h
+        if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(str)) {
+          str = str.replace(' ', 'T') + 'Z';
+        } else if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/.test(str)) {
+          str = str.replace(' ', 'T') + ':00Z';
+        } else if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/.test(str)) {
+          str = str + 'Z';
         }
-        const d = new Date(cleanStr.replace(' ', 'T'));
-        if (isNaN(d.getTime())) {
+
+        const date = new Date(str);
+        if (isNaN(date.getTime())) {
           return dtStr;
         }
-        return d.toLocaleDateString('id-ID', {
+
+        return new Intl.DateTimeFormat('id-ID', {
           timeZone: 'Asia/Jakarta',
           day: 'numeric',
           month: 'short',
           year: 'numeric',
           hour: '2-digit',
-          minute: '2-digit'
-        });
+          minute: '2-digit',
+          hour12: false
+        }).format(date) + ' WIB';
       } catch (e) {
         return dtStr;
       }

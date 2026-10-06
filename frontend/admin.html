@@ -686,7 +686,7 @@
                 <th class="py-3.5 px-4 w-12 text-center">No</th>
                 
                 <!-- Sortable Nama -->
-                <th @click="toggleSort('name')" class="py-3.5 px-4 cursor-pointer hover:bg-slate-100 transition-colors">
+                <th @click="toggleSort('name')" class="py-3.5 px-5 cursor-pointer hover:bg-slate-100 transition-colors min-w-[280px] lg:min-w-[340px]">
                   <div class="flex items-center space-x-1">
                     <span>Nama Tamu</span>
                     <span class="text-xs" :class="sortBy === 'name' ? 'text-red-600 font-extrabold' : 'text-slate-400'" x-text="sortBy === 'name' ? (sortDir === 'asc' ? '▲' : '▼') : '↕'"></span>
@@ -777,7 +777,7 @@
                   <td class="py-3.5 px-4 text-center text-slate-400 font-mono" x-text="(currentPage - 1) * perPage + index + 1"></td>
                   
                   <!-- Guest Name -->
-                  <td class="py-3.5 px-4 cursor-pointer select-none group" @dblclick="startInlineEdit(g, 'name')" title="Klik 2x untuk edit cepat">
+                  <td class="py-3.5 px-5 cursor-pointer select-none group min-w-[280px] lg:min-w-[340px]" @dblclick="startInlineEdit(g, 'name')" title="Klik 2x untuk edit cepat">
                     <template x-if="editingCell && editingCell.guestId === g.id && editingCell.field === 'name'">
                       <textarea 
                         x-model="editingCell.value" 
@@ -786,12 +786,12 @@
                         @keydown.escape="cancelInlineEdit()"
                         x-init="$nextTick(() => { $el.focus(); $el.select(); })"
                         rows="2"
-                        class="w-full p-1.5 text-xs font-bold text-slate-900 bg-amber-50/80 border-2 border-amber-400 rounded-lg focus:outline-none shadow-inner"
+                        class="w-full p-2 text-sm font-bold text-slate-900 bg-amber-50/80 border-2 border-amber-400 rounded-lg focus:outline-none shadow-inner"
                       ></textarea>
                     </template>
                     <template x-if="!editingCell || editingCell.guestId !== g.id || editingCell.field !== 'name'">
                       <div class="group-hover:bg-amber-50/50 p-1 -m-1 rounded transition-colors">
-                        <div class="font-bold text-slate-900 whitespace-pre-line leading-snug" x-text="g.name"></div>
+                        <div class="font-bold text-slate-900 text-sm sm:text-base whitespace-pre-line leading-snug tracking-tight" x-text="g.name"></div>
                         <div class="text-[10px] text-slate-400 font-mono mt-0.5" x-text="'ID: #' + g.id + ' � Token: ' + g.qr_token"></div>
                       </div>
                     </template>
