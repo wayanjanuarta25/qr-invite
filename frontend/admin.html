@@ -52,7 +52,7 @@
   <!-- Top Navbar -->
   <div class="merah-putih-ribbon w-full h-1.5 bg-gradient-to-r from-red-600 via-white to-red-600"></div>
   <header class="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-slate-200">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="w-full max-w-[98%] mx-auto px-2 sm:px-4 lg:px-6">
       <div class="flex items-center justify-between h-16">
         
         <!-- Logo & Brand -->
@@ -126,7 +126,7 @@
     </div>
   </header>
 
-  <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8">
+  <div class="w-full max-w-[98%] mx-auto px-2 sm:px-4 lg:px-6 py-4 sm:py-6">
     
     <!-- Mobile & Tablet Event Filter Bar (Visible only on < md) -->
     <div class="md:hidden flex items-center space-x-2 bg-white p-2.5 rounded-2xl border border-slate-200 shadow-sm mb-4">
@@ -149,7 +149,7 @@
       <!-- Tabs (Horizontally scrollable on mobile) -->
       <nav class="flex space-x-1 bg-white p-1 sm:p-1.5 rounded-2xl border border-slate-200 shadow-sm overflow-x-auto max-w-full shrink-0">
         <button 
-          @click="activeTab = 'dashboard'; $nextTick(() => lucide.createIcons())"
+          @click="switchTab('dashboard'); $nextTick(() => lucide.createIcons())"
           :class="activeTab === 'dashboard' ? 'bg-red-600 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'"
           class="flex items-center space-x-1.5 sm:space-x-2 px-3 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap"
         >
@@ -158,7 +158,7 @@
         </button>
 
         <button 
-          @click="activeTab = 'guests'; $nextTick(() => lucide.createIcons())"
+          @click="switchTab('guests'); $nextTick(() => lucide.createIcons())"
           :class="activeTab === 'guests' ? 'bg-red-600 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'"
           class="flex items-center space-x-1.5 sm:space-x-2 px-3 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap"
         >
@@ -172,7 +172,7 @@
         </button>
 
         <button 
-          @click="activeTab = 'events'; $nextTick(() => lucide.createIcons())"
+          @click="switchTab('events'); $nextTick(() => lucide.createIcons())"
           :class="activeTab === 'events' ? 'bg-red-600 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'"
           class="flex items-center space-x-1.5 sm:space-x-2 px-3 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap"
         >
@@ -1026,7 +1026,7 @@
             <!-- Footer Actions -->
             <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between gap-2 flex-wrap">
               <button 
-                @click="selectedEventId = String(ev.id); activeTab = 'guests'"
+                @click="selectedEventId = String(ev.id); switchTab('guests')"
                 class="text-xs font-bold text-red-600 hover:text-red-700 flex items-center space-x-1 cursor-pointer"
               >
                 <span>Kelola Tamu</span>
@@ -1232,7 +1232,7 @@
           </select>
         </div>
 
-        <!-- Full Name -->
+        <!-- 1. Nama Tamu -->
         <div>
           <div class="flex items-center justify-between mb-1.5">
             <label class="block text-xs font-bold text-slate-700">Nama Lengkap Tamu (Full Name)</label>
@@ -1274,20 +1274,9 @@
           </div>
         </div>
 
-        <!-- Phone Number -->
+        <!-- 2. Kategori (Internal) -->
         <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1.5">Nomor WhatsApp / Telepon (Phone Number)</label>
-          <input 
-            type="text" 
-            x-model="guestForm.phone" 
-            placeholder="081234567890"
-            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-600"
-          >
-        </div>
-
-        <!-- Category -->
-        <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1.5">Kategori Tamu (Klasifikasi Internal)</label>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">Kategori (Internal Panitia)</label>
           <select 
             x-model="guestForm.category" 
             class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-600 font-semibold"
@@ -1298,59 +1287,70 @@
             <option value="VIP">VIP</option>
             <option value="General">General</option>
           </select>
-          <p class="text-[10px] text-slate-400 mt-1 italic">*Kategori ini bersifat rahasia/internal sistem dan tidak ditampilkan kepada tamu pada undangan fisik maupun digital.</p>
+          <p class="text-[10px] text-slate-400 mt-1 italic">*Kategori bersifat internal/rahasia dan tidak tampak pada undangan fisik/digital tamu.</p>
         </div>
 
-        <!-- Grid Sumber & Contact Person -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1.5">Sumber (Opsional)</label>
-            <input 
-              type="text" 
-              x-model="guestForm.source" 
-              placeholder="Contoh: Rekomendasi Danpus, Panitia, dll"
-              class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-600"
-            >
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1.5">Contact Person (CP)</label>
-            <input 
-              type="text" 
-              x-model="guestForm.contact_person" 
-              placeholder="Nama/Kontak Ajudan atau Staf"
-              class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-600"
-            >
-          </div>
+        <!-- 3. Sumber -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">Sumber</label>
+          <input 
+            type="text" 
+            x-model="guestForm.source" 
+            placeholder="Contoh: Rekomendasi Danpus, Panitia Sie A, dll"
+            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-600"
+          >
         </div>
 
-        <!-- Grid Status Undangan & Konfirmasi Kehadiran -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1.5">Status Undangan</label>
-            <select 
-              x-model="guestForm.invitation_status" 
-              class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-600 font-semibold"
-            >
-              <option value="Belum Dikirim">Belum Dikirim (Default)</option>
-              <option value="Terkirim">Terkirim</option>
-              <option value="Sudah Dijawab">Sudah Dijawab</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1.5">Konfirmasi Kehadiran</label>
-            <select 
-              x-model="guestForm.rsvp_status" 
-              class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-600 font-semibold"
-            >
-              <option value="Belum Konfirmasi">Belum Konfirmasi (Default)</option>
-              <option value="Dapat Hadir">Dapat Hadir</option>
-              <option value="Tidak Dapat Hadir">Tidak Dapat Hadir</option>
-              <option value="Belum Dapat Memastikan">Belum Dapat Memastikan</option>
-            </select>
-          </div>
+        <!-- 4. Contact Person -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">Contact Person (CP)</label>
+          <input 
+            type="text" 
+            x-model="guestForm.contact_person" 
+            placeholder="Nama / Kontak Staf atau Ajudan CP"
+            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-600"
+          >
         </div>
 
-        <!-- Keterangan Tambahan -->
+        <!-- 5. Nomor Telfon -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">Nomor Telfon / WA</label>
+          <input 
+            type="text" 
+            x-model="guestForm.phone" 
+            placeholder="081234567890"
+            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-600"
+          >
+        </div>
+
+        <!-- 6. Status Undangan -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">Status Undangan</label>
+          <select 
+            x-model="guestForm.invitation_status" 
+            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-600 font-semibold"
+          >
+            <option value="Belum Dikirim">Belum Dikirim (Default)</option>
+            <option value="Terkirim">Terkirim</option>
+            <option value="Sudah Dijawab">Sudah Dijawab</option>
+          </select>
+        </div>
+
+        <!-- 7. Konfirmasi Kehadiran -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">Konfirmasi Kehadiran</label>
+          <select 
+            x-model="guestForm.rsvp_status" 
+            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-600 font-semibold"
+          >
+            <option value="Belum Konfirmasi">Belum Konfirmasi (Default)</option>
+            <option value="Dapat Hadir">Dapat Hadir</option>
+            <option value="Tidak Dapat Hadir">Tidak Dapat Hadir</option>
+            <option value="Belum Dapat Memastikan">Belum Dapat Memastikan</option>
+          </select>
+        </div>
+
+        <!-- 8. Keterangan -->
         <div>
           <label class="block text-xs font-bold text-slate-700 mb-1.5">Keterangan</label>
           <textarea 
@@ -1361,16 +1361,16 @@
           ></textarea>
         </div>
 
-        <!-- Status (in edit mode) -->
+        <!-- 9. Status Kehadiran Acara (Check-in saat mode edit) -->
         <template x-if="guestModalMode === 'edit'">
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1.5">Status Kehadiran</label>
+            <label class="block text-xs font-bold text-slate-700 mb-1.5">Kehadiran Acara (Check-in)</label>
             <select 
               x-model="guestForm.attendance_status" 
-              class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-600"
+              class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-600 font-semibold"
             >
-              <option value="PENDING">PENDING (Belum Hadir)</option>
-              <option value="PRESENT">PRESENT (Sudah Hadir)</option>
+              <option value="PENDING">Belum Hadir (PENDING)</option>
+              <option value="PRESENT">Sudah Hadir (PRESENT)</option>
             </select>
           </div>
         </template>

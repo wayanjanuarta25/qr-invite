@@ -156,17 +156,22 @@ exports.createGuest = async (req, res) => {
     const qr_image = await createQrImage(qr_token, req);
 
     const stmt = db.prepare(`
-      INSERT INTO guests (event_id, name, phone, category, qr_token, qr_image, attendance_status)
-      VALUES (?, ?, ?, ?, ?, ?, 'PENDING')
+      INSERT INTO guests (event_id, name, phone, category, qr_token, qr_image, attendance_status, source, contact_person, invitation_status, rsvp_status, notes)
+      VALUES (?, ?, ?, ?, ?, ?, 'PENDING', ?, ?, ?, ?, ?)
     `);
 
     const result = stmt.run(
       event_id,
       name.trim(),
       (phone || '').trim(),
-      category || 'General',
+      category || 'Pejabat TNI',
       qr_token,
-      qr_image
+      qr_image,
+      (source || '').trim(),
+      (contact_person || '').trim(),
+      invitation_status || 'Belum Dikirim',
+      rsvp_status || 'Belum Konfirmasi',
+      (notes || '').trim()
     );
 
     const newGuest = db.prepare(`
@@ -211,7 +216,12 @@ exports.updateGuest = (req, res) => {
         phone = COALESCE(?, phone),
         category = COALESCE(?, category),
         attendance_status = COALESCE(?, attendance_status),
-        arrival_time = ?
+        arrival_time = ?,
+        source = COALESCE(?, source),
+        contact_person = COALESCE(?, contact_person),
+        invitation_status = COALESCE(?, invitation_status),
+        rsvp_status = COALESCE(?, rsvp_status),
+        notes = COALESCE(?, notes)
       WHERE id = ?
     `).run(
       name !== undefined ? name.trim() : null,
@@ -219,6 +229,11 @@ exports.updateGuest = (req, res) => {
       category !== undefined ? category : null,
       attendance_status !== undefined ? attendance_status : null,
       arrival_time,
+      source !== undefined ? source.trim() : null,
+      contact_person !== undefined ? contact_person.trim() : null,
+      invitation_status !== undefined ? invitation_status : null,
+      rsvp_status !== undefined ? rsvp_status : null,
+      notes !== undefined ? notes.trim() : null,
       id
     );
 

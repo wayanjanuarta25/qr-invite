@@ -5,7 +5,7 @@
 document.addEventListener('alpine:init', () => {
   Alpine.data('adminDashboard', () => ({
     // Current Active Tab: 'dashboard' | 'guests' | 'events'
-    activeTab: 'dashboard',
+    activeTab: localStorage.getItem('qr_invite_admin_tab') || 'guests',
 
     // User session
     currentUser: null,
@@ -806,6 +806,13 @@ document.addEventListener('alpine:init', () => {
     },
 
         // Toggle Sorting Column
+        // Switch and persist active tab in localStorage
+    switchTab(tabName) {
+      this.activeTab = tabName;
+      localStorage.setItem('qr_invite_admin_tab', tabName);
+      this.$nextTick(() => { if (window.lucide) lucide.createIcons(); });
+    },
+
     toggleSort(field) {
       if (this.sortBy === field) {
         this.sortDir = this.sortDir === 'asc' ? 'desc' : 'asc';
