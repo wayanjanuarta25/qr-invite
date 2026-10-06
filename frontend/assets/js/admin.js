@@ -819,8 +819,7 @@ document.addEventListener('alpine:init', () => {
       const start = textarea.selectionStart;
       const end = textarea.selectionEnd;
       const val = textarea.value;
-      textarea.value = val.substring(0, start) + '
-' + val.substring(end);
+      textarea.value = val.substring(0, start) + '\n' + val.substring(end);
       this.editingCell.value = textarea.value;
       this.$nextTick(() => {
         textarea.selectionStart = textarea.selectionEnd = start + 1;
