@@ -571,16 +571,26 @@ document.addEventListener('alpine:init', () => {
 
     // Download batch ZIP of all invitation PDFs
     async downloadBatchInvitationsPdf() {
-      let activeEventId = this.filters.event_id;
-      if (!activeEventId || activeEventId === "all") {
-        if (this.events && this.events.length > 0) {
-          activeEventId = this.events[0].id;
-        } else {
-          App.toast("Belum ada acara yang tersedia.", "warning");
-          return;
+      let targetEventId = this.filters.event_id;
+      
+      // Jika filter masih 'all' atau kosong: cari acara yang memiliki tamu
+      if (!targetEventId || targetEventId === 'all') {
+        const eventWithGuests = this.events.find(e => (e.total_guests || 0) > 0);
+        if (eventWithGuests) {
+          targetEventId = eventWithGuests.id;
+        } else if (this.guests && this.guests.length > 0) {
+          targetEventId = this.guests[0].event_id;
+        } else if (this.events && this.events.length > 0) {
+          targetEventId = this.events[0].id;
         }
       }
-      this.executeDownloadInvitationsZip(activeEventId);
+
+      if (!targetEventId) {
+        App.toast('Belum ada acara atau data tamu yang tersedia.', 'warning');
+        return;
+      }
+
+      this.executeDownloadInvitationsZip(targetEventId);
     },
 
     async executeDownloadInvitationsZip(eventId) {

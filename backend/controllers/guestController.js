@@ -698,19 +698,32 @@ exports.downloadGuestInvitationPdfByToken = async (req, res) => {
 
 exports.downloadEventInvitationsZip = async (req, res) => {
   try {
-    const eventId = req.params.id || req.query.event_id;
+    let eventId = req.params.id || req.query.event_id;
+    let event = null;
+    let guests = [];
+
     if (!eventId || eventId === 'all') {
-      return res.status(400).json({ error: 'Pilih acara tertentu untuk mengunduh Undangan.' });
+      // Jika event_id all atau tidak dispesifikasikan, ambil acara pertama yang ada tamu
+      const firstEventWithGuests = db.prepare('SELECT e.*, COUNT(g.id) as cnt FROM events e JOIN guests g ON e.id = g.event_id GROUP BY e.id ORDER BY cnt DESC LIMIT 1').get();
+      if (firstEventWithGuests) {
+        event = firstEventWithGuests;
+        eventId = event.id;
+        guests = db.prepare('SELECT * FROM guests WHERE event_id = ? ORDER BY name ASC').all(eventId);
+      } else {
+        // Ambil semua tamu dari semua acara
+        guests = db.prepare('SELECT * FROM guests ORDER BY name ASC').all();
+        event = { name: 'Semua_Acara' };
+      }
+    } else {
+      event = db.prepare('SELECT * FROM events WHERE id = ?').get(eventId);
+      if (!event) {
+        return res.status(404).json({ error: 'Acara tidak ditemukan.' });
+      }
+      guests = db.prepare('SELECT * FROM guests WHERE event_id = ? ORDER BY name ASC').all(eventId);
     }
 
-    const event = db.prepare('SELECT * FROM events WHERE id = ?').get(eventId);
-    if (!event) {
-      return res.status(404).json({ error: 'Acara tidak ditemukan.' });
-    }
-
-    const guests = db.prepare('SELECT * FROM guests WHERE event_id = ? ORDER BY name ASC').all(eventId);
     if (!guests || guests.length === 0) {
-      return res.status(400).json({ error: 'Belum ada tamu terdaftar pada acara "' + event.name + '".' });
+      return res.status(400).json({ error: 'Belum ada tamu yang terdaftar di sistem.' });
     }
 
     const zip = new JSZip();
