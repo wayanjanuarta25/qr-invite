@@ -1,3 +1,5 @@
+const fs = require('fs');
+const path = require('path');
 const bcrypt = require('bcryptjs');
 const db = require('../database/db');
 const { logActivity } = require('../utils/logger');
@@ -46,6 +48,30 @@ exports.createUser = (req, res) => {
     `);
 
     const result = stmt.run(name.trim(), cleanEmail, hashedPassword, cleanRole);
+
+    // Auto-sync into seed_data.json so created user is permanently preserved across deployments
+    try {
+      const seedPath = path.join(__dirname, '../database/seed_data.json');
+      if (fs.existsSync(seedPath)) {
+        const seedData = JSON.parse(fs.readFileSync(seedPath, 'utf8'));
+        if (!seedData.users) seedData.users = [];
+        const existInSeed = seedData.users.find(u => (u.email || '').toLowerCase() === cleanEmail);
+        if (!existInSeed) {
+          seedData.users.push({
+            id: Number(result.lastInsertRowid),
+            name: name.trim(),
+            email: cleanEmail,
+            password: hashedPassword,
+            role: cleanRole,
+            status: 'ACTIVE',
+            created_at: new Date().toISOString().replace('T', ' ').substring(0, 19)
+          });
+          fs.writeFileSync(seedPath, JSON.stringify(seedData, null, 2), 'utf8');
+        }
+      }
+    } catch (seedErr) {
+      console.error('Auto-sync seed_data users error:', seedErr);
+    }
 
     logActivity(req, 'USER_CREATED', `Membuat akun baru: ${cleanEmail} (${cleanRole})`);
 
@@ -118,6 +144,25 @@ exports.updateUser = (req, res) => {
 
     logActivity(req, 'USER_UPDATED', `Mengubah profil/role akun ID: #${id} (${cleanEmail})`);
 
+    // Sync seed_data.json on update
+    try {
+      const seedPath = path.join(__dirname, '../database/seed_data.json');
+      if (fs.existsSync(seedPath)) {
+        const seedData = JSON.parse(fs.readFileSync(seedPath, 'utf8'));
+        if (seedData.users) {
+          const su = seedData.users.find(u => String(u.id) === String(id) || (u.email || '').toLowerCase() === user.email.toLowerCase());
+          if (su) {
+            if (name) su.name = name.trim();
+            if (email) su.email = email.trim().toLowerCase();
+            if (role) su.role = role;
+            if (status) su.status = status;
+            if (password && password.trim()) su.password = hashedPassword;
+            fs.writeFileSync(seedPath, JSON.stringify(seedData, null, 2), 'utf8');
+          }
+        }
+      }
+    } catch (e) {}
+
     return res.json({
       success: true,
       message: 'Data akun berhasil diperbarui.'
@@ -149,6 +194,18 @@ exports.deleteUser = (req, res) => {
     db.prepare('DELETE FROM users WHERE id = ?').run(id);
 
     logActivity(req, 'USER_DELETED', `Menghapus akun: ${user.email} (ID: #${id})`);
+
+    // Sync seed_data.json on delete
+    try {
+      const seedPath = path.join(__dirname, '../database/seed_data.json');
+      if (fs.existsSync(seedPath)) {
+        const seedData = JSON.parse(fs.readFileSync(seedPath, 'utf8'));
+        if (seedData.users) {
+          seedData.users = seedData.users.filter(u => String(u.id) !== String(id) && (u.email || '').toLowerCase() !== user.email.toLowerCase());
+          fs.writeFileSync(seedPath, JSON.stringify(seedData, null, 2), 'utf8');
+        }
+      }
+    } catch (e) {}
 
     return res.json({
       success: true,

@@ -175,7 +175,23 @@ async function initSeed() {
 
       if (insertedCount > 0) {
         console.log(`[DB SYNC] Successfully synced ${insertedCount} new guests from seed_data.json!`);
+    }
+
+    // 2. Ensure seed users exist in database (Never delete or overwrite existing users)
+    if (data.users && Array.isArray(data.users)) {
+      const checkUser = db.prepare("SELECT id FROM users WHERE LOWER(email) = ?");
+      const insertUser = db.prepare("INSERT INTO users (name, email, password, role, status) VALUES (?, ?, ?, ?, ?)");
+      for (const u of data.users) {
+        const em = (u.email || '').trim().toLowerCase();
+        if (!em) continue;
+        if (!checkUser.get(em)) {
+          const pass = (u.password && u.password.startsWith('$')) ? u.password : bcrypt.hashSync(u.password || 'admin123', 10);
+          insertUser.run(u.name || 'User', em, pass, u.role || 'User', u.status || 'ACTIVE');
+          console.log('[DB SYNC] Preserved user account from seed: ' + em);
+        }
       }
+    }
+
     }
 
     // 2. Ensure admin@digitalinvite.com exists and is always an active Administrator
