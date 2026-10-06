@@ -544,7 +544,7 @@ document.addEventListener('alpine:init', () => {
       if (!guest || !guest.id) return;
       App.toast("Sedang membuat file PDF undangan resmi...", "info");
       try {
-        const token = localStorage.getItem("token");
+        const token = App.getToken();
         const res = await fetch("/api/guests/" + guest.id + "/invitation-pdf", {
           headers: { "Authorization": "Bearer " + token }
         });
@@ -589,7 +589,7 @@ document.addEventListener('alpine:init', () => {
     async executeDownloadInvitationsZip(eventId) {
       App.toast("Sedang memproses seluruh undangan PDF...", "info");
       try {
-        const token = localStorage.getItem("token");
+        const token = App.getToken();
         const res = await fetch("/api/guests/export/invitations-zip?event_id=" + eventId, {
           headers: { "Authorization": "Bearer " + token }
         });
