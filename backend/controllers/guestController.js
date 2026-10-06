@@ -132,7 +132,7 @@ exports.getGuestById = (req, res) => {
 
 exports.createGuest = async (req, res) => {
   try {
-    const { event_id, name, phone, category } = req.body;
+    const { event_id, name, phone, category, source, contact_person, invitation_status, rsvp_status, notes } = req.body;
 
     if (!event_id || !name) {
       return res.status(400).json({ error: 'ID Acara dan Nama Tamu wajib diisi.' });
@@ -190,7 +190,7 @@ exports.createGuest = async (req, res) => {
 exports.updateGuest = (req, res) => {
   try {
     const { id } = req.params;
-    const { name, phone, category, attendance_status } = req.body;
+    const { name, phone, category, attendance_status, source, contact_person, invitation_status, rsvp_status, notes } = req.body;
 
     const guest = db.prepare('SELECT * FROM guests WHERE id = ?').get(id);
     if (!guest) {

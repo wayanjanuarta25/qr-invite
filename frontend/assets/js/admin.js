@@ -52,7 +52,12 @@ document.addEventListener('alpine:init', () => {
       event_id: '',
       name: '',
       phone: '',
-      category: 'General',
+      category: 'Pejabat TNI',
+      source: '',
+      contact_person: '',
+      invitation_status: 'Belum Dikirim',
+      rsvp_status: 'Belum Konfirmasi',
+      notes: '',
       attendance_status: 'PENDING'
     },
 
@@ -692,22 +697,47 @@ document.addEventListener('alpine:init', () => {
       this.$nextTick(() => { if (window.lucide) lucide.createIcons(); });
     },
 
+        // Quick inline update for guest table fields (Status Undangan, RSVP)
+    async updateGuestField(guest, fieldName, newValue) {
+      try {
+        guest[fieldName] = newValue;
+        const payload = {
+          name: guest.name,
+          phone: guest.phone,
+          category: guest.category,
+          source: guest.source,
+          contact_person: guest.contact_person,
+          invitation_status: guest.invitation_status,
+          rsvp_status: guest.rsvp_status,
+          notes: guest.notes,
+          attendance_status: guest.attendance_status
+        };
+        payload[fieldName] = newValue;
+
+        await App.api('/api/guests/' + guest.id, {
+          method: 'PUT',
+          body: JSON.stringify(payload)
+        });
+        App.toast('Berhasil memperbarui ' + fieldName.replace('_', ' ') + '!', 'success');
+      } catch (err) {
+        console.error('Update guest field error:', err);
+        App.toast('Gagal memperbarui data tamu: ' + err.message, 'error');
+        await this.loadGuests();
+      }
+    },
+
     printQrCard() {
       window.print();
     },
 
     // Category styling helper
     getCategoryBadgeClass(category) {
-      switch ((category || '').toLowerCase()) {
-        case 'vip':
-          return 'bg-amber-100 text-amber-800 border-amber-300';
-        case 'family':
-          return 'bg-purple-100 text-purple-800 border-purple-300';
-        case 'friend':
-          return 'bg-blue-100 text-blue-800 border-blue-300';
-        default:
-          return 'bg-slate-100 text-slate-800 border-slate-300';
-      }
+      const cat = (category || '').toLowerCase();
+      if (cat.includes('tni')) return 'bg-red-100 text-red-800 border-red-300';
+      if (cat.includes('luar')) return 'bg-sky-100 text-sky-800 border-sky-300';
+      if (cat.includes('sahabat') || cat.includes('satsiber')) return 'bg-emerald-100 text-emerald-800 border-emerald-300';
+      if (cat.includes('vip')) return 'bg-amber-100 text-amber-800 border-amber-300';
+      return 'bg-slate-100 text-slate-800 border-slate-300';
     },
 
     formatDateTime(dtStr) {

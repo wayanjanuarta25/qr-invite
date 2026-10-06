@@ -27,6 +27,11 @@ CREATE TABLE IF NOT EXISTS guests (
     qr_image TEXT,
     attendance_status TEXT DEFAULT 'PENDING',
     arrival_time DATETIME,
+    source TEXT DEFAULT '',
+    contact_person TEXT DEFAULT '',
+    invitation_status TEXT DEFAULT 'Belum Dikirim',
+    rsvp_status TEXT DEFAULT 'Belum Konfirmasi',
+    notes TEXT DEFAULT '',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE
 );
