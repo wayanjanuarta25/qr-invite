@@ -611,18 +611,76 @@
         <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse">
             <thead>
-              <tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">
+              <tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap select-none">
                 <th class="py-3.5 px-4 w-12 text-center">No</th>
-                <th class="py-3.5 px-4">Nama Tamu</th>
-                <th class="py-3.5 px-4">Kategori (Internal)</th>
-                <th class="py-3.5 px-4">Sumber</th>
-                <th class="py-3.5 px-4">Contact Person</th>
-                <th class="py-3.5 px-4">Nomor Telfon</th>
-                <th class="py-3.5 px-4">Status Undangan</th>
-                <th class="py-3.5 px-4">Konfirmasi Kehadiran</th>
+                
+                <!-- Sortable Nama -->
+                <th @click="toggleSort('name')" class="py-3.5 px-4 cursor-pointer hover:bg-slate-100 transition-colors">
+                  <div class="flex items-center space-x-1">
+                    <span>Nama Tamu</span>
+                    <span class="text-xs" :class="sortBy === 'name' ? 'text-red-600 font-extrabold' : 'text-slate-400'" x-text="sortBy === 'name' ? (sortDir === 'asc' ? '▲' : '▼') : '↕'"></span>
+                  </div>
+                </th>
+
+                <!-- Sortable Kategori -->
+                <th @click="toggleSort('category')" class="py-3.5 px-4 cursor-pointer hover:bg-slate-100 transition-colors">
+                  <div class="flex items-center space-x-1">
+                    <span>Kategori (Internal)</span>
+                    <span class="text-xs" :class="sortBy === 'category' ? 'text-red-600 font-extrabold' : 'text-slate-400'" x-text="sortBy === 'category' ? (sortDir === 'asc' ? '▲' : '▼') : '↕'"></span>
+                  </div>
+                </th>
+
+                <!-- Sortable Sumber -->
+                <th @click="toggleSort('source')" class="py-3.5 px-4 cursor-pointer hover:bg-slate-100 transition-colors">
+                  <div class="flex items-center space-x-1">
+                    <span>Sumber</span>
+                    <span class="text-xs" :class="sortBy === 'source' ? 'text-red-600 font-extrabold' : 'text-slate-400'" x-text="sortBy === 'source' ? (sortDir === 'asc' ? '▲' : '▼') : '↕'"></span>
+                  </div>
+                </th>
+
+                <!-- Sortable Contact Person -->
+                <th @click="toggleSort('contact_person')" class="py-3.5 px-4 cursor-pointer hover:bg-slate-100 transition-colors">
+                  <div class="flex items-center space-x-1">
+                    <span>Contact Person</span>
+                    <span class="text-xs" :class="sortBy === 'contact_person' ? 'text-red-600 font-extrabold' : 'text-slate-400'" x-text="sortBy === 'contact_person' ? (sortDir === 'asc' ? '▲' : '▼') : '↕'"></span>
+                  </div>
+                </th>
+
+                <!-- Sortable Nomor Telfon -->
+                <th @click="toggleSort('phone')" class="py-3.5 px-4 cursor-pointer hover:bg-slate-100 transition-colors">
+                  <div class="flex items-center space-x-1">
+                    <span>Nomor Telfon</span>
+                    <span class="text-xs" :class="sortBy === 'phone' ? 'text-red-600 font-extrabold' : 'text-slate-400'" x-text="sortBy === 'phone' ? (sortDir === 'asc' ? '▲' : '▼') : '↕'"></span>
+                  </div>
+                </th>
+
+                <!-- Sortable Status Undangan -->
+                <th @click="toggleSort('invitation_status')" class="py-3.5 px-4 cursor-pointer hover:bg-slate-100 transition-colors">
+                  <div class="flex items-center space-x-1">
+                    <span>Status Undangan</span>
+                    <span class="text-xs" :class="sortBy === 'invitation_status' ? 'text-red-600 font-extrabold' : 'text-slate-400'" x-text="sortBy === 'invitation_status' ? (sortDir === 'asc' ? '▲' : '▼') : '↕'"></span>
+                  </div>
+                </th>
+
+                <!-- Sortable Konfirmasi Kehadiran -->
+                <th @click="toggleSort('rsvp_status')" class="py-3.5 px-4 cursor-pointer hover:bg-slate-100 transition-colors">
+                  <div class="flex items-center space-x-1">
+                    <span>Konfirmasi Kehadiran</span>
+                    <span class="text-xs" :class="sortBy === 'rsvp_status' ? 'text-red-600 font-extrabold' : 'text-slate-400'" x-text="sortBy === 'rsvp_status' ? (sortDir === 'asc' ? '▲' : '▼') : '↕'"></span>
+                  </div>
+                </th>
+
                 <th class="py-3.5 px-4">Keterangan</th>
                 <th class="py-3.5 px-4 text-center">QR Code</th>
-                <th class="py-3.5 px-4">Status Kehadiran</th>
+
+                <!-- Sortable Kehadiran Acara -->
+                <th @click="toggleSort('attendance_status')" class="py-3.5 px-4 cursor-pointer hover:bg-slate-100 transition-colors">
+                  <div class="flex items-center space-x-1">
+                    <span>Kehadiran Acara</span>
+                    <span class="text-xs" :class="sortBy === 'attendance_status' ? 'text-red-600 font-extrabold' : 'text-slate-400'" x-text="sortBy === 'attendance_status' ? (sortDir === 'asc' ? '▲' : '▼') : '↕'"></span>
+                  </div>
+                </th>
+
                 <th class="py-3.5 px-4 text-center">Aksi</th>
               </tr>
             </thead>
@@ -687,14 +745,14 @@
                       class="text-[11px] font-bold rounded-lg px-2.5 py-1.5 border cursor-pointer focus:outline-none focus:ring-1 focus:ring-red-600 transition-all"
                       :class="{
                         'bg-slate-50 text-slate-600 border-slate-200': !g.rsvp_status || g.rsvp_status === 'Belum Konfirmasi',
-                        'bg-emerald-50 text-emerald-800 border-emerald-300': g.rsvp_status === 'Hadir',
-                        'bg-rose-50 text-rose-700 border-rose-300': g.rsvp_status === 'Tidak Hadir',
+                        'bg-emerald-50 text-emerald-800 border-emerald-300': g.rsvp_status === 'Dapat Hadir',
+                        'bg-rose-50 text-rose-700 border-rose-300': g.rsvp_status === 'Tidak Dapat Hadir',
                         'bg-amber-50 text-amber-800 border-amber-300': g.rsvp_status === 'Belum Dapat Memastikan'
                       }"
                     >
                       <option value="Belum Konfirmasi">Belum Konfirmasi</option>
-                      <option value="Hadir">Hadir</option>
-                      <option value="Tidak Hadir">Tidak Hadir</option>
+                      <option value="Dapat Hadir">Dapat Hadir</option>
+                      <option value="Tidak Dapat Hadir">Tidak Dapat Hadir</option>
                       <option value="Belum Dapat Memastikan">Belum Dapat Memastikan</option>
                     </select>
                   </td>
@@ -1241,6 +1299,66 @@
             <option value="General">General</option>
           </select>
           <p class="text-[10px] text-slate-400 mt-1 italic">*Kategori ini bersifat rahasia/internal sistem dan tidak ditampilkan kepada tamu pada undangan fisik maupun digital.</p>
+        </div>
+
+        <!-- Grid Sumber & Contact Person -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1.5">Sumber (Opsional)</label>
+            <input 
+              type="text" 
+              x-model="guestForm.source" 
+              placeholder="Contoh: Rekomendasi Danpus, Panitia, dll"
+              class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-600"
+            >
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1.5">Contact Person (CP)</label>
+            <input 
+              type="text" 
+              x-model="guestForm.contact_person" 
+              placeholder="Nama/Kontak Ajudan atau Staf"
+              class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-600"
+            >
+          </div>
+        </div>
+
+        <!-- Grid Status Undangan & Konfirmasi Kehadiran -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1.5">Status Undangan</label>
+            <select 
+              x-model="guestForm.invitation_status" 
+              class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-600 font-semibold"
+            >
+              <option value="Belum Dikirim">Belum Dikirim (Default)</option>
+              <option value="Terkirim">Terkirim</option>
+              <option value="Sudah Dijawab">Sudah Dijawab</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1.5">Konfirmasi Kehadiran</label>
+            <select 
+              x-model="guestForm.rsvp_status" 
+              class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-600 font-semibold"
+            >
+              <option value="Belum Konfirmasi">Belum Konfirmasi (Default)</option>
+              <option value="Dapat Hadir">Dapat Hadir</option>
+              <option value="Tidak Dapat Hadir">Tidak Dapat Hadir</option>
+              <option value="Belum Dapat Memastikan">Belum Dapat Memastikan</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Keterangan Tambahan -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">Keterangan</label>
+          <textarea 
+            x-model="guestForm.notes" 
+            rows="2"
+            placeholder="Catatan khusus, nomor meja, permintaan VIP, dll"
+            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-600 resize-none"
+          ></textarea>
         </div>
 
         <!-- Status (in edit mode) -->

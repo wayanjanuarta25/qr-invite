@@ -82,6 +82,8 @@ document.addEventListener('alpine:init', () => {
     // Batch QR Download State
         // Name similarity detection state
     similarGuestsNotice: [],
+    sortBy: 'created_at',
+    sortDir: 'desc',
     detectedDuplicatesCount: 0,
     isFilterDuplicatesActive: false,
     allGuestsCache: [],
@@ -395,11 +397,17 @@ document.addEventListener('alpine:init', () => {
         event_id: String(guest.event_id),
         name: guest.name,
         phone: guest.phone || '',
-        category: guest.category || 'General',
+        category: guest.category || 'Pejabat TNI',
+        source: guest.source || '',
+        contact_person: guest.contact_person || '',
+        invitation_status: guest.invitation_status || 'Belum Dikirim',
+        rsvp_status: guest.rsvp_status || 'Belum Konfirmasi',
+        notes: guest.notes || '',
         attendance_status: guest.attendance_status || 'PENDING'
       };
+      this.similarGuestsNotice = [];
       this.isGuestModalOpen = true;
-      this.$nextTick(() => lucide.createIcons());
+      this.$nextTick(() => { if (window.lucide) lucide.createIcons(); });
     },
 
     async saveGuest() {
@@ -797,10 +805,42 @@ document.addEventListener('alpine:init', () => {
       return Math.max(1, Math.ceil(this.guests.length / this.perPage));
     },
 
+        // Toggle Sorting Column
+    toggleSort(field) {
+      if (this.sortBy === field) {
+        this.sortDir = this.sortDir === 'asc' ? 'desc' : 'asc';
+      } else {
+        this.sortBy = field;
+        this.sortDir = 'asc';
+      }
+      this.currentPage = 1;
+      this.$nextTick(() => { if (window.lucide) lucide.createIcons(); });
+    },
+
+    get sortedGuests() {
+      if (!this.guests || this.guests.length === 0) return [];
+      const list = [...this.guests];
+      const field = this.sortBy;
+      const dir = this.sortDir === 'asc' ? 1 : -1;
+
+      return list.sort((a, b) => {
+        let valA = a[field] || '';
+        let valB = b[field] || '';
+
+        if (typeof valA === 'string') valA = valA.toLowerCase();
+        if (typeof valB === 'string') valB = valB.toLowerCase();
+
+        if (valA < valB) return -1 * dir;
+        if (valA > valB) return 1 * dir;
+        return 0;
+      });
+    },
+
     get paginatedGuests() {
-      if (!this.guests) return [];
+      const sorted = this.sortedGuests;
+      if (!sorted) return [];
       const start = (this.currentPage - 1) * this.perPage;
-      return this.guests.slice(start, start + this.perPage);
+      return sorted.slice(start, start + this.perPage);
     },
 
     get paginationStartIndex() {
