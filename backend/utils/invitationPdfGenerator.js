@@ -54,36 +54,60 @@ async function cropQrCodeBuffer(rawQrBuffer) {
 }
 
 /**
- * Split name into 1 or 2 lines fitting within maxWidth points
+ * Split name into lines fitting strictly within maxAllowedWidth (430 pt)
+ * Adjusts font size automatically if 3 lines or more so it stays comfortably inside the golden border
  */
-function fitNameToLines(name, maxW = 500) {
+function fitNameToLines(name, maxW = 430) {
   if (!font) {
     const rawLines = name.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
-    return { lines: rawLines.length > 0 ? rawLines : [name.trim()], fontSize: 31 };
+    return { lines: rawLines.length > 0 ? rawLines : [name.trim()], fontSize: 22 };
   }
   const getWidth = (str, sz) => (font.layout(str).advanceWidth / font.unitsPerEm) * sz;
 
   // Jika user secara manual memecah baris (dengan Alt+Enter / Enter di textarea nama)
   if (name.includes('\n')) {
     const explicitLines = name.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
-    let sz = 31;
-    while (sz >= 14) {
+    const lineCount = explicitLines.length;
+
+    // Skala ukuran font berdasarkan jumlah baris:
+    // 1 baris: 29 pt
+    // 2 baris: 26 pt
+    // 3 baris: 20 pt (agar pas proporsional & tidak mepet tepi kotak)
+    // >= 4 baris: 16.5 pt
+    let startingSize = 29;
+    if (lineCount === 2) {
+      startingSize = 26;
+    } else if (lineCount === 3) {
+      startingSize = 20;
+    } else if (lineCount >= 4) {
+      startingSize = 16.5;
+    }
+
+    let sz = startingSize;
+    while (sz >= 12) {
       const allFit = explicitLines.every(l => getWidth(l, sz) <= maxW);
       if (allFit) {
         return { lines: explicitLines, fontSize: sz };
       }
-      sz -= 1;
+      sz -= 0.5;
     }
     return { lines: explicitLines, fontSize: sz };
   }
 
-  // Jika satu baris biasa, lakukan auto-wrap cerdas (1 baris -> 2 baris seimbang)
-  const words = name.trim().split(/\s+/);
-  let sz = 31;
-  while (sz >= 16) {
-    if (getWidth(name, sz) <= maxW) {
-      return { lines: [name.trim()], fontSize: sz };
+  // Jika 1 baris tanpa enter manual:
+  // Coba muat 1 baris jika pas dalam batas aman (430 pt)
+  let singleSz = 29;
+  while (singleSz >= 23) {
+    if (getWidth(name.trim(), singleSz) <= maxW) {
+      return { lines: [name.trim()], fontSize: singleSz };
     }
+    singleSz -= 0.5;
+  }
+
+  // Jika terlalu panjang, auto-wrap jadi 2 baris seimbang
+  const words = name.trim().split(/\s+/);
+  let sz = 26;
+  while (sz >= 15) {
     let bestSplit = null;
     let bestDiff = Infinity;
     for (let i = 1; i < words.length; i++) {
@@ -102,15 +126,15 @@ function fitNameToLines(name, maxW = 500) {
     if (bestSplit) {
       return { lines: bestSplit, fontSize: sz };
     }
-    sz -= 1;
+    sz -= 0.5;
   }
-  return { lines: [name.trim()], fontSize: sz };
+  return { lines: [name.trim()], fontSize: 18 };
 }
 
 /**
  * Render guest name with Alice font, gradient -180 deg (#fff6de -> #ead296)
  */
-async function renderNameVectorImage(lines, fontSize = 31, lineHeightMul = 1.09) {
+async function renderNameVectorImage(lines, fontSize = 26, lineHeightMul = 1.08) {
   if (!font) {
     const textSvg = '<svg width="600" height="100" xmlns="http://www.w3.org/2000/svg"><text x="300" y="50" font-size="' + fontSize + '" fill="#FFF6DE" text-anchor="middle">' + lines.join(' ') + '</text></svg>';
     const buf = await sharp(Buffer.from(textSvg)).png().toBuffer();
@@ -185,9 +209,10 @@ async function generateInvitationPdf(guest, checkUrl) {
   page1.drawImage(embeddedQr, { x: qrX, y: qrY, width: qrW, height: qrH });
 
   // 2. Render Name with Alice font & gold gradient
-  const maxAllowedWidth = 520;
+  // Max width diturunkan ke 430 pt agar tetap berada aman di dalam bingkai kotak emas (tidak over kanan-kiri)
+  const maxAllowedWidth = 430;
   const fit = fitNameToLines(guest.name, maxAllowedWidth);
-  const nameImg = await renderNameVectorImage(fit.lines, fit.fontSize, 1.09);
+  const nameImg = await renderNameVectorImage(fit.lines, fit.fontSize, 1.08);
   const embeddedName = await pdfDoc.embedPng(nameImg.buffer);
 
   const namePdfX = (pW - nameImg.width) / 2;
@@ -207,5 +232,6 @@ async function generateInvitationPdf(guest, checkUrl) {
 
 module.exports = {
   generateInvitationPdf,
+  fitNameToLines,
   cropQrCodeBuffer
 };
