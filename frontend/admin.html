@@ -188,13 +188,7 @@
 
       <!-- Quick Action Buttons (Responsive on mobile) -->
       <div class="flex items-center space-x-2 sm:space-x-3 w-full sm:w-auto">
-        <button 
-          @click="openAddGuestModal()"
-          class="flex-1 sm:flex-initial inline-flex items-center justify-center space-x-1.5 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-red-600 hover:bg-red-700 active:bg-red-800 text-white text-[11px] sm:text-xs font-bold shadow-md shadow-red-600/20 transition-all cursor-pointer whitespace-nowrap"
-        >
-          <i data-lucide="user-plus" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
-          <span>Tambah Tamu</span>
-        </button>
+
 
         <button 
           @click="openAddEventModal()"
@@ -691,8 +685,8 @@
                   
                   <!-- Guest Name -->
                   <td class="py-3.5 px-4">
-                    <div class="font-bold text-slate-900" x-text="g.name"></div>
-                    <div class="text-[10px] text-slate-400 font-mono" x-text="'ID: #' + g.id + ' • Token: ' + g.qr_token"></div>
+                    <div class="font-bold text-slate-900 whitespace-pre-line leading-snug" x-text="g.name"></div>
+                    <div class="text-[10px] text-slate-400 font-mono mt-0.5" x-text="'ID: #' + g.id + ' • Token: ' + g.qr_token"></div>
                   </td>
 
                   <!-- Category Badge (Internal) -->
@@ -1241,14 +1235,19 @@
               <span x-text="similarGuestsNotice.length + ' Nama Mirip Ditemukan'"></span>
             </span>
           </div>
-          <input 
-            type="text" 
+          <textarea 
             x-model="guestForm.name" 
             @input="checkSimilarGuestNames()"
+            @keydown="handleNameAltEnter($event)"
             required
-            placeholder="Contoh: Budi Santoso, S.Kom"
-            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-600"
-          >
+            rows="2"
+            placeholder="Contoh: Marsekal Madya TNI (tekan Alt+Enter untuk baris baru) Muhammad Syaugi, S.Sos."
+            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-600 resize-none font-medium leading-relaxed"
+          ></textarea>
+          <div class="flex items-center justify-between mt-1 text-[10px] text-slate-400">
+            <span>Tekan <kbd class="px-1 py-0.5 bg-slate-100 border border-slate-200 rounded font-mono font-bold text-slate-600">Alt</kbd> + <kbd class="px-1 py-0.5 bg-slate-100 border border-slate-200 rounded font-mono font-bold text-slate-600">Enter</kbd> untuk pindah ke baris baru</span>
+            <span class="text-amber-600 font-semibold" x-show="(guestForm.name || '').includes('\n')">Format multi-baris aktif</span>
+          </div>
           
           <!-- Box Pemberitahuan Kemiripan Nama -->
           <div x-show="similarGuestsNotice.length > 0" x-cloak class="mt-2 p-2.5 rounded-xl bg-amber-50/90 border border-amber-200 text-xs text-amber-900 transition-all">
@@ -1292,11 +1291,48 @@
 
         <!-- 3. Sumber -->
         <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1.5">Sumber</label>
+          <div class="flex items-center justify-between mb-1.5">
+            <label class="block text-xs font-bold text-slate-700">Sumber</label>
+            <span class="text-[10px] text-slate-400">Rekomendasi Cepat:</span>
+          </div>
+          <div class="flex flex-wrap items-center gap-1.5 mb-2">
+            <button 
+              type="button" 
+              @click="setSourceSuggestion('Komandan')" 
+              class="px-2 py-0.5 rounded-lg text-[10px] font-bold border transition-all cursor-pointer"
+              :class="guestForm.source === 'Komandan' ? 'bg-red-600 text-white border-red-600 shadow-sm' : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-red-50 hover:text-red-700 hover:border-red-200'"
+            >
+              Komandan
+            </button>
+            <button 
+              type="button" 
+              @click="setSourceSuggestion('Wadan')" 
+              class="px-2 py-0.5 rounded-lg text-[10px] font-bold border transition-all cursor-pointer"
+              :class="guestForm.source === 'Wadan' ? 'bg-red-600 text-white border-red-600 shadow-sm' : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-red-50 hover:text-red-700 hover:border-red-200'"
+            >
+              Wadan
+            </button>
+            <button 
+              type="button" 
+              @click="setSourceSuggestion('Asops')" 
+              class="px-2 py-0.5 rounded-lg text-[10px] font-bold border transition-all cursor-pointer"
+              :class="guestForm.source === 'Asops' ? 'bg-red-600 text-white border-red-600 shadow-sm' : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-red-50 hover:text-red-700 hover:border-red-200'"
+            >
+              Asops
+            </button>
+            <button 
+              type="button" 
+              @click="setSourceSuggestion('Ltk Angga')" 
+              class="px-2 py-0.5 rounded-lg text-[10px] font-bold border transition-all cursor-pointer"
+              :class="guestForm.source === 'Ltk Angga' ? 'bg-red-600 text-white border-red-600 shadow-sm' : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-red-50 hover:text-red-700 hover:border-red-200'"
+            >
+              Ltk Angga
+            </button>
+          </div>
           <input 
             type="text" 
             x-model="guestForm.source" 
-            placeholder="Contoh: Rekomendasi Danpus, Panitia Sie A, dll"
+            placeholder="Pilih rekomendasi di atas atau ketik bebas..."
             class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-600"
           >
         </div>

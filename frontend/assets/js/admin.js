@@ -369,6 +369,24 @@ document.addEventListener('alpine:init', () => {
       }
     },
 
+        setSourceSuggestion(val) {
+      this.guestForm.source = val;
+    },
+
+        handleNameAltEnter(e) {
+      if (e.altKey && e.key === 'Enter') {
+        e.preventDefault();
+        const input = e.target;
+        const start = input.selectionStart;
+        const end = input.selectionEnd;
+        const val = this.guestForm.name || '';
+        this.guestForm.name = val.substring(0, start) + '\n' + val.substring(end);
+        this.$nextTick(() => {
+          input.selectionStart = input.selectionEnd = start + 1;
+        });
+      }
+    },
+
     openAddGuestModal() {
       if (this.events.length === 0) {
         App.toast('Silakan buat event terlebih dahulu sebelum menambahkan tamu.', 'warning');
@@ -383,11 +401,17 @@ document.addEventListener('alpine:init', () => {
         event_id: String(defaultEventId),
         name: '',
         phone: '',
-        category: 'General',
+        category: 'Pejabat TNI',
+        source: '',
+        contact_person: '',
+        invitation_status: 'Belum Dikirim',
+        rsvp_status: 'Belum Konfirmasi',
+        notes: '',
         attendance_status: 'PENDING'
       };
+      this.similarGuestsNotice = [];
       this.isGuestModalOpen = true;
-      this.$nextTick(() => lucide.createIcons());
+      this.$nextTick(() => { if (window.lucide) lucide.createIcons(); });
     },
 
     openEditGuestModal(guest) {

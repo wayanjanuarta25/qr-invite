@@ -58,11 +58,27 @@ async function cropQrCodeBuffer(rawQrBuffer) {
  */
 function fitNameToLines(name, maxW = 500) {
   if (!font) {
-    return { lines: [name.trim()], fontSize: 31 };
+    const rawLines = name.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+    return { lines: rawLines.length > 0 ? rawLines : [name.trim()], fontSize: 31 };
   }
   const getWidth = (str, sz) => (font.layout(str).advanceWidth / font.unitsPerEm) * sz;
-  const words = name.trim().split(/\s+/);
 
+  // Jika user secara manual memecah baris (dengan Alt+Enter / Enter di textarea nama)
+  if (name.includes('\n')) {
+    const explicitLines = name.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+    let sz = 31;
+    while (sz >= 14) {
+      const allFit = explicitLines.every(l => getWidth(l, sz) <= maxW);
+      if (allFit) {
+        return { lines: explicitLines, fontSize: sz };
+      }
+      sz -= 1;
+    }
+    return { lines: explicitLines, fontSize: sz };
+  }
+
+  // Jika satu baris biasa, lakukan auto-wrap cerdas (1 baris -> 2 baris seimbang)
+  const words = name.trim().split(/\s+/);
   let sz = 31;
   while (sz >= 16) {
     if (getWidth(name, sz) <= maxW) {
