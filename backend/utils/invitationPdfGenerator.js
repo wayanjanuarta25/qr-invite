@@ -163,7 +163,7 @@ async function generateInvitationPdf(guest, checkUrl) {
   const qrX = (726887 / 18288000) * pW;
   const qrW = (1834988 / 18288000) * pW;
   const qrH = (1829073 / 10287000) * pH;
-  const qrY = ((10287000 - (7914371 + 1829073)) / 10287000) * pH;
+  const qrY = ((10287000 - (7914371 + 1829073)) / 10287000) * pH + 8;
 
   const embeddedQr = await pdfDoc.embedPng(croppedQrBuffer);
   page1.drawImage(embeddedQr, { x: qrX, y: qrY, width: qrW, height: qrH });
@@ -175,7 +175,7 @@ async function generateInvitationPdf(guest, checkUrl) {
   const embeddedName = await pdfDoc.embedPng(nameImg.buffer);
 
   const namePdfX = (pW - nameImg.width) / 2;
-  const nameCenterY = ((10287000 - (8594916 + 443357 / 2)) / 10287000) * pH;
+  const nameCenterY = ((10287000 - (8594916 + 443357 / 2)) / 10287000) * pH + 7;
   const namePdfY = nameCenterY - (nameImg.height / 2);
 
   page1.drawImage(embeddedName, {
