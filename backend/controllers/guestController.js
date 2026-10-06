@@ -176,7 +176,7 @@ exports.createGuest = async (req, res) => {
       event_id,
       name.trim(),
       (phone || '').trim(),
-      category || 'Pejabat TNI',
+      category || 'General',
       qr_token,
       qr_image,
       (source || '').trim(),
