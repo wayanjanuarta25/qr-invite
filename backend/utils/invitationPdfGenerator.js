@@ -125,14 +125,14 @@ async function renderNameVectorImage(lines, fontSize = 31, lineHeightMul = 1.09)
         const scale = fontSize / font.unitsPerEm;
         const gx = startX + (pos.xOffset * scale);
         const gy = baselineY;
-        allPaths.push('<path d="' + p + '" transform="translate(' + gx + ', ' + gy + ') scale(' + scale + ', -' + scale + ')" />');
+        allPaths.push('<path d="' + p + '" transform="translate(' + gx + ', ' + gy + ') scale(' + scale + ', -' + scale + ')" stroke="url(#gold)" stroke-width="' + (0.035 * fontSize) + '" stroke-linejoin="round" />');
       }
       startX += (pos.xAdvance / font.unitsPerEm) * fontSize;
     }
   });
 
   const svgH = Math.ceil(totalH) + 20;
-  const svg = '<svg width="' + totalW + '" height="' + svgH + '" viewBox="0 0 ' + totalW + ' ' + svgH + '" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="gold" x1="0" y1="0" x2="0" y2="100%"><stop offset="0%" stop-color="#fff6de"/><stop offset="100%" stop-color="#ead296"/></linearGradient></defs><g fill="url(#gold)">' + allPaths.join('') + '</g></svg>';
+  const svg = '<svg width="' + totalW + '" height="' + svgH + '" viewBox="0 0 ' + totalW + ' ' + svgH + '" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="gold" x1="0" y1="100%" x2="0" y2="0%"><stop offset="0%" stop-color="#fff6de"/><stop offset="100%" stop-color="#ead296"/></linearGradient></defs><g fill="url(#gold)">' + allPaths.join('') + '</g></svg>';
 
   const buffer = await sharp(Buffer.from(svg)).png().toBuffer();
   return { buffer, width: totalW, height: svgH };
