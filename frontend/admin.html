@@ -758,7 +758,7 @@
                 <th @click="toggleSort('created_at')" class="py-3.5 px-4 cursor-pointer hover:bg-slate-100 transition-colors whitespace-nowrap">
                   <div class="flex items-center space-x-1">
                     <span>Dibuat Pada</span>
-                    <span class="text-xs" :class="sortBy === 'created_at' ? 'text-red-600 font-extrabold' : 'text-slate-400'" x-text="sortBy === 'created_at' ? (sortDir === 'asc' ? '?' : '?') : '?'"></span>
+                    <span class="text-xs" :class="sortBy === 'created_at' ? 'text-red-600 font-extrabold' : 'text-slate-400'" x-text="sortBy === 'created_at' ? (sortDir === 'asc' ? '▲' : '▼') : '↕'"></span>
                   </div>
                 </th>
 
@@ -766,7 +766,7 @@
                 <th @click="toggleSort('updated_at')" class="py-3.5 px-4 cursor-pointer hover:bg-slate-100 transition-colors whitespace-nowrap">
                   <div class="flex items-center space-x-1">
                     <span>Terakhir Diedit</span>
-                    <span class="text-xs" :class="sortBy === 'updated_at' ? 'text-red-600 font-extrabold' : 'text-slate-400'" x-text="sortBy === 'updated_at' ? (sortDir === 'asc' ? '?' : '?') : '?'"></span>
+                    <span class="text-xs" :class="sortBy === 'updated_at' ? 'text-red-600 font-extrabold' : 'text-slate-400'" x-text="sortBy === 'updated_at' ? (sortDir === 'asc' ? '▲' : '▼') : '↕'"></span>
                   </div>
                 </th>
               </tr>
