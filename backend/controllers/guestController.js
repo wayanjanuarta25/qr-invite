@@ -193,6 +193,8 @@ exports.createGuest = async (req, res) => {
       WHERE g.id = ?
     `).get(result.lastInsertRowid);
 
+    logActivity(req, 'GUEST_CREATED', `Menambahkan tamu baru: ${newGuest.name} [Kategori: ${newGuest.category || 'General'}] ke acara "${newGuest.event_name || '-'}" (ID: #${newGuest.id})`);
+
     return res.status(201).json({
       success: true,
       message: 'Tamu berhasil didaftarkan.',
@@ -344,6 +346,8 @@ exports.toggleAttendance = (req, res) => {
       }
     }
 
+    logActivity(req, 'ATTENDANCE_TOGGLED', `Mengubah status kehadiran tamu ${updated.name} (ID: #${id}) menjadi ${newStatus}`);
+
     return res.json({
       success: true,
       message: `Status kehadiran berhasil diubah menjadi ${newStatus}.`,
@@ -429,6 +433,8 @@ exports.importGuests = async (req, res) => {
     });
 
     insertMany(processed);
+
+    logActivity(req, 'GUESTS_IMPORTED', `Mengimpor ${processed.length} data tamu secara massal ke acara "${event.name}"`);
 
     return res.status(201).json({
       success: true,

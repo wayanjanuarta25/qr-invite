@@ -1,3 +1,4 @@
+const { logActivity } = require('../utils/logger');
 const db = require('../database/db');
 
 exports.getAllEvents = (req, res) => {

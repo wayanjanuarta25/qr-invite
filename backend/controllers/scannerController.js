@@ -1,3 +1,4 @@
+const { logActivity } = require('../utils/logger');
 const db = require('../database/db');
 const liveController = require('./liveController');
 
@@ -107,6 +108,8 @@ exports.checkAndRecordAttendance = (req, res) => {
       SET attendance_status = 'PRESENT', arrival_time = ?
       WHERE id = ?
     `).run(nowLocal, guest.id);
+
+    logActivity(req, 'ATTENDANCE_CHECKIN', `Check-in QR Berhasil: ${guest.name} [Kategori: ${guest.category || 'General'}] hadir pada acara "${guest.event_name || '-'}" (${nowLocal} WIB)`);
 
     // Broadcast checkin event to live TV display screens in real-time
     try {
