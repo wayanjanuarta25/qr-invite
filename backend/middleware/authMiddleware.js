@@ -24,7 +24,22 @@ function authMiddleware(req, res, next) {
   }
 }
 
+// Role-based access control middleware
+function requireAdmin(req, res, next) {
+  if (!req.user) {
+    return res.status(401).json({ error: 'Akses tidak sah. Silakan login terlebih dahulu.' });
+  }
+
+  const role = (req.user.role || '').toLowerCase();
+  if (role !== 'admin') {
+    return res.status(403).json({ error: 'Akses ditolak. Fitur ini hanya dapat diakses oleh Administrator.' });
+  }
+
+  next();
+}
+
 module.exports = {
   authMiddleware,
+  requireAdmin,
   JWT_SECRET
 };

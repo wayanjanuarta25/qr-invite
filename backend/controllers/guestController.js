@@ -1,3 +1,4 @@
+const { logActivity } = require('../utils/logger');
 const { generateInvitationPdf } = require('../utils/invitationPdfGenerator');
 const db = require('../database/db');
 const path = require('path');
@@ -255,6 +256,7 @@ exports.updateGuest = (req, res) => {
       WHERE g.id = ?
     `).get(id);
 
+    logActivity(req, 'GUEST_UPDATED', `Memperbarui data tamu: ${currentGuest.name} (ID: #${id})`);
     return res.json({
       success: true,
       message: 'Data tamu berhasil diperbarui.',
@@ -289,6 +291,7 @@ exports.deleteGuest = (req, res) => {
 
     db.prepare('DELETE FROM guests WHERE id = ?').run(id);
 
+    logActivity(req, 'GUEST_DELETED', `Menghapus tamu: ${guest.name} (ID: #${id})`);
     return res.json({
       success: true,
       message: 'Tamu berhasil dihapus.'

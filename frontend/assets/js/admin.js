@@ -106,6 +106,24 @@ document.addEventListener('alpine:init', () => {
     attendanceChart: null,
     categoryChart: null,
 
+    // Role & User Management State (Admin only)
+    usersList: [],
+    isLoadingUsers: false,
+    isUserModalOpen: false,
+    userModalMode: 'create', // 'create' | 'edit'
+    userForm: {
+      id: null,
+      name: '',
+      email: '',
+      password: '',
+      role: 'Admin',
+      status: 'ACTIVE'
+    },
+    activityLogs: [],
+    isLoadingLogs: false,
+    logFilterAction: 'all',
+    logLimit: 100,
+
     async init() {
       if (!App.requireAuth()) return;
       this.currentUser = App.getUser() || { name: 'Administrator', email: 'admin@digitalinvite.com' };
@@ -113,6 +131,10 @@ document.addEventListener('alpine:init', () => {
       await this.loadEvents();
       await this.loadStats();
       await this.loadGuests();
+      if (this.isAdmin) {
+        this.loadUsers();
+        this.loadActivityLogs();
+      }
 
       this.$nextTick(() => {
         lucide.createIcons();
