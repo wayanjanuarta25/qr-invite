@@ -540,40 +540,15 @@ document.addEventListener('alpine:init', () => {
     },
 
         // Download official 3-page invitation PDF for a single guest
-    async downloadFullInvitationPdf(guest) {
+        downloadFullInvitationPdf(guest) {
       if (!guest || !guest.id) return;
-      App.toast("Sedang membuat file PDF undangan resmi...", "info");
-      try {
-        const token = App.getToken();
-        const res = await fetch("/api/guests/" + guest.id + "/invitation-pdf", {
-          headers: { "Authorization": "Bearer " + token }
-        });
-        if (!res.ok) {
-          const errData = await res.json().catch(() => ({}));
-          throw new Error(errData.error || "Gagal mengunduh file PDF");
-        }
-        const blob = await res.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        const cleanName = (guest.name || "Tamu").replace(/[/\\?%*:|"<>]/g, "").trim().replace(/\s+/g, "_");
-        a.download = "Undangan_" + cleanName + "_" + (guest.qr_token || "") + ".pdf";
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        window.URL.revokeObjectURL(url);
-        App.toast("Undangan PDF resmi berhasil diunduh!", "success");
-      } catch (err) {
-        console.error("Download PDF error:", err);
-        App.toast(err.message || "Gagal mengunduh undangan PDF resmi.", "error");
-      }
+      App.toast("Sedang menyiapkan file PDF undangan...", "info");
+      const token = App.getToken();
+      window.location.href = "/api/guests/" + guest.id + "/invitation-pdf?token=" + (token || "");
     },
 
-    // Download batch ZIP of all invitation PDFs
-    async downloadBatchInvitationsPdf() {
+    downloadBatchInvitationsPdf() {
       let targetEventId = this.filters.event_id;
-      
-      // Jika filter masih 'all' atau kosong: cari acara yang memiliki tamu
       if (!targetEventId || targetEventId === 'all') {
         const eventWithGuests = this.events.find(e => (e.total_guests || 0) > 0);
         if (eventWithGuests) {
@@ -593,44 +568,12 @@ document.addEventListener('alpine:init', () => {
       this.executeDownloadInvitationsZip(targetEventId);
     },
 
-    async executeDownloadInvitationsZip(eventId) {
-      this.isDownloadingZip = true;
-      this.zipProgress = {
-        percent: 40,
-        text: 'Membuat file PDF undangan 3 halaman untuk seluruh tamu...'
-      };
-      App.toast("Sedang memproses file ZIP undangan... Mohon tunggu sebentar.", "info");
-
-      try {
-        const token = App.getToken();
-        const res = await fetch("/api/guests/export/invitations-zip?event_id=" + eventId, {
-          headers: { "Authorization": "Bearer " + token }
-        });
-        if (!res.ok) {
-          const errData = await res.json().catch(() => ({}));
-          throw new Error(errData.error || "Gagal membuat arsip ZIP undangan.");
-        }
-        this.zipProgress.percent = 85;
-        this.zipProgress.text = 'Mengompresi ke dalam format ZIP...';
-
-        const blob = await res.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "Undangan_Lengkap_Acara_" + Date.now() + ".zip";
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        window.URL.revokeObjectURL(url);
-        App.toast("Arsip ZIP Undangan berhasil diunduh!", "success");
-      } catch (err) {
-        console.error("ZIP Invitations error:", err);
-        App.toast(err.message || "Gagal mengunduh arsip ZIP undangan.", "error");
-      } finally {
-        this.isDownloadingZip = false;
-        this.zipProgress = { percent: 0, text: '' };
-      }
+    executeDownloadInvitationsZip(eventId) {
+      App.toast("Memulai pengunduhan file ZIP undangan... Browser sedang mengunduh.", "info");
+      const token = App.getToken();
+      window.location.href = "/api/guests/export/invitations-zip?event_id=" + eventId + "&token=" + (token || "");
     },
+
     printQrCard() {
       window.print();
     },
