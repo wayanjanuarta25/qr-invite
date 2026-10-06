@@ -1,31 +1,7 @@
 {
-  "version": "2.0.0",
-  "exported_at": "2026-10-06T12:02:58.272Z",
+  "version": "2.1.0",
+  "exported_at": "2026-10-06T12:14:02.631Z",
   "events": [
-    {
-      "id": 2,
-      "name": "Company Gathering 2027",
-      "date": "2027-01-15 13:00",
-      "location": "Royal Tulip Gunung Geulis, Bogor",
-      "description": "Annual Gala & Synergy Gathering",
-      "created_at": "2026-10-06 07:07:46"
-    },
-    {
-      "id": 3,
-      "name": "National Seminar on AI",
-      "date": "2026-12-05 08:30",
-      "location": "Jakarta Convention Center",
-      "description": "Transforming Digital Economy with Artificial Intelligence",
-      "created_at": "2026-10-06 07:07:46"
-    },
-    {
-      "id": 4,
-      "name": "acara tambahan",
-      "date": "rabu, 28 februari 2045",
-      "location": "sabang sampai merauke",
-      "description": "deskripsi ini opsional",
-      "created_at": "2026-10-06 08:11:08"
-    },
     {
       "id": 5,
       "name": "HUT KE-9 SATSIBER TNI",
@@ -33,102 +9,9 @@
       "location": "Satsiber TNI, Cilangkap, Jakarta Timur",
       "description": "Peringatan Hari Ulang Tahun ke-9 Satuan Siber TNI Tahun 2026",
       "created_at": "2026-10-06 12:02:37"
-    },
-    {
-      "id": 6,
-      "name": "Wedding Ahmad & Siti",
-      "date": "2026-11-20 09:00",
-      "location": "Jakarta",
-      "description": "Wedding Ahmad & Siti",
-      "created_at": "2026-10-06 12:02:37"
     }
   ],
   "guests": [
-    {
-      "id": 1,
-      "event_id": 4,
-      "name": "bubun",
-      "phone": "02156",
-      "category": "General",
-      "qr_token": "B5Q5DER2BNXR",
-      "qr_image": "/qr/qr_B5Q5DER2BNXR.png",
-      "attendance_status": "PENDING",
-      "arrival_time": null,
-      "created_at": "2026-10-06 08:11:40",
-      "source": "",
-      "contact_person": "",
-      "invitation_status": "Belum Dikirim",
-      "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
-    },
-    {
-      "id": 2,
-      "event_id": 4,
-      "name": "bobon edited",
-      "phone": "0001111",
-      "category": "VIP",
-      "qr_token": "Q6WBG3PZ6V7K",
-      "qr_image": "/qr/qr_Q6WBG3PZ6V7K.png",
-      "attendance_status": "PENDING",
-      "arrival_time": null,
-      "created_at": "2026-10-06 08:22:08",
-      "source": "",
-      "contact_person": "",
-      "invitation_status": "Belum Dikirim",
-      "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
-    },
-    {
-      "id": 3,
-      "event_id": 4,
-      "name": "didin",
-      "phone": "000333",
-      "category": "Sahabat Satsiber",
-      "qr_token": "88RKH68J92T9",
-      "qr_image": "/qr/qr_88RKH68J92T9.png",
-      "attendance_status": "PENDING",
-      "arrival_time": null,
-      "created_at": "2026-10-06 09:19:17",
-      "source": "",
-      "contact_person": "",
-      "invitation_status": "Terkirim",
-      "rsvp_status": "Dapat Hadir",
-      "notes": ""
-    },
-    {
-      "id": 4,
-      "event_id": 4,
-      "name": "dodon do",
-      "phone": "07256423868",
-      "category": "Pejabat Luar",
-      "qr_token": "CNQDUVTQ9F5A",
-      "qr_image": "/qr/qr_CNQDUVTQ9F5A.png",
-      "attendance_status": "PENDING",
-      "arrival_time": null,
-      "created_at": "2026-10-06 09:32:55",
-      "source": "WadanA",
-      "contact_person": "ini diaa",
-      "invitation_status": "Sudah Dijawab",
-      "rsvp_status": "Belum Dapat Memastikan",
-      "notes": "grrsgjkk"
-    },
-    {
-      "id": 5,
-      "event_id": 4,
-      "name": "evsafv",
-      "phone": "235243",
-      "category": "Pejabat TNI",
-      "qr_token": "D32G4Y9DPPKV",
-      "qr_image": "/qr/qr_D32G4Y9DPPKV.png",
-      "attendance_status": "PENDING",
-      "arrival_time": null,
-      "created_at": "2026-10-06 09:42:01",
-      "source": "Komandan",
-      "contact_person": "avcd",
-      "invitation_status": "Terkirim",
-      "rsvp_status": "Tidak Dapat Hadir",
-      "notes": "afscdd"
-    },
     {
       "id": 12,
       "event_id": 5,
@@ -144,7 +27,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 13,
@@ -161,7 +45,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 14,
@@ -178,7 +63,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 15,
@@ -195,7 +81,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 16,
@@ -212,7 +99,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 17,
@@ -229,7 +117,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 18,
@@ -246,7 +135,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 19,
@@ -263,7 +153,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 20,
@@ -280,7 +171,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 21,
@@ -297,7 +189,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 22,
@@ -314,7 +207,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 23,
@@ -331,7 +225,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 24,
@@ -348,75 +243,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
-    },
-    {
-      "id": 25,
-      "event_id": 6,
-      "name": "Eko Prasetyo",
-      "phone": "085712345678",
-      "category": "Friend",
-      "qr_token": "QUOXM40ZKT0O",
-      "qr_image": "/qr/qr_QUOXM40ZKT0O.png",
-      "attendance_status": "PENDING",
-      "arrival_time": null,
-      "created_at": "2026-10-06 12:02:37",
-      "source": "",
-      "contact_person": "",
-      "invitation_status": "Belum Dikirim",
-      "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
-    },
-    {
-      "id": 26,
-      "event_id": 6,
-      "name": "Siti Sarah",
-      "phone": "087812349999",
-      "category": "Friend",
-      "qr_token": "RP91T383KK6Y",
-      "qr_image": "/qr/qr_RP91T383KK6Y.png",
-      "attendance_status": "PENDING",
-      "arrival_time": null,
-      "created_at": "2026-10-06 12:02:37",
-      "source": "",
-      "contact_person": "",
-      "invitation_status": "Belum Dikirim",
-      "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
-    },
-    {
-      "id": 27,
-      "event_id": 6,
-      "name": "Andi Wijaya",
-      "phone": "081900112233",
-      "category": "General",
-      "qr_token": "ZBO2N0JTTH2K",
-      "qr_image": "/qr/qr_ZBO2N0JTTH2K.png",
-      "attendance_status": "PENDING",
-      "arrival_time": null,
-      "created_at": "2026-10-06 12:02:37",
-      "source": "",
-      "contact_person": "",
-      "invitation_status": "Belum Dikirim",
-      "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
-    },
-    {
-      "id": 28,
-      "event_id": 6,
-      "name": "Maya Anggraini",
-      "phone": "081700998877",
-      "category": "General",
-      "qr_token": "H6RXHP2ML58N",
-      "qr_image": "/qr/qr_H6RXHP2ML58N.png",
-      "attendance_status": "PENDING",
-      "arrival_time": null,
-      "created_at": "2026-10-06 12:02:37",
-      "source": "",
-      "contact_person": "",
-      "invitation_status": "Belum Dikirim",
-      "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 29,
@@ -433,7 +261,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 30,
@@ -450,7 +279,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 31,
@@ -467,7 +297,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 32,
@@ -484,7 +315,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 33,
@@ -501,7 +333,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 34,
@@ -518,7 +351,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 35,
@@ -535,7 +369,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 36,
@@ -552,7 +387,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 37,
@@ -569,7 +405,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 38,
@@ -586,7 +423,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 39,
@@ -603,7 +441,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 40,
@@ -620,7 +459,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 41,
@@ -637,7 +477,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 42,
@@ -654,7 +495,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 43,
@@ -671,75 +513,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
-    },
-    {
-      "id": 44,
-      "event_id": 6,
-      "name": "Budi Santoso",
-      "phone": "081234567890",
-      "category": "VIP",
-      "qr_token": "K309M0GWNT6F",
-      "qr_image": "/qr/qr_K309M0GWNT6F.png",
-      "attendance_status": "PENDING",
-      "arrival_time": null,
-      "created_at": "2026-10-06 12:02:37",
-      "source": "",
-      "contact_person": "",
-      "invitation_status": "Belum Dikirim",
-      "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
-    },
-    {
-      "id": 45,
-      "event_id": 6,
-      "name": "Dian Sastrowardoyo",
-      "phone": "081298765432",
-      "category": "VIP",
-      "qr_token": "GS5QTGE7Z5GB",
-      "qr_image": "/qr/qr_GS5QTGE7Z5GB.png",
-      "attendance_status": "PENDING",
-      "arrival_time": null,
-      "created_at": "2026-10-06 12:02:37",
-      "source": "",
-      "contact_person": "",
-      "invitation_status": "Belum Dikirim",
-      "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
-    },
-    {
-      "id": 46,
-      "event_id": 6,
-      "name": "Rahmat Hidayat",
-      "phone": "081311223344",
-      "category": "Family",
-      "qr_token": "5RVVX2L8S52O",
-      "qr_image": "/qr/qr_5RVVX2L8S52O.png",
-      "attendance_status": "PENDING",
-      "arrival_time": null,
-      "created_at": "2026-10-06 12:02:37",
-      "source": "",
-      "contact_person": "",
-      "invitation_status": "Belum Dikirim",
-      "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
-    },
-    {
-      "id": 47,
-      "event_id": 6,
-      "name": "Nurul Indah",
-      "phone": "081555667788",
-      "category": "Family",
-      "qr_token": "SG1VDKNOGJNM",
-      "qr_image": "/qr/qr_SG1VDKNOGJNM.png",
-      "attendance_status": "PENDING",
-      "arrival_time": null,
-      "created_at": "2026-10-06 12:02:37",
-      "source": "",
-      "contact_person": "",
-      "invitation_status": "Belum Dikirim",
-      "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 48,
@@ -756,7 +531,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 49,
@@ -773,7 +549,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 50,
@@ -790,7 +567,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 51,
@@ -807,7 +585,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 52,
@@ -824,7 +603,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 53,
@@ -841,7 +621,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 54,
@@ -858,7 +639,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 55,
@@ -875,7 +657,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 56,
@@ -892,7 +675,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 57,
@@ -909,7 +693,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 58,
@@ -926,7 +711,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 59,
@@ -943,7 +729,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 60,
@@ -960,7 +747,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 61,
@@ -977,7 +765,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 62,
@@ -994,7 +783,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 63,
@@ -1011,7 +801,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 64,
@@ -1028,7 +819,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 65,
@@ -1045,7 +837,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 66,
@@ -1062,7 +855,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 67,
@@ -1079,7 +873,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 68,
@@ -1096,7 +891,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 69,
@@ -1113,7 +909,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 70,
@@ -1130,7 +927,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 71,
@@ -1147,7 +945,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 72,
@@ -1164,7 +963,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 73,
@@ -1181,7 +981,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 74,
@@ -1198,7 +999,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 75,
@@ -1215,7 +1017,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 76,
@@ -1232,7 +1035,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 77,
@@ -1249,7 +1053,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 78,
@@ -1266,7 +1071,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 79,
@@ -1283,7 +1089,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 80,
@@ -1300,7 +1107,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 81,
@@ -1317,7 +1125,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 82,
@@ -1334,7 +1143,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 83,
@@ -1351,7 +1161,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 84,
@@ -1368,7 +1179,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 85,
@@ -1385,7 +1197,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 86,
@@ -1402,7 +1215,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 87,
@@ -1419,7 +1233,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     },
     {
       "id": 88,
@@ -1436,7 +1251,8 @@
       "contact_person": "",
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
-      "notes": ""
+      "notes": "",
+      "updated_at": "2026-10-06 12:02:37"
     }
   ],
   "users": [

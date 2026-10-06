@@ -753,6 +753,22 @@
                 </th>
 
                 <th class="py-3.5 px-4 text-center">Aksi</th>
+
+                <!-- Sortable Dibuat Pada -->
+                <th @click="toggleSort('created_at')" class="py-3.5 px-4 cursor-pointer hover:bg-slate-100 transition-colors whitespace-nowrap">
+                  <div class="flex items-center space-x-1">
+                    <span>Dibuat Pada</span>
+                    <span class="text-xs" :class="sortBy === 'created_at' ? 'text-red-600 font-extrabold' : 'text-slate-400'" x-text="sortBy === 'created_at' ? (sortDir === 'asc' ? '?' : '?') : '?'"></span>
+                  </div>
+                </th>
+
+                <!-- Sortable Terakhir Diedit -->
+                <th @click="toggleSort('updated_at')" class="py-3.5 px-4 cursor-pointer hover:bg-slate-100 transition-colors whitespace-nowrap">
+                  <div class="flex items-center space-x-1">
+                    <span>Terakhir Diedit</span>
+                    <span class="text-xs" :class="sortBy === 'updated_at' ? 'text-red-600 font-extrabold' : 'text-slate-400'" x-text="sortBy === 'updated_at' ? (sortDir === 'asc' ? '?' : '?') : '?'"></span>
+                  </div>
+                </th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100 text-xs">
@@ -1007,12 +1023,20 @@
 
                     </div>
                   </td>
+
+                  <!-- Dibuat Pada -->
+                  <td class="py-3.5 px-4 whitespace-nowrap text-slate-500 font-mono text-[11px]" x-text="formatDateTime(g.created_at)"></td>
+
+                  <!-- Terakhir Diedit -->
+                  <td class="py-3.5 px-4 whitespace-nowrap text-slate-700 font-mono text-[11px]">
+                    <span :class="g.updated_at && g.updated_at !== g.created_at ? 'text-amber-700 font-semibold' : 'text-slate-500'" x-text="formatDateTime(g.updated_at || g.created_at)"></span>
+                  </td>
                 </tr>
               </template>
 
               <template x-if="guests.length === 0 && !isLoadingGuests">
                 <tr>
-                  <td colspan="12" class="py-12 text-center text-slate-400">
+                  <td colspan="14" class="py-12 text-center text-slate-400">
                     <i data-lucide="users" class="w-8 h-8 mx-auto mb-2 text-slate-300"></i>
                     <p class="font-semibold text-slate-600">Tidak ada tamu yang ditemukan</p>
                     <p class="text-[11px] text-slate-400 mt-1">Coba ubah kata kunci pencarian atau tambahkan tamu baru.</p>

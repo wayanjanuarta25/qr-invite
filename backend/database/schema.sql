@@ -35,6 +35,7 @@ CREATE TABLE IF NOT EXISTS guests (
     rsvp_status TEXT DEFAULT 'Belum Konfirmasi',
     notes TEXT DEFAULT '',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE
 );
 

@@ -233,7 +233,8 @@ exports.updateGuest = (req, res) => {
         contact_person = COALESCE(?, contact_person),
         invitation_status = COALESCE(?, invitation_status),
         rsvp_status = COALESCE(?, rsvp_status),
-        notes = COALESCE(?, notes)
+        notes = COALESCE(?, notes),
+        updated_at = CURRENT_TIMESTAMP
       WHERE id = ?
     `).run(
       name !== undefined ? name.trim() : null,
@@ -419,8 +420,8 @@ exports.importGuests = async (req, res) => {
 
     const insertMany = db.transaction((guestList) => {
       const stmt = db.prepare(`
-        INSERT INTO guests (event_id, name, phone, category, source, contact_person, invitation_status, rsvp_status, notes, qr_token, qr_image, attendance_status)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'PENDING')
+        INSERT INTO guests (event_id, name, phone, category, source, contact_person, invitation_status, rsvp_status, notes, qr_token, qr_image, attendance_status, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'PENDING', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
       `);
       for (const g of guestList) {
         stmt.run(g.event_id, g.name, g.phone, g.category, g.source, g.contact_person, g.invitation_status, g.rsvp_status, g.notes, g.qr_token, g.qr_image);

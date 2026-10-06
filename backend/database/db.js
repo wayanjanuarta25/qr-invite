@@ -31,7 +31,8 @@ function autoMigrate() {
       { name: 'contact_person', def: "TEXT DEFAULT ''" },
       { name: 'invitation_status', def: "TEXT DEFAULT 'Belum Dikirim'" },
       { name: 'rsvp_status', def: "TEXT DEFAULT 'Belum Konfirmasi'" },
-      { name: 'notes', def: "TEXT DEFAULT ''" }
+      { name: 'notes', def: "TEXT DEFAULT ''" },
+      { name: 'updated_at', def: "DATETIME" }
     ];
 
     for (const col of requiredGuestCols) {
@@ -56,6 +57,7 @@ function autoMigrate() {
     }
 
     // Set default values for any legacy null/empty fields
+    db.exec("UPDATE guests SET updated_at = created_at WHERE updated_at IS NULL OR updated_at = ''");
     db.exec("UPDATE users SET role = 'Admin' WHERE role IS NULL OR role = ''");
     db.exec("UPDATE users SET status = 'ACTIVE' WHERE status IS NULL OR status = ''");
 
