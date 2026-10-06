@@ -370,7 +370,7 @@ exports.importGuests = async (req, res) => {
     }
 
     const processed = [];
-    const validCategories = ['VIP', 'Family', 'Friend', 'General'];
+    const validCategories = ['Pejabat TNI', 'Pejabat Luar', 'Sahabat Satsiber', 'VIP', 'General'];
 
     for (const item of guests) {
       const name = (item.name || '').trim();
@@ -379,7 +379,13 @@ exports.importGuests = async (req, res) => {
       const phone = (item.phone || '').trim();
       let rawCat = (item.category || 'General').trim();
       let matchedCat = validCategories.find(c => c.toLowerCase() === rawCat.toLowerCase());
-      const category = matchedCat || 'General';
+      const category = matchedCat || (rawCat ? rawCat : 'General');
+
+      const source = (item.source || item.sumber || '').trim();
+      const contact_person = (item.contact_person || item.cp || '').trim();
+      const invitation_status = (item.invitation_status || 'Belum Dikirim').trim();
+      const rsvp_status = (item.rsvp_status || 'Belum Konfirmasi').trim();
+      const notes = (item.notes || item.keterangan || '').trim();
 
       let qr_token = generateUniqueToken();
       let duplicateCheck = db.prepare('SELECT id FROM guests WHERE qr_token = ?').get(qr_token);
@@ -394,6 +400,11 @@ exports.importGuests = async (req, res) => {
         name,
         phone,
         category,
+        source,
+        contact_person,
+        invitation_status,
+        rsvp_status,
+        notes,
         qr_token,
         qr_image
       });
@@ -405,11 +416,11 @@ exports.importGuests = async (req, res) => {
 
     const insertMany = db.transaction((guestList) => {
       const stmt = db.prepare(`
-        INSERT INTO guests (event_id, name, phone, category, qr_token, qr_image, attendance_status)
-        VALUES (?, ?, ?, ?, ?, ?, 'PENDING')
+        INSERT INTO guests (event_id, name, phone, category, source, contact_person, invitation_status, rsvp_status, notes, qr_token, qr_image, attendance_status)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'PENDING')
       `);
       for (const g of guestList) {
-        stmt.run(g.event_id, g.name, g.phone, g.category, g.qr_token, g.qr_image);
+        stmt.run(g.event_id, g.name, g.phone, g.category, g.source, g.contact_person, g.invitation_status, g.rsvp_status, g.notes, g.qr_token, g.qr_image);
       }
     });
 
@@ -492,10 +503,15 @@ exports.exportGuestsCsv = (req, res) => {
     const headers = [
       'No',
       'Nama Tamu',
-      'Nomor HP',
-      'Acara',
       'Kategori',
-      'Status Kehadiran',
+      'Sumber',
+      'Contact Person',
+      'Nomor HP',
+      'Status Undangan',
+      'Konfirmasi Kehadiran',
+      'Status Kehadiran Scan',
+      'Keterangan',
+      'Acara',
       'Waktu Kedatangan',
       'Token QR',
       'Link Undangan Digital'
@@ -509,10 +525,15 @@ exports.exportGuestsCsv = (req, res) => {
       const row = [
         escapeCsv(idx + 1),
         escapeCsv(g.name),
+        escapeCsv(g.category || 'General'),
+        escapeCsv(g.source || '-'),
+        escapeCsv(g.contact_person || '-'),
         escapeCsv(g.phone || '-'),
-        escapeCsv(g.event_name),
-        escapeCsv(g.category),
+        escapeCsv(g.invitation_status || 'Belum Dikirim'),
+        escapeCsv(g.rsvp_status || 'Belum Konfirmasi'),
         escapeCsv(statusLabel),
+        escapeCsv(g.notes || '-'),
+        escapeCsv(g.event_name),
         escapeCsv(g.arrival_time || '-'),
         escapeCsv(g.qr_token),
         escapeCsv(inviteUrl)

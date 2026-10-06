@@ -217,6 +217,22 @@ exports.getStats = (req, res) => {
       GROUP BY category
     `).all(...params);
 
+    // Invitation Status breakdown
+    const invitationStats = db.prepare(`
+      SELECT COALESCE(invitation_status, 'Belum Dikirim') as status, COUNT(*) as count
+      FROM guests
+      ${filter}
+      GROUP BY COALESCE(invitation_status, 'Belum Dikirim')
+    `).all(...params);
+
+    // RSVP Status breakdown
+    const rsvpStats = db.prepare(`
+      SELECT COALESCE(rsvp_status, 'Belum Konfirmasi') as status, COUNT(*) as count
+      FROM guests
+      ${filter}
+      GROUP BY COALESCE(rsvp_status, 'Belum Konfirmasi')
+    `).all(...params);
+
     // Event summary
     const eventStats = db.prepare(`
       SELECT e.id, e.name, e.date,
@@ -235,6 +251,8 @@ exports.getStats = (req, res) => {
         not_arrived: notArrived,
         today_attendance: todayAttendance,
         categories: categoryStats,
+        invitations: invitationStats,
+        rsvps: rsvpStats,
         events: eventStats
       }
     });

@@ -22,6 +22,8 @@ document.addEventListener('alpine:init', () => {
       not_arrived: 0,
       today_attendance: 0,
       categories: [],
+      invitations: [],
+      rsvps: [],
       events: []
     },
 
@@ -288,7 +290,7 @@ document.addEventListener('alpine:init', () => {
 
       const catCtx = document.getElementById('categoryBarChart');
       if (catCtx && !this.categoryChart) {
-        const labels = ['VIP', 'Family', 'Friend', 'General'];
+        const labels = ['Pejabat TNI', 'Pejabat Luar', 'Sahabat Satsiber', 'VIP', 'General'];
         const values = labels.map(l => {
           const found = this.stats.categories.find(c => c.category.toLowerCase() === l.toLowerCase());
           return found ? found.count : 0;
@@ -301,7 +303,7 @@ document.addEventListener('alpine:init', () => {
             datasets: [{
               label: 'Total Tamu',
               data: values,
-              backgroundColor: ['#D4AF37', '#9333EA', '#DC2626', '#64748B'],
+              backgroundColor: ['#DC2626', '#2563EB', '#059669', '#D97706', '#64748B'],
               borderRadius: 8,
               borderSkipped: false
             }]
@@ -336,7 +338,7 @@ document.addEventListener('alpine:init', () => {
       }
 
       if (this.categoryChart) {
-        const labels = ['VIP', 'Family', 'Friend', 'General'];
+        const labels = ['Pejabat TNI', 'Pejabat Luar', 'Sahabat Satsiber', 'VIP', 'General'];
         const values = labels.map(l => {
           const found = this.stats.categories.find(c => c.category.toLowerCase() === l.toLowerCase());
           return found ? found.count : 0;
@@ -1053,6 +1055,11 @@ document.addEventListener('alpine:init', () => {
             let nameVal = '';
             let phoneVal = '';
             let catVal = 'General';
+            let sourceVal = '';
+            let cpVal = '';
+            let invStatusVal = 'Belum Dikirim';
+            let rsvpStatusVal = 'Belum Konfirmasi';
+            let notesVal = '';
 
             for (const key of Object.keys(row)) {
               const k = key.toLowerCase().trim();
@@ -1060,10 +1067,20 @@ document.addEventListener('alpine:init', () => {
 
               if (!nameVal && (k.includes('nama') || k.includes('name') || k.includes('tamu') || k.includes('guest'))) {
                 nameVal = val;
-              } else if (!phoneVal && (k.includes('hp') || k.includes('phone') || k.includes('telp') || k.includes('wa') || k.includes('kontak') || k.includes('nomor') || k.includes('mobile'))) {
+              } else if (!phoneVal && (k.includes('hp') || k.includes('phone') || k.includes('telp') || k.includes('wa') || k.includes('kontak') || k.includes('nomor') || k.includes('mobile') || k.includes('telfon'))) {
                 phoneVal = val;
               } else if (k.includes('kategori') || k.includes('category') || k.includes('kat') || k.includes('tipe') || k.includes('type')) {
                 catVal = val || 'General';
+              } else if (k.includes('sumber') || k.includes('source') || k.includes('asal')) {
+                sourceVal = val || '';
+              } else if (k.includes('contact') || k.includes('cp') || k.includes('pic') || k.includes('person')) {
+                cpVal = val || '';
+              } else if (k.includes('status undangan') || k.includes('undangan') || k.includes('invitation')) {
+                invStatusVal = val || 'Belum Dikirim';
+              } else if (k.includes('konfirmasi') || k.includes('rsvp') || k.includes('kehadiran')) {
+                rsvpStatusVal = val || 'Belum Konfirmasi';
+              } else if (k.includes('keterangan') || k.includes('notes') || k.includes('note') || k.includes('catatan')) {
+                notesVal = val || '';
               }
             }
 
@@ -1076,17 +1093,24 @@ document.addEventListener('alpine:init', () => {
             }
 
             if (nameVal) {
-              // Normalize category
+              // Normalize category to official categories
               let normCat = 'General';
               const lowerCat = catVal.toLowerCase();
-              if (lowerCat.includes('vip')) normCat = 'VIP';
-              else if (lowerCat.includes('fam') || lowerCat.includes('keluarga')) normCat = 'Family';
-              else if (lowerCat.includes('frie') || lowerCat.includes('teman')) normCat = 'Friend';
+              if (lowerCat.includes('tni')) normCat = 'Pejabat TNI';
+              else if (lowerCat.includes('luar')) normCat = 'Pejabat Luar';
+              else if (lowerCat.includes('satsiber') || lowerCat.includes('sahabat')) normCat = 'Sahabat Satsiber';
+              else if (lowerCat.includes('vip')) normCat = 'VIP';
+              else if (['pejabat tni', 'pejabat luar', 'sahabat satsiber', 'vip', 'general'].includes(lowerCat)) normCat = catVal;
 
               parsed.push({
                 name: nameVal,
                 phone: phoneVal,
-                category: normCat
+                category: normCat,
+                source: sourceVal,
+                contact_person: cpVal,
+                invitation_status: invStatusVal,
+                rsvp_status: rsvpStatusVal,
+                notes: notesVal
               });
             } else {
               invalidCount++;
@@ -1198,31 +1222,101 @@ document.addEventListener('alpine:init', () => {
 
     downloadImportTemplate(format = 'xlsx') {
       const sampleData = [
-        { "Nama Tamu": "Budi Santoso", "Nomor HP": "081234567890", "Kategori": "VIP" },
-        { "Nama Tamu": "Siti Nurhaliza", "Nomor HP": "082345678901", "Kategori": "Family" },
-        { "Nama Tamu": "Agus Pratama", "Nomor HP": "083456789012", "Kategori": "Friend" },
-        { "Nama Tamu": "Dewi Sartika", "Nomor HP": "085678901234", "Kategori": "General" }
+        {
+          "Nama Tamu": "Marsekal TNI Fadjar Prasetyo",
+          "Kategori": "Pejabat TNI",
+          "Sumber": "Komandan",
+          "Contact Person": "Mayor Adi",
+          "Nomor HP": "081234567890",
+          "Status Undangan": "Terkirim",
+          "Konfirmasi Kehadiran": "Dapat Hadir",
+          "Keterangan": "Hadir bersama ajudan"
+        },
+        {
+          "Nama Tamu": "Dr. Eng. Hary Budiarto, M.Kom",
+          "Kategori": "Pejabat Luar",
+          "Sumber": "Wadan",
+          "Contact Person": "Kapten Budi",
+          "Nomor HP": "082345678901",
+          "Status Undangan": "Terkirim",
+          "Konfirmasi Kehadiran": "Belum Konfirmasi",
+          "Keterangan": "Kepala Balitbang Kominfo"
+        },
+        {
+          "Nama Tamu": "Ir. Budi Rahardjo, M.Sc., Ph.D.",
+          "Kategori": "Sahabat Satsiber",
+          "Sumber": "Asops",
+          "Contact Person": "Ltk Angga",
+          "Nomor HP": "083456789012",
+          "Status Undangan": "Sudah Dijawab",
+          "Konfirmasi Kehadiran": "Dapat Hadir",
+          "Keterangan": "Pakar Cybersecurity ITB"
+        },
+        {
+          "Nama Tamu": "Kolonel Laut (E) Tri Harsono",
+          "Kategori": "VIP",
+          "Sumber": "Ltk Angga",
+          "Contact Person": "Mayor Dwi",
+          "Nomor HP": "085678901234",
+          "Status Undangan": "Belum Dikirim",
+          "Konfirmasi Kehadiran": "Belum Konfirmasi",
+          "Keterangan": "Undangan VIP Satsiber"
+        },
+        {
+          "Nama Tamu": "Ahmad Rizky Pratama, S.Kom",
+          "Kategori": "General",
+          "Sumber": "Sekretariat",
+          "Contact Person": "Sertu Rian",
+          "Nomor HP": "087890123456",
+          "Status Undangan": "Belum Dikirim",
+          "Konfirmasi Kehadiran": "Belum Konfirmasi",
+          "Keterangan": "Tamu Rekan Kerja"
+        }
       ];
 
       if (format === 'xlsx') {
         const ws = XLSX.utils.json_to_sheet(sampleData);
-        ws['!cols'] = [{ wch: 25 }, { wch: 18 }, { wch: 15 }];
+        ws['!cols'] = [
+          { wch: 32 },
+          { wch: 18 },
+          { wch: 16 },
+          { wch: 18 },
+          { wch: 16 },
+          { wch: 18 },
+          { wch: 22 },
+          { wch: 28 }
+        ];
         const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Daftar Tamu");
-        XLSX.writeFile(wb, "Template_Import_Tamu.xlsx");
-        App.toast('Template Excel (.xlsx) berhasil diunduh!', 'success');
+        XLSX.utils.book_append_sheet(wb, ws, "Template Import Tamu");
+        XLSX.writeFile(wb, "Template_Import_Tamu_HUT_SS.xlsx");
+        App.toast('Template Excel (.xlsx) dengan struktur kolom terbaru berhasil diunduh!', 'success');
       } else {
-        const csvContent = '\uFEFFNama Tamu,Nomor HP,Kategori\r\nBudi Santoso,081234567890,VIP\r\nSiti Nurhaliza,082345678901,Family\r\nAgus Pratama,083456789012,Friend\r\nDewi Sartika,085678901234,General\r\n';
+        const headers = ["Nama Tamu", "Kategori", "Sumber", "Contact Person", "Nomor HP", "Status Undangan", "Konfirmasi Kehadiran", "Keterangan"];
+        const rows = [headers.join(',')];
+        const escapeCsv = (val) => '"' + String(val || '').replace(/"/g, '""') + '"';
+        sampleData.forEach(item => {
+          rows.push([
+            escapeCsv(item["Nama Tamu"]),
+            escapeCsv(item["Kategori"]),
+            escapeCsv(item["Sumber"]),
+            escapeCsv(item["Contact Person"]),
+            escapeCsv(item["Nomor HP"]),
+            escapeCsv(item["Status Undangan"]),
+            escapeCsv(item["Konfirmasi Kehadiran"]),
+            escapeCsv(item["Keterangan"])
+          ].join(','));
+        });
+        const csvContent = '\uFEFF' + rows.join('\r\n');
         const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'Template_Import_Tamu.csv';
+        a.download = 'Template_Import_Tamu_HUT_SS.csv';
         document.body.appendChild(a);
         a.click();
         a.remove();
         URL.revokeObjectURL(url);
-        App.toast('Template CSV (.csv) berhasil diunduh!', 'success');
+        App.toast('Template CSV (.csv) dengan struktur kolom terbaru berhasil diunduh!', 'success');
       }
     },
 
@@ -1301,11 +1395,16 @@ document.addEventListener('alpine:init', () => {
         const rows = this.guests.map((g, idx) => ({
           'No': idx + 1,
           'Nama Tamu': g.name,
+          'Kategori': g.category || 'General',
+          'Sumber': g.source || '-',
+          'Contact Person': g.contact_person || '-',
           'Nomor HP': g.phone || '-',
+          'Status Undangan': g.invitation_status || 'Belum Dikirim',
+          'Konfirmasi Kehadiran': g.rsvp_status || 'Belum Konfirmasi',
+          'Status Kehadiran Scan': g.attendance_status === 'PRESENT' ? 'Hadir (PRESENT)' : 'Belum Hadir (PENDING)',
+          'Keterangan': g.notes || '-',
           'Acara': g.event_name,
-          'Kategori': g.category,
-          'Status Kehadiran': g.attendance_status === 'PRESENT' ? 'Hadir (PRESENT)' : 'Belum Hadir (PENDING)',
-          'Waktu Hadir': g.arrival_time ? this.formatDateTime(g.arrival_time) : '-',
+          'Waktu Hadir Scan': g.arrival_time ? this.formatDateTime(g.arrival_time) : '-',
           'Token QR': g.qr_token,
           'Link Undangan Digital': `${window.location.origin}/check/${g.qr_token}`
         }));
@@ -1313,11 +1412,16 @@ document.addEventListener('alpine:init', () => {
         const ws = XLSX.utils.json_to_sheet(rows);
         ws['!cols'] = [
           { wch: 6 },
-          { wch: 26 },
-          { wch: 16 },
           { wch: 28 },
-          { wch: 12 },
+          { wch: 18 },
+          { wch: 16 },
+          { wch: 18 },
+          { wch: 16 },
+          { wch: 18 },
           { wch: 22 },
+          { wch: 22 },
+          { wch: 25 },
+          { wch: 24 },
           { wch: 20 },
           { wch: 16 },
           { wch: 45 }
@@ -1327,7 +1431,7 @@ document.addEventListener('alpine:init', () => {
         XLSX.utils.book_append_sheet(wb, ws, "Daftar Tamu");
         const filename = `Daftar_Tamu_${activeEvent}_${timestamp}.xlsx`;
         XLSX.writeFile(wb, filename);
-        App.toast(`Data tamu berhasil diekspor ke Excel (${filename})!`, 'success');
+        App.toast(`Data tamu (${this.guests.length} baris) berhasil diekspor ke Excel (${filename})!`, 'success');
       } else {
         // CSV Export
         const escapeCsv = (val) => {
@@ -1339,10 +1443,15 @@ document.addEventListener('alpine:init', () => {
         const headers = [
           'No',
           'Nama Tamu',
-          'Nomor HP',
-          'Acara',
           'Kategori',
-          'Status Kehadiran',
+          'Sumber',
+          'Contact Person',
+          'Nomor HP',
+          'Status Undangan',
+          'Konfirmasi Kehadiran',
+          'Status Kehadiran Scan',
+          'Keterangan',
+          'Acara',
           'Waktu Kedatangan',
           'Token QR',
           'Link Undangan Digital'
@@ -1355,10 +1464,15 @@ document.addEventListener('alpine:init', () => {
           csvLines.push([
             escapeCsv(idx + 1),
             escapeCsv(g.name),
+            escapeCsv(g.category || 'General'),
+            escapeCsv(g.source || '-'),
+            escapeCsv(g.contact_person || '-'),
             escapeCsv(g.phone || '-'),
-            escapeCsv(g.event_name),
-            escapeCsv(g.category),
+            escapeCsv(g.invitation_status || 'Belum Dikirim'),
+            escapeCsv(g.rsvp_status || 'Belum Konfirmasi'),
             escapeCsv(statusLabel),
+            escapeCsv(g.notes || '-'),
+            escapeCsv(g.event_name),
             escapeCsv(g.arrival_time || '-'),
             escapeCsv(g.qr_token),
             escapeCsv(inviteUrl)

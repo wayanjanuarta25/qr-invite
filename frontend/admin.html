@@ -236,67 +236,79 @@
     <!-- TAB 1: DASHBOARD OVERVIEW -->
     <div x-show="activeTab === 'dashboard'" x-cloak class="space-y-6 sm:space-y-8">
       
-      <!-- 4 Statistics Cards (Responsive 2 cols on mobile, 4 cols on desktop) -->
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
+      <!-- 6 KPI Overview Cards (Terkait Status Undangan, RSVP, dan Kehadiran) -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
         
         <!-- Total Guests -->
-        <div class="bg-white rounded-2xl p-3.5 sm:p-5 border border-slate-200 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
-          <div class="flex items-center justify-between mb-2 sm:mb-3">
-            <span class="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider truncate">Total Guests</span>
-            <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-red-50 text-red-600 flex items-center justify-center shrink-0">
-              <i data-lucide="users" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+        <div class="bg-white rounded-2xl p-3.5 sm:p-4 border border-slate-200 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider truncate">Total Tamu</span>
+            <div class="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+              <i data-lucide="users" class="w-3.5 h-3.5"></i>
             </div>
           </div>
-          <div class="text-2xl sm:text-3xl font-extrabold text-slate-900" x-text="stats.total_guests"></div>
-          <div class="mt-1.5 sm:mt-2 text-[10px] sm:text-xs text-slate-500 flex items-center space-x-1 truncate">
-            <span class="text-red-600 font-semibold">Tamu Terdaftar</span>
-            <span class="hidden sm:inline">dalam sistem</span>
-          </div>
+          <div class="text-2xl font-extrabold text-slate-900" x-text="stats.total_guests"></div>
+          <div class="mt-1 text-[10px] text-slate-400 truncate">Semua data tamu</div>
         </div>
 
-        <!-- Confirmed Attendance -->
-        <div class="bg-white rounded-2xl p-3.5 sm:p-5 border border-slate-200 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
-          <div class="flex items-center justify-between mb-2 sm:mb-3">
-            <span class="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider truncate">Confirmed</span>
-            <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
-              <i data-lucide="check-circle-2" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+        <!-- Undangan Terkirim -->
+        <div class="bg-white rounded-2xl p-3.5 sm:p-4 border border-slate-200 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider truncate">Terkirim</span>
+            <div class="w-7 h-7 rounded-lg bg-sky-50 text-sky-600 flex items-center justify-center shrink-0">
+              <i data-lucide="send" class="w-3.5 h-3.5"></i>
             </div>
           </div>
-          <div class="text-2xl sm:text-3xl font-extrabold text-emerald-600" x-text="stats.confirmed_attendance"></div>
-          <div class="mt-1.5 sm:mt-2 text-[10px] sm:text-xs text-slate-500 flex items-center justify-between truncate">
-            <span class="text-emerald-700 font-semibold" x-text="attendancePercentage + '% Hadir'"></span>
-            <span class="text-slate-400 hidden sm:inline">Sudah Scan</span>
-          </div>
+          <div class="text-2xl font-extrabold text-sky-600" x-text="(stats.invitations?.find(i => i.status === 'Terkirim')?.count || 0) + (stats.invitations?.find(i => i.status === 'Sudah Dijawab')?.count || 0)"></div>
+          <div class="mt-1 text-[10px] text-sky-700 font-medium truncate">Undangan terkirim</div>
         </div>
 
-        <!-- Not Arrived -->
-        <div class="bg-white rounded-2xl p-3.5 sm:p-5 border border-slate-200 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
-          <div class="flex items-center justify-between mb-2 sm:mb-3">
-            <span class="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider truncate">Not Arrived</span>
-            <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
-              <i data-lucide="clock" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+        <!-- RSVP Dapat Hadir -->
+        <div class="bg-white rounded-2xl p-3.5 sm:p-4 border border-slate-200 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider truncate">Dapat Hadir</span>
+            <div class="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+              <i data-lucide="user-check" class="w-3.5 h-3.5"></i>
             </div>
           </div>
-          <div class="text-2xl sm:text-3xl font-extrabold text-amber-600" x-text="stats.not_arrived"></div>
-          <div class="mt-1.5 sm:mt-2 text-[10px] sm:text-xs text-slate-500 flex items-center space-x-1 truncate">
-            <span class="text-amber-700 font-semibold">Belum Hadir</span>
-            <span class="hidden sm:inline">menunggu</span>
-          </div>
+          <div class="text-2xl font-extrabold text-emerald-600" x-text="stats.rsvps?.find(r => r.status === 'Dapat Hadir')?.count || 0"></div>
+          <div class="mt-1 text-[10px] text-emerald-700 font-medium truncate">Konfirmasi hadir</div>
         </div>
 
-        <!-- Today's Attendance -->
-        <div class="bg-white rounded-2xl p-3.5 sm:p-5 border border-slate-200 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
-          <div class="flex items-center justify-between mb-2 sm:mb-3">
-            <span class="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider truncate">Today's</span>
-            <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
-              <i data-lucide="calendar-check" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+        <!-- RSVP Tidak Dapat Hadir -->
+        <div class="bg-white rounded-2xl p-3.5 sm:p-4 border border-slate-200 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider truncate">Tidak Hadir</span>
+            <div class="w-7 h-7 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center shrink-0">
+              <i data-lucide="user-x" class="w-3.5 h-3.5"></i>
             </div>
           </div>
-          <div class="text-2xl sm:text-3xl font-extrabold text-purple-600" x-text="stats.today_attendance"></div>
-          <div class="mt-1.5 sm:mt-2 text-[10px] sm:text-xs text-slate-500 flex items-center space-x-1 truncate">
-            <span class="text-purple-700 font-semibold">Hari Ini</span>
-            <span class="hidden sm:inline">(Realtime)</span>
+          <div class="text-2xl font-extrabold text-rose-600" x-text="stats.rsvps?.find(r => r.status === 'Tidak Dapat Hadir')?.count || 0"></div>
+          <div class="mt-1 text-[10px] text-rose-700 font-medium truncate">Konfirmasi berhalangan</div>
+        </div>
+
+        <!-- Check-in Hadir (PRESENT) -->
+        <div class="bg-white rounded-2xl p-3.5 sm:p-4 border border-slate-200 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider truncate">Check-in Scan</span>
+            <div class="w-7 h-7 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+              <i data-lucide="qr-code" class="w-3.5 h-3.5"></i>
+            </div>
           </div>
+          <div class="text-2xl font-extrabold text-amber-600" x-text="stats.confirmed_attendance"></div>
+          <div class="mt-1 text-[10px] text-amber-700 font-medium truncate" x-text="attendancePercentage + '% dari total'"></div>
+        </div>
+
+        <!-- Check-in Hari Ini -->
+        <div class="bg-white rounded-2xl p-3.5 sm:p-4 border border-slate-200 shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider truncate">Scan Hari Ini</span>
+            <div class="w-7 h-7 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
+              <i data-lucide="calendar-check" class="w-3.5 h-3.5"></i>
+            </div>
+          </div>
+          <div class="text-2xl font-extrabold text-purple-600" x-text="stats.today_attendance"></div>
+          <div class="mt-1 text-[10px] text-purple-700 font-medium truncate">Aktivitas realtime</div>
         </div>
 
       </div>
@@ -342,7 +354,7 @@
           <div class="flex items-center justify-between mb-4">
             <div>
               <h3 class="text-sm font-bold text-slate-900">Distribusi Kategori Tamu</h3>
-              <p class="text-xs text-slate-400">Jumlah undangan berdasarkan kategori VIP, Family, Friend, General</p>
+              <p class="text-xs text-slate-400">Jumlah undangan berdasarkan kategori Pejabat TNI, Pejabat Luar, Sahabat Satsiber, VIP, General</p>
             </div>
             <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
               <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
@@ -353,18 +365,22 @@
             <canvas id="categoryBarChart"></canvas>
           </div>
 
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-4 pt-3 border-t border-slate-100 text-xs">
+          <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 mt-4 pt-3 border-t border-slate-100 text-xs">
+            <div class="p-2 rounded-xl bg-red-50/70 border border-red-200 text-center">
+              <div class="text-[10px] font-bold text-red-800 uppercase">Pejabat TNI</div>
+              <div class="text-sm font-extrabold text-red-900" x-text="(stats.categories.find(c => c.category === 'Pejabat TNI')?.count || 0) + ' Tamu'"></div>
+            </div>
+            <div class="p-2 rounded-xl bg-blue-50/70 border border-blue-200 text-center">
+              <div class="text-[10px] font-bold text-blue-800 uppercase">Pejabat Luar</div>
+              <div class="text-sm font-extrabold text-blue-900" x-text="(stats.categories.find(c => c.category === 'Pejabat Luar')?.count || 0) + ' Tamu'"></div>
+            </div>
+            <div class="p-2 rounded-xl bg-emerald-50/70 border border-emerald-200 text-center">
+              <div class="text-[10px] font-bold text-emerald-800 uppercase">Sahabat Satsiber</div>
+              <div class="text-sm font-extrabold text-emerald-900" x-text="(stats.categories.find(c => c.category === 'Sahabat Satsiber')?.count || 0) + ' Tamu'"></div>
+            </div>
             <div class="p-2 rounded-xl bg-amber-50/70 border border-amber-200 text-center">
               <div class="text-[10px] font-bold text-amber-800 uppercase">VIP</div>
               <div class="text-sm font-extrabold text-amber-900" x-text="(stats.categories.find(c => c.category === 'VIP')?.count || 0) + ' Tamu'"></div>
-            </div>
-            <div class="p-2 rounded-xl bg-purple-50/70 border border-purple-200 text-center">
-              <div class="text-[10px] font-bold text-purple-800 uppercase">Family</div>
-              <div class="text-sm font-extrabold text-purple-900" x-text="(stats.categories.find(c => c.category === 'Family')?.count || 0) + ' Tamu'"></div>
-            </div>
-            <div class="p-2 rounded-xl bg-red-50/70 border border-red-200 text-center">
-              <div class="text-[10px] font-bold text-red-800 uppercase">Friend</div>
-              <div class="text-sm font-extrabold text-red-900" x-text="(stats.categories.find(c => c.category === 'Friend')?.count || 0) + ' Tamu'"></div>
             </div>
             <div class="p-2 rounded-xl bg-slate-100 border border-slate-200 text-center">
               <div class="text-[10px] font-bold text-slate-600 uppercase">General</div>
@@ -536,7 +552,7 @@
 
           <!-- Attendance Status Filter -->
           <div class="flex items-center space-x-1.5 text-xs text-slate-500">
-            <span>Status:</span>
+            <span>Kehadiran:</span>
             <select 
               x-model="statusFilter"
               class="bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-red-600 cursor-pointer"
@@ -738,13 +754,20 @@
                     </template>
                   </td>
 
-                  <!-- Category Badge (Internal) -->
+                  <!-- Category (Editable Dropdown) -->
                   <td class="py-3.5 px-4 whitespace-nowrap">
-                    <span 
+                    <select 
+                      :value="g.category || 'General'"
+                      @change="updateGuestField(g, 'category', $event.target.value)"
                       :class="getCategoryBadgeClass(g.category)"
-                      class="px-2.5 py-1 rounded-full text-[10px] font-bold border inline-block" 
-                      x-text="g.category || 'General'"
-                    ></span>
+                      class="px-2 py-1 rounded-full text-[10px] font-bold border cursor-pointer focus:outline-none focus:ring-1 focus:ring-red-600 transition-all"
+                    >
+                      <option value="Pejabat TNI">Pejabat TNI</option>
+                      <option value="Pejabat Luar">Pejabat Luar</option>
+                      <option value="Sahabat Satsiber">Sahabat Satsiber</option>
+                      <option value="VIP">VIP</option>
+                      <option value="General">General</option>
+                    </select>
                   </td>
 
                   <!-- Sumber (Inline Editable) -->
@@ -1682,7 +1705,7 @@
         <div class="p-3 bg-emerald-50/60 border border-emerald-100 rounded-xl flex items-center justify-between gap-3">
           <div class="flex items-center space-x-2 min-w-0">
             <i data-lucide="info" class="w-4 h-4 text-emerald-600 shrink-0"></i>
-            <span class="text-[11px] text-emerald-800 truncate">Unduh template kolom (Nama, No HP, Kategori):</span>
+            <span class="text-[11px] text-emerald-800 truncate">Unduh template lengkap (Nama, No HP, Kategori, Sumber, CP, Keterangan):</span>
           </div>
           <div class="flex items-center space-x-1.5 shrink-0">
             <button 
