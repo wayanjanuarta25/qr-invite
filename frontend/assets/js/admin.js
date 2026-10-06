@@ -571,15 +571,12 @@ document.addEventListener('alpine:init', () => {
 
     // Download batch ZIP of all invitation PDFs
     async downloadBatchInvitationsPdf() {
-      const activeEventId = this.filters.event_id;
+      let activeEventId = this.filters.event_id;
       if (!activeEventId || activeEventId === "all") {
         if (this.events && this.events.length > 0) {
-          this.selectedBatchQrEventId = String(this.events[0].id);
-          this.isQrSelectEventModalOpen = true;
-          App.toast("Silakan pilih acara terlebih dahulu untuk download undangan.", "info");
-          return;
+          activeEventId = this.events[0].id;
         } else {
-          App.toast("Belum ada acara tersedia.", "warning");
+          App.toast("Belum ada acara yang tersedia.", "warning");
           return;
         }
       }
@@ -587,7 +584,13 @@ document.addEventListener('alpine:init', () => {
     },
 
     async executeDownloadInvitationsZip(eventId) {
-      App.toast("Sedang memproses seluruh undangan PDF...", "info");
+      this.isDownloadingZip = true;
+      this.zipProgress = {
+        percent: 40,
+        text: 'Membuat file PDF undangan 3 halaman untuk seluruh tamu...'
+      };
+      App.toast("Sedang memproses file ZIP undangan... Mohon tunggu sebentar.", "info");
+
       try {
         const token = App.getToken();
         const res = await fetch("/api/guests/export/invitations-zip?event_id=" + eventId, {
@@ -597,6 +600,9 @@ document.addEventListener('alpine:init', () => {
           const errData = await res.json().catch(() => ({}));
           throw new Error(errData.error || "Gagal membuat arsip ZIP undangan.");
         }
+        this.zipProgress.percent = 85;
+        this.zipProgress.text = 'Mengompresi ke dalam format ZIP...';
+
         const blob = await res.blob();
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement("a");
@@ -610,6 +616,9 @@ document.addEventListener('alpine:init', () => {
       } catch (err) {
         console.error("ZIP Invitations error:", err);
         App.toast(err.message || "Gagal mengunduh arsip ZIP undangan.", "error");
+      } finally {
+        this.isDownloadingZip = false;
+        this.zipProgress = { percent: 0, text: '' };
       }
     },
     printQrCard() {
