@@ -109,10 +109,10 @@ async function initSeed() {
 
       // Check current guest count for master event (e.g. HUT KE-9 SATSIBER TNI)
       const hutEvent = db.prepare("SELECT id FROM events WHERE name = 'HUT KE-9 SATSIBER TNI'").get();
-      const targetEventId = hutEvent ? hutEvent.id : (data.events?.[0]?.id || 1);
+      const defaultEventId = hutEvent ? hutEvent.id : (data.events?.[0]?.id || 1);
 
       // Insert missing master guests by qr_token or name
-      const checkGuest = db.prepare('SELECT id FROM guests WHERE qr_token = ? OR (name = ? AND event_id = ?)');
+      const checkGuest = db.prepare('SELECT id FROM guests WHERE qr_token = ? OR name = ?');
       const insertGuest = db.prepare(`
         INSERT INTO guests (
           event_id, name, phone, category, qr_token, qr_image, attendance_status,
@@ -122,7 +122,8 @@ async function initSeed() {
 
       let insertedCount = 0;
       for (const g of (data.guests || [])) {
-        const exist = checkGuest.get(g.qr_token, g.name, targetEventId);
+        const exist = checkGuest.get(g.qr_token, g.name);
+        const guestEventId = g.event_id || defaultEventId;
         if (!exist) {
           const qrFileName = `qr_${g.qr_token}.png`;
           const qrFilePath = path.join(qrDir, qrFileName);
@@ -141,7 +142,7 @@ async function initSeed() {
           }
 
           insertGuest.run(
-            targetEventId,
+            guestEventId,
             g.name,
             g.phone || '',
             g.category || 'General',
