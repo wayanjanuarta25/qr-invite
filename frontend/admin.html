@@ -186,33 +186,31 @@
         </button>
 
         <!-- Tab Manajemen Akun (Admin Only) -->
-        <template x-if="isAdmin">
-          <button 
-            @click="switchTab('users'); loadUsers(); $nextTick(() => lucide.createIcons())"
-            :class="activeTab === 'users' ? 'bg-red-600 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'"
-            class="flex items-center space-x-1.5 sm:space-x-2 px-3 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap"
-          >
-            <i data-lucide="shield-check" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
-            <span>Manajemen Akun</span>
-            <span 
-              :class="activeTab === 'users' ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-600'"
-              class="px-1.5 py-0.5 rounded-md text-[10px]" 
-              x-text="usersList.length"
-            ></span>
-          </button>
-        </template>
+        <button 
+          x-show="isAdmin"
+          @click="switchTab('users'); loadUsers(); $nextTick(() => lucide.createIcons())"
+          :class="activeTab === 'users' ? 'bg-red-600 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'"
+          class="flex items-center space-x-1.5 sm:space-x-2 px-3 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap"
+        >
+          <i data-lucide="shield-check" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+          <span>Manajemen Akun</span>
+          <span 
+            :class="activeTab === 'users' ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-600'"
+            class="px-1.5 py-0.5 rounded-md text-[10px]" 
+            x-text="usersList.length"
+          ></span>
+        </button>
 
         <!-- Tab Log Aktivitas (Admin Only) -->
-        <template x-if="isAdmin">
-          <button 
-            @click="switchTab('logs'); loadActivityLogs(); $nextTick(() => lucide.createIcons())"
-            :class="activeTab === 'logs' ? 'bg-red-600 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'"
-            class="flex items-center space-x-1.5 sm:space-x-2 px-3 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap"
-          >
-            <i data-lucide="history" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
-            <span>Log Aktivitas</span>
-          </button>
-        </template>
+        <button 
+          x-show="isAdmin"
+          @click="switchTab('logs'); loadActivityLogs(); $nextTick(() => lucide.createIcons())"
+          :class="activeTab === 'logs' ? 'bg-red-600 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'"
+          class="flex items-center space-x-1.5 sm:space-x-2 px-3 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap"
+        >
+          <i data-lucide="history" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+          <span>Log Aktivitas</span>
+        </button>
       </nav>
 
       <!-- Quick Action Buttons (Responsive on mobile) -->

@@ -1679,6 +1679,137 @@ document.addEventListener('alpine:init', () => {
       } finally {
         this.isDownloadingZip = false;
       }
+    },
+
+    // Check if current user is admin
+    get isAdmin() {
+      if (!this.currentUser) return true;
+      return !this.currentUser.role || this.currentUser.role === 'Admin';
+    },
+
+    // User Management Methods
+    async loadUsers() {
+      this.isLoadingUsers = true;
+      try {
+        const res = await App.api('/api/users');
+        this.usersList = res.users || [];
+      } catch (err) {
+        console.warn('loadUsers error:', err);
+      } finally {
+        this.isLoadingUsers = false;
+        this.$nextTick(() => lucide.createIcons());
+      }
+    },
+
+    openAddUserModal() {
+      this.userModalMode = 'create';
+      this.userForm = {
+        id: null,
+        name: '',
+        email: '',
+        password: '',
+        role: 'Admin',
+        status: 'ACTIVE'
+      };
+      this.isUserModalOpen = true;
+      this.$nextTick(() => lucide.createIcons());
+    },
+
+    openEditUserModal(user) {
+      this.userModalMode = 'edit';
+      this.userForm = {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        password: '',
+        role: user.role || 'Admin',
+        status: user.status || 'ACTIVE'
+      };
+      this.isUserModalOpen = true;
+      this.$nextTick(() => lucide.createIcons());
+    },
+
+    async saveUser() {
+      if (!this.userForm.name || !this.userForm.email) {
+        App.toast('Nama dan email wajib diisi.', 'warning');
+        return;
+      }
+
+      if (this.userModalMode === 'create' && (!this.userForm.password || this.userForm.password.length < 6)) {
+        App.toast('Password minimal 6 karakter untuk akun baru.', 'warning');
+        return;
+      }
+
+      try {
+        if (this.userModalMode === 'create') {
+          await App.api('/api/users', {
+            method: 'POST',
+            body: JSON.stringify(this.userForm)
+          });
+          App.toast('Akun baru berhasil dibuat!', 'success');
+        } else {
+          await App.api(`/api/users/${this.userForm.id}`, {
+            method: 'PUT',
+            body: JSON.stringify(this.userForm)
+          });
+          App.toast('Data akun berhasil diperbarui!', 'success');
+        }
+
+        this.isUserModalOpen = false;
+        await this.loadUsers();
+        await this.loadActivityLogs();
+      } catch (err) {
+        App.toast(err.message || 'Gagal menyimpan data akun', 'error');
+      }
+    },
+
+    async deleteUser(user) {
+      if (!confirm(`Apakah Anda yakin ingin menghapus akun "${user.name}" (${user.email})?`)) {
+        return;
+      }
+
+      try {
+        await App.api(`/api/users/${user.id}`, {
+          method: 'DELETE'
+        });
+        App.toast(`Akun ${user.name} berhasil dihapus.`, 'success');
+        await this.loadUsers();
+        await this.loadActivityLogs();
+      } catch (err) {
+        App.toast(err.message || 'Gagal menghapus akun.', 'error');
+      }
+    },
+
+    // Activity Logs Methods
+    async loadActivityLogs() {
+      this.isLoadingLogs = true;
+      try {
+        const params = new URLSearchParams();
+        if (this.logFilterAction !== 'all') params.append('action', this.logFilterAction);
+        params.append('limit', this.logLimit);
+
+        const res = await App.api(`/api/users/logs?${params.toString()}`);
+        this.activityLogs = res.logs || [];
+      } catch (err) {
+        console.warn('loadActivityLogs error:', err);
+      } finally {
+        this.isLoadingLogs = false;
+        this.$nextTick(() => lucide.createIcons());
+      }
+    },
+
+    getActionBadgeClass(action) {
+      if (!action) return 'bg-slate-100 text-slate-700 border-slate-200';
+      if (action.includes('FAIL') || action.includes('BLOCK') || action.includes('DELETE')) {
+        return 'bg-rose-50 text-rose-700 border-rose-200';
+      }
+      if (action.includes('SUCCESS') || action.includes('CREATE') || action.includes('IMPORT')) {
+        return 'bg-emerald-50 text-emerald-700 border-emerald-200';
+      }
+      if (action.includes('UPDATE')) {
+        return 'bg-amber-50 text-amber-700 border-amber-200';
+      }
+      return 'bg-blue-50 text-blue-700 border-blue-200';
     }
   }));
 });
