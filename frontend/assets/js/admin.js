@@ -963,6 +963,15 @@ document.addEventListener('alpine:init', () => {
         let valA = a[field] || '';
         let valB = b[field] || '';
 
+        // If sorting dates (created_at or updated_at), compare timestamps
+        if (field === 'created_at' || field === 'updated_at') {
+          const timeA = valA ? new Date(valA).getTime() : 0;
+          const timeB = valB ? new Date(valB).getTime() : 0;
+          if (timeA < timeB) return -1 * dir;
+          if (timeA > timeB) return 1 * dir;
+          return 0;
+        }
+
         if (typeof valA === 'string') valA = valA.toLowerCase();
         if (typeof valB === 'string') valB = valB.toLowerCase();
 
