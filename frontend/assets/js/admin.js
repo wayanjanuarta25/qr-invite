@@ -37,6 +37,12 @@ document.addEventListener('alpine:init', () => {
     perPage: 10,
 
     // Modals
+    isDuplicateModalOpen: false,
+    isResolvingDuplicates: false,
+    pendingRestoreJson: null,
+    restoreDuplicateList: [],
+    duplicateDecisions: {},
+
     isEventModalOpen: false,
     eventModalMode: 'create', // 'create' | 'edit'
     eventForm: {
@@ -405,7 +411,17 @@ document.addEventListener('alpine:init', () => {
       this.guestForm.source = val;
     },
 
-        handleNameAltEnter(e) {
+        // Bersihkan kotak pencarian dan muat ulang tamu
+    clearSearch() {
+      this.searchQuery = '';
+      this.currentPage = 1;
+      this.loadGuests();
+      this.$nextTick(() => {
+        if (window.lucide) lucide.createIcons();
+      });
+    },
+
+    handleNameAltEnter(e) {
       if (e.altKey && e.key === 'Enter') {
         e.preventDefault();
         const input = e.target;
@@ -1252,63 +1268,35 @@ document.addEventListener('alpine:init', () => {
             return;
           }
 
-          App.toast('Sedang memulihkan data acara & tamu...', 'info');
-          try {
-            const res = await App.api('/api/guests/restore-backup', {
-              method: 'POST',
-              body: JSON.stringify(json)
+          App.toast('Mengecek data backup...', 'info');
+          const res = await App.api('/api/guests/restore-backup', {
+            method: 'POST',
+            body: JSON.stringify({
+              events: json.events,
+              guests: json.guests || [],
+              defaultStrategy: 'ask'
+            })
+          });
+
+          if (res.hasDuplicates && res.duplicates && res.duplicates.length > 0) {
+            // Ada data double: Tampilkan modal untuk bertanya ke pengguna
+            this.pendingRestoreJson = json;
+            this.restoreDuplicateList = res.duplicates;
+            this.duplicateDecisions = {};
+            // Default: pertahankan data yang sudah ada (existing)
+            res.duplicates.forEach(d => {
+              this.duplicateDecisions[d.index] = 'existing';
             });
-
-            App.toast(res.message, 'success');
-            this.isImportModalOpen = false;
-            await this.loadEvents();
-            await this.loadStats();
-            await this.loadGuests();
-          } catch (apiErr) {
-            console.warn('Backend restore route unavailable, using client fallback:', apiErr);
-            // Fallback restore via standard endpoints
-            const eventMap = {};
-            for (const ev of (json.events || [])) {
-              let existing = this.events.find(e => e.name === ev.name);
-              if (existing) {
-                eventMap[ev.id] = existing.id;
-              } else {
-                const newEv = await App.api('/api/events', {
-                  method: 'POST',
-                  body: JSON.stringify({
-                    name: ev.name,
-                    date: ev.date,
-                    location: ev.location,
-                    description: ev.description || ''
-                  })
-                });
-                eventMap[ev.id] = newEv.event.id;
-              }
-            }
-            await this.loadEvents();
-
-            let guestCount = 0;
-            for (const g of (json.guests || [])) {
-              const targetEvId = eventMap[g.event_id] || (this.events[0]?.id);
-              if (!targetEvId) continue;
-              await App.api('/api/guests', {
-                method: 'POST',
-                body: JSON.stringify({
-                  event_id: targetEvId,
-                  name: g.name,
-                  phone: g.phone || '',
-                  category: g.category || 'General'
-                })
-              });
-              guestCount++;
-            }
-
-            App.toast(`Berhasil restore ${guestCount} tamu!`, 'success');
-            this.isImportModalOpen = false;
-            await this.loadEvents();
-            await this.loadStats();
-            await this.loadGuests();
+            this.isDuplicateModalOpen = true;
+            this.$nextTick(() => { if (window.lucide) lucide.createIcons(); });
+            return;
           }
+
+          App.toast(res.message || 'Pemulihan data berhasil!', 'success');
+          this.isImportModalOpen = false;
+          await this.loadEvents();
+          await this.loadStats();
+          await this.loadGuests();
         } catch (err) {
           console.error('Restore error:', err);
           App.toast('Gagal restore: ' + err.message, 'error');
@@ -1317,6 +1305,45 @@ document.addEventListener('alpine:init', () => {
         }
       };
       reader.readAsText(file);
+    },
+
+    setAllDuplicateDecisions(choice) {
+      if (!this.restoreDuplicateList) return;
+      this.restoreDuplicateList.forEach(d => {
+        this.duplicateDecisions[d.index] = choice;
+      });
+    },
+
+    async confirmAndExecuteRestore() {
+      if (!this.pendingRestoreJson) return;
+      this.isResolvingDuplicates = true;
+      try {
+        const res = await App.api('/api/guests/restore-backup', {
+          method: 'POST',
+          body: JSON.stringify({
+            events: this.pendingRestoreJson.events,
+            guests: this.pendingRestoreJson.guests || [],
+            duplicateDecisions: this.duplicateDecisions,
+            defaultStrategy: 'custom'
+          })
+        });
+
+        App.toast(res.message || 'Pemulihan data selesai!', 'success');
+        this.isDuplicateModalOpen = false;
+        this.isImportModalOpen = false;
+        this.pendingRestoreJson = null;
+        this.restoreDuplicateList = [];
+        this.duplicateDecisions = {};
+
+        await this.loadEvents();
+        await this.loadStats();
+        await this.loadGuests();
+      } catch (err) {
+        console.error('Confirm restore error:', err);
+        App.toast('Gagal menyelesaikan restore: ' + err.message, 'error');
+      } finally {
+        this.isResolvingDuplicates = false;
+      }
     },
 
     downloadImportTemplate(format = 'xlsx') {

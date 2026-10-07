@@ -634,7 +634,7 @@ exports.downloadEventQrsZip = async (req, res) => {
 // Restore full backup JSON (Events & Guests preservation)
 exports.restoreFullBackup = async (req, res) => {
   try {
-    const { events, guests } = req.body;
+    const { events, guests, duplicateDecisions = {}, defaultStrategy = 'ask' } = req.body;
     if (!events || !Array.isArray(events)) {
       return res.status(400).json({ error: 'Format backup tidak valid: events harus berupa array.' });
     }
@@ -657,52 +657,164 @@ exports.restoreFullBackup = async (req, res) => {
       }
     }
 
-    let restoredGuestsCount = 0;
-    if (guests && Array.isArray(guests)) {
-      const insertGuest = db.prepare(`
-        INSERT INTO guests (event_id, name, phone, category, qr_token, qr_image, attendance_status, arrival_time)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-      `);
+    // Step 1: Detect duplicates if duplicateDecisions not resolved yet
+    const duplicateList = [];
+    const guestsList = Array.isArray(guests) ? guests : [];
 
-      for (const g of guests) {
-        let targetEventId = eventIdMap[g.event_id];
-        if (!targetEventId && g.event_name) {
-          const ev = db.prepare('SELECT id FROM events WHERE name = ?').get(g.event_name);
-          if (ev) targetEventId = ev.id;
-        }
-        if (!targetEventId) {
-          const firstEv = db.prepare('SELECT id FROM events LIMIT 1').get();
-          targetEventId = firstEv ? firstEv.id : 1;
-        }
-
-        const token = g.qr_token || generateUniqueToken();
-        const existingGuest = db.prepare('SELECT id FROM guests WHERE qr_token = ?').get(token);
-        if (existingGuest) continue;
-
-        const qrFileName = `qr_${token}.png`;
-        const qrFilePath = path.join(qrDir, qrFileName);
-        let qr_image = `/qr/${qrFileName}`;
-        if (!fs.existsSync(qrFilePath)) {
-          await createQrImage(token, req);
-        }
-
-        insertGuest.run(
-          targetEventId,
-          g.name,
-          g.phone || '',
-          g.category || 'General',
-          token,
-          qr_image,
-          g.attendance_status || 'PENDING',
-          g.arrival_time || null
-        );
-        restoredGuestsCount++;
+    for (let i = 0; i < guestsList.length; i++) {
+      const g = guestsList[i];
+      let existingGuest = null;
+      if (g.qr_token) {
+        existingGuest = db.prepare('SELECT * FROM guests WHERE qr_token = ?').get(g.qr_token);
       }
+      if (!existingGuest && g.name) {
+        existingGuest = db.prepare('SELECT * FROM guests WHERE LOWER(name) = LOWER(?)').get(g.name.trim());
+      }
+
+      if (existingGuest) {
+        duplicateList.push({
+          index: i,
+          token: g.qr_token || existingGuest.qr_token,
+          existingGuest: {
+            id: existingGuest.id,
+            name: existingGuest.name,
+            phone: existingGuest.phone,
+            category: existingGuest.category,
+            source: existingGuest.source,
+            contact_person: existingGuest.contact_person,
+            invitation_status: existingGuest.invitation_status,
+            rsvp_status: existingGuest.rsvp_status,
+            notes: existingGuest.notes,
+            qr_token: existingGuest.qr_token
+          },
+          newGuest: {
+            name: g.name,
+            phone: g.phone || '',
+            category: g.category || 'General',
+            source: g.source || '',
+            contact_person: g.contact_person || '',
+            invitation_status: g.invitation_status || 'Belum Dikirim',
+            rsvp_status: g.rsvp_status || 'Belum Konfirmasi',
+            notes: g.notes || '',
+            qr_token: g.qr_token || ''
+          }
+        });
+      }
+    }
+
+    // If duplicates found and user hasn't made decisions and hasn't selected global overwrite/skip
+    if (duplicateList.length > 0 && Object.keys(duplicateDecisions).length === 0 && defaultStrategy === 'ask') {
+      return res.json({
+        success: true,
+        hasDuplicates: true,
+        duplicateCount: duplicateList.length,
+        duplicates: duplicateList,
+        message: `Ditemukan ${duplicateList.length} data tamu ganda. Silakan pilih opsi data yang ingin digunakan.`
+      });
+    }
+
+    let restoredGuestsCount = 0;
+    let updatedGuestsCount = 0;
+    let skippedGuestsCount = 0;
+
+    const insertGuest = db.prepare(`
+      INSERT INTO guests (
+        event_id, name, phone, category, qr_token, qr_image, attendance_status,
+        arrival_time, created_at, updated_at, source, contact_person, invitation_status, rsvp_status, notes
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `);
+
+    const updateGuest = db.prepare(`
+      UPDATE guests SET
+        name = ?,
+        phone = ?,
+        category = ?,
+        source = ?,
+        contact_person = ?,
+        invitation_status = ?,
+        rsvp_status = ?,
+        notes = ?,
+        updated_at = CURRENT_TIMESTAMP
+      WHERE id = ?
+    `);
+
+    for (let i = 0; i < guestsList.length; i++) {
+      const g = guestsList[i];
+      let targetEventId = eventIdMap[g.event_id];
+      if (!targetEventId && g.event_name) {
+        const ev = db.prepare('SELECT id FROM events WHERE name = ?').get(g.event_name);
+        if (ev) targetEventId = ev.id;
+      }
+      if (!targetEventId) {
+        const firstEv = db.prepare('SELECT id FROM events LIMIT 1').get();
+        targetEventId = firstEv ? firstEv.id : 1;
+      }
+
+      const token = g.qr_token || generateUniqueToken();
+      let existingGuest = db.prepare('SELECT * FROM guests WHERE qr_token = ?').get(token);
+      if (!existingGuest && g.name) {
+        existingGuest = db.prepare('SELECT * FROM guests WHERE LOWER(name) = LOWER(?)').get(g.name.trim());
+      }
+
+      if (existingGuest) {
+        // Check decision for this duplicate
+        const decision = duplicateDecisions[i] || duplicateDecisions[token] || defaultStrategy;
+        if (decision === 'new' || decision === 'overwrite_all') {
+          // Use new data to update existing guest
+          updateGuest.run(
+            g.name || existingGuest.name,
+            g.phone || existingGuest.phone || '',
+            g.category || existingGuest.category || 'General',
+            g.source || existingGuest.source || '',
+            g.contact_person || existingGuest.contact_person || '',
+            g.invitation_status || existingGuest.invitation_status || 'Belum Dikirim',
+            g.rsvp_status || existingGuest.rsvp_status || 'Belum Konfirmasi',
+            g.notes || existingGuest.notes || '',
+            existingGuest.id
+          );
+          updatedGuestsCount++;
+        } else {
+          // 'existing' or 'skip_all': Keep existing data
+          skippedGuestsCount++;
+        }
+        continue;
+      }
+
+      // Guest is new, insert into database
+      const qrFileName = `qr_${token}.png`;
+      const qrFilePath = path.join(qrDir, qrFileName);
+      let qr_image = `/qr/${qrFileName}`;
+      if (!fs.existsSync(qrFilePath)) {
+        await createQrImage(token, req);
+      }
+
+      insertGuest.run(
+        targetEventId,
+        g.name,
+        g.phone || '',
+        g.category || 'General',
+        token,
+        qr_image,
+        g.attendance_status || 'PENDING',
+        g.arrival_time || null,
+        g.created_at || new Date().toISOString(),
+        g.updated_at || g.created_at || new Date().toISOString(),
+        g.source || '',
+        g.contact_person || '',
+        g.invitation_status || 'Belum Dikirim',
+        g.rsvp_status || 'Belum Konfirmasi',
+        g.notes || ''
+      );
+      restoredGuestsCount++;
     }
 
     return res.json({
       success: true,
-      message: `Berhasil me-restore ${events.length} acara dan ${restoredGuestsCount} tamu dari file backup!`
+      hasDuplicates: false,
+      restoredCount: restoredGuestsCount,
+      updatedCount: updatedGuestsCount,
+      skippedCount: skippedGuestsCount,
+      message: `Proses pemulihan selesai: ${restoredGuestsCount} tamu baru ditambahkan, ${updatedGuestsCount} diperbarui dengan data baru, dan ${skippedGuestsCount} mempertahankan data lama.`
     });
   } catch (error) {
     console.error('Restore backup error:', error);

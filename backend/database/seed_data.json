@@ -15,7 +15,7 @@
     {
       "id": 12,
       "event_id": 5,
-      "name": "Babe Surya - PT Esa Medika Tbk",
+      "name": "Babe Surya - PT Esa Medika Tbk\nDirektur Utama",
       "phone": "",
       "category": "General",
       "qr_token": "VBJ6VWHNANYL",
@@ -28,7 +28,7 @@
       "invitation_status": "Belum Dikirim",
       "rsvp_status": "Belum Konfirmasi",
       "notes": "",
-      "updated_at": "2026-10-06 12:02:37"
+      "updated_at": "2026-10-06 12:56:18"
     },
     {
       "id": 13,
@@ -1255,7 +1255,7 @@
       "updated_at": "2026-10-06 12:02:37"
     },
     {
-      "id": 89,
+      "id": 102,
       "event_id": 5,
       "name": "Candra CB",
       "phone": "",
@@ -1273,7 +1273,7 @@
       "updated_at": "2026-10-06 14:44:00"
     },
     {
-      "id": 90,
+      "id": 103,
       "event_id": 5,
       "name": "Dede Apriadi\nDirektor Komersial & Pemberitaan NusantaraTV",
       "phone": "",
@@ -1291,7 +1291,7 @@
       "updated_at": "2026-10-06 14:44:00"
     },
     {
-      "id": 91,
+      "id": 104,
       "event_id": 5,
       "name": "Lalu Mara Satriawangsa\nPemimpin Redaksi TVOne",
       "phone": "",
@@ -1309,7 +1309,7 @@
       "updated_at": "2026-10-06 14:44:00"
     },
     {
-      "id": 92,
+      "id": 105,
       "event_id": 5,
       "name": "Ariawan\nDirektur Utama SinpoTV",
       "phone": "",
@@ -1327,7 +1327,7 @@
       "updated_at": "2026-10-06 14:44:00"
     },
     {
-      "id": 93,
+      "id": 106,
       "event_id": 5,
       "name": "Aiman Witjaksono\nPemimpin Redaksi iNews (MNC)",
       "phone": "",
@@ -1345,7 +1345,7 @@
       "updated_at": "2026-10-06 14:44:00"
     },
     {
-      "id": 94,
+      "id": 107,
       "event_id": 5,
       "name": "Yogi Nugraha\nPemimpin Redaksi KompasTV",
       "phone": "",
@@ -1363,7 +1363,7 @@
       "updated_at": "2026-10-06 14:44:00"
     },
     {
-      "id": 95,
+      "id": 108,
       "event_id": 5,
       "name": "Geong Rusdiyanto\nPemimpin Redaksi GarudaTV",
       "phone": "",
@@ -1381,7 +1381,7 @@
       "updated_at": "2026-10-06 14:44:00"
     },
     {
-      "id": 96,
+      "id": 109,
       "event_id": 5,
       "name": "Titin Rosmasari\nPemimpin Redaksi CNN Indonesia (Trans)",
       "phone": "",
@@ -1399,7 +1399,7 @@
       "updated_at": "2026-10-06 14:44:00"
     },
     {
-      "id": 97,
+      "id": 110,
       "event_id": 5,
       "name": "Retno Pinasti\nPemimpin Redaksi EMTEK (SCTV & Indosiar)",
       "phone": "",
@@ -1417,7 +1417,7 @@
       "updated_at": "2026-10-06 14:44:00"
     },
     {
-      "id": 98,
+      "id": 111,
       "event_id": 5,
       "name": "Budiyanto\nPemimpin Redaksi MetroTV",
       "phone": "",
@@ -1435,7 +1435,7 @@
       "updated_at": "2026-10-06 14:44:00"
     },
     {
-      "id": 99,
+      "id": 112,
       "event_id": 5,
       "name": "Zaki Amrullah\nPemimpin Redaksi BTV",
       "phone": "",
@@ -1453,7 +1453,7 @@
       "updated_at": "2026-10-06 14:44:00"
     },
     {
-      "id": 100,
+      "id": 113,
       "event_id": 5,
       "name": "Arif Adi Kuswardono\nDirektur Pemberitaan TVRI",
       "phone": "",
@@ -1471,7 +1471,7 @@
       "updated_at": "2026-10-06 14:44:00"
     },
     {
-      "id": 101,
+      "id": 114,
       "event_id": 5,
       "name": "Irawan - Royal Grup",
       "phone": "",
@@ -1489,7 +1489,7 @@
       "updated_at": "2026-10-06 14:44:00"
     },
     {
-      "id": 102,
+      "id": 115,
       "event_id": 5,
       "name": "Letjen TNI (Purn) Bambang Ismawan",
       "phone": "",
@@ -1507,7 +1507,7 @@
       "updated_at": "2026-10-06 14:44:00"
     },
     {
-      "id": 103,
+      "id": 116,
       "event_id": 5,
       "name": "BJP Purn Antonius Ginting\nBupati Kabupaten Karo",
       "phone": "",
@@ -1525,7 +1525,7 @@
       "updated_at": "2026-10-06 15:45:00"
     },
     {
-      "id": 104,
+      "id": 117,
       "event_id": 5,
       "name": "Manaek Hutabarat\nKakan Pertanahan Tapanuli Tengah",
       "phone": "",
@@ -1543,7 +1543,7 @@
       "updated_at": "2026-10-06 15:45:00"
     },
     {
-      "id": 105,
+      "id": 118,
       "event_id": 5,
       "name": "Yudhi - PT Djarum",
       "phone": "",
@@ -1561,7 +1561,7 @@
       "updated_at": "2026-10-06 15:45:00"
     },
     {
-      "id": 106,
+      "id": 119,
       "event_id": 5,
       "name": "Dimas - SNJ Grup",
       "phone": "",
@@ -1579,7 +1579,7 @@
       "updated_at": "2026-10-06 15:55:00"
     },
     {
-      "id": 107,
+      "id": 120,
       "event_id": 5,
       "name": "Babe Rudy Susanto",
       "phone": "",
@@ -1597,7 +1597,7 @@
       "updated_at": "2026-10-06 15:55:00"
     },
     {
-      "id": 108,
+      "id": 121,
       "event_id": 5,
       "name": "BJ Pol Rico Soenarko",
       "phone": "",
@@ -1615,7 +1615,7 @@
       "updated_at": "2026-10-06 15:55:00"
     },
     {
-      "id": 109,
+      "id": 122,
       "event_id": 5,
       "name": "Ibu Dessy",
       "phone": "",
@@ -1633,7 +1633,7 @@
       "updated_at": "2026-10-06 16:10:00"
     },
     {
-      "id": 110,
+      "id": 123,
       "event_id": 5,
       "name": "Andri Krisnanto",
       "phone": "",
@@ -1651,7 +1651,7 @@
       "updated_at": "2026-10-06 16:10:00"
     },
     {
-      "id": 111,
+      "id": 124,
       "event_id": 5,
       "name": "Panglima TNI",
       "phone": "",
@@ -1669,7 +1669,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 112,
+      "id": 125,
       "event_id": 5,
       "name": "Wakil Panglima TNI",
       "phone": "6282273626019",
@@ -1687,7 +1687,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 113,
+      "id": 126,
       "event_id": 5,
       "name": "Irjen TNI",
       "phone": "6281334170607",
@@ -1705,7 +1705,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 114,
+      "id": 127,
       "event_id": 5,
       "name": "Kasum TNI",
       "phone": "6289652006482",
@@ -1723,7 +1723,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 115,
+      "id": 128,
       "event_id": 5,
       "name": "Asrenum Panglima TNI",
       "phone": "",
@@ -1741,7 +1741,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 116,
+      "id": 129,
       "event_id": 5,
       "name": "Asops Panglima TNI",
       "phone": "",
@@ -1759,7 +1759,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 117,
+      "id": 130,
       "event_id": 5,
       "name": "Danjen Akademi TNI",
       "phone": "6281181210692",
@@ -1777,7 +1777,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 118,
+      "id": 131,
       "event_id": 5,
       "name": "Kabais TNI",
       "phone": "",
@@ -1795,7 +1795,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 119,
+      "id": 132,
       "event_id": 5,
       "name": "Dankodiklat TNI",
       "phone": "",
@@ -1813,7 +1813,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 120,
+      "id": 133,
       "event_id": 5,
       "name": "Kaster TNI",
       "phone": "",
@@ -1831,7 +1831,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 121,
+      "id": 134,
       "event_id": 5,
       "name": "Koorsahli Panglima TNI",
       "phone": "",
@@ -1849,7 +1849,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 122,
+      "id": 135,
       "event_id": 5,
       "name": "Asintel Panglima TNI",
       "phone": "6281335493002",
@@ -1867,7 +1867,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 123,
+      "id": 136,
       "event_id": 5,
       "name": "Aspers Panglima TNI",
       "phone": "6281338992003",
@@ -1885,7 +1885,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 124,
+      "id": 137,
       "event_id": 5,
       "name": "Aslog Panglima TNI",
       "phone": "",
@@ -1903,7 +1903,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 125,
+      "id": 138,
       "event_id": 5,
       "name": "Askomlek Panglima TNI",
       "phone": "6281213129297",
@@ -1921,7 +1921,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 126,
+      "id": 139,
       "event_id": 5,
       "name": "Asstra Panglima TNI",
       "phone": "",
@@ -1939,7 +1939,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 127,
+      "id": 140,
       "event_id": 5,
       "name": "Danpuspom TNI",
       "phone": "",
@@ -1957,7 +1957,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 128,
+      "id": 141,
       "event_id": 5,
       "name": "Kababinkum dan Ham TNI",
       "phone": "",
@@ -1975,7 +1975,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 129,
+      "id": 142,
       "event_id": 5,
       "name": "Kapuspen TNI",
       "phone": "",
@@ -1993,7 +1993,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 130,
+      "id": 143,
       "event_id": 5,
       "name": "Kapusminpers TNI",
       "phone": "",
@@ -2011,7 +2011,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 131,
+      "id": 144,
       "event_id": 5,
       "name": "Kapusinfo TNI",
       "phone": "",
@@ -2029,7 +2029,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 132,
+      "id": 145,
       "event_id": 5,
       "name": "Kapusjaspermildas TNI",
       "phone": "",
@@ -2047,7 +2047,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 133,
+      "id": 146,
       "event_id": 5,
       "name": "Kapuslemasmil",
       "phone": "6285777744476",
@@ -2065,7 +2065,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 134,
+      "id": 147,
       "event_id": 5,
       "name": "Dansatkomlek TNI",
       "phone": "",
@@ -2083,7 +2083,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 135,
+      "id": 148,
       "event_id": 5,
       "name": "Kapusdalops TNI",
       "phone": "",
@@ -2101,7 +2101,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 136,
+      "id": 149,
       "event_id": 5,
       "name": "Kabalog TNI",
       "phone": "",
@@ -2119,7 +2119,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 137,
+      "id": 150,
       "event_id": 5,
       "name": "Kapusada TNI",
       "phone": "",
@@ -2137,7 +2137,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 138,
+      "id": 151,
       "event_id": 5,
       "name": "Dir A Bais TNI",
       "phone": "",
@@ -2155,7 +2155,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 139,
+      "id": 152,
       "event_id": 5,
       "name": "Dir B Bais TNI",
       "phone": "",
@@ -2173,7 +2173,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 140,
+      "id": 153,
       "event_id": 5,
       "name": "Dir C Bais TNI",
       "phone": "",
@@ -2191,7 +2191,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 141,
+      "id": 154,
       "event_id": 5,
       "name": "Dir D Bais TNI",
       "phone": "",
@@ -2209,7 +2209,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 142,
+      "id": 155,
       "event_id": 5,
       "name": "Dan SIG Bais TNI",
       "phone": "",
@@ -2227,7 +2227,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 143,
+      "id": 156,
       "event_id": 5,
       "name": "Danpusiberad",
       "phone": "",
@@ -2245,7 +2245,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 144,
+      "id": 157,
       "event_id": 5,
       "name": "Danpusiberal",
       "phone": "",
@@ -2263,7 +2263,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 145,
+      "id": 158,
       "event_id": 5,
       "name": "Dansatsiberau",
       "phone": "",
@@ -2281,7 +2281,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 146,
+      "id": 159,
       "event_id": 5,
       "name": "Kadispenad",
       "phone": "",
@@ -2299,7 +2299,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 147,
+      "id": 160,
       "event_id": 5,
       "name": "Kadispenal",
       "phone": "6283198906853",
@@ -2317,7 +2317,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 148,
+      "id": 161,
       "event_id": 5,
       "name": "Kadispenau",
       "phone": "",
@@ -2335,7 +2335,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 149,
+      "id": 162,
       "event_id": 5,
       "name": "Wakil Ketua MPR RI – Ibu Lestari Moerdijat",
       "phone": "628111098770",
@@ -2353,7 +2353,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 150,
+      "id": 163,
       "event_id": 5,
       "name": "Menteri Badan Perencanaan Pembangunan Nasional (Bappenas)",
       "phone": "",
@@ -2371,7 +2371,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 151,
+      "id": 164,
       "event_id": 5,
       "name": "Menteri Ekonomi Kreatif Republik Indonesia (Kemenekraf)",
       "phone": "",
@@ -2389,7 +2389,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 152,
+      "id": 165,
       "event_id": 5,
       "name": "Wakil Menteri Ekonomi Kreatif Republik Indonesia",
       "phone": "",
@@ -2407,7 +2407,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 153,
+      "id": 166,
       "event_id": 5,
       "name": "Sekjen Kementerian Komunikasi dan Digital (Komdigi)",
       "phone": "",
@@ -2425,7 +2425,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 154,
+      "id": 167,
       "event_id": 5,
       "name": "Dirjen Pengawasan Ruang Digital Kementerian Komunikasi dan Digital",
       "phone": "",
@@ -2443,7 +2443,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 155,
+      "id": 168,
       "event_id": 5,
       "name": "Kepala Badan Informasi dan Komunikasi Intelijen Pertahanan (BIK)",
       "phone": "",
@@ -2461,7 +2461,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 156,
+      "id": 169,
       "event_id": 5,
       "name": "Kepala Pusat Siber dan Teknologi Pertahanan (Kemhan)",
       "phone": "",
@@ -2479,7 +2479,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 157,
+      "id": 170,
       "event_id": 5,
       "name": "Staf Khusus Menteri Pertahanan Bidang Cyber Security – Ibu Sylvia Sumarlin",
       "phone": "",
@@ -2497,7 +2497,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 158,
+      "id": 171,
       "event_id": 5,
       "name": "Staf Khusus Menteri Bappenas – Bapak Rama Notowidigdo",
       "phone": "628195021234",
@@ -2515,7 +2515,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 159,
+      "id": 172,
       "event_id": 5,
       "name": "Kepala Badan Siber dan Sandi Negara (BSSN)",
       "phone": "",
@@ -2533,7 +2533,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 160,
+      "id": 173,
       "event_id": 5,
       "name": "Deputi 1 BSSN",
       "phone": "",
@@ -2551,7 +2551,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 161,
+      "id": 174,
       "event_id": 5,
       "name": "Deputi 2 BSSN",
       "phone": "",
@@ -2569,7 +2569,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 162,
+      "id": 175,
       "event_id": 5,
       "name": "Komisi I DPR RI – Ibu Amelia Anggaraini",
       "phone": "",
@@ -2587,7 +2587,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 163,
+      "id": 176,
       "event_id": 5,
       "name": "Komisi I DPR RI – Ibu Andina Thresia Narang",
       "phone": "",
@@ -2605,7 +2605,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 164,
+      "id": 177,
       "event_id": 5,
       "name": "Komisi I DPR RI – Bapak Dave Laksono",
       "phone": "",
@@ -2623,7 +2623,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 165,
+      "id": 178,
       "event_id": 5,
       "name": "Deputi Koordinasi Pencegahan dan Peningkatan Kapasitas Keamanan Siber (Kemenko Polkam)",
       "phone": "",
@@ -2641,7 +2641,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 166,
+      "id": 179,
       "event_id": 5,
       "name": "Ketua Umum APTIKOM",
       "phone": "",
@@ -2659,7 +2659,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 167,
+      "id": 180,
       "event_id": 5,
       "name": "Ketua Umum APTISI",
       "phone": "",
@@ -2677,7 +2677,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 168,
+      "id": 181,
       "event_id": 5,
       "name": "Presiden Direktur PT. ITSEC Asia Tbk. (CYBR)",
       "phone": "",
@@ -2695,7 +2695,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 169,
+      "id": 182,
       "event_id": 5,
       "name": "Ketua Indonesia Cyber Security Forum (ICSF)",
       "phone": "",
@@ -2713,7 +2713,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 170,
+      "id": 183,
       "event_id": 5,
       "name": "Direktur PT. Sucofindo",
       "phone": "",
@@ -2731,7 +2731,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 171,
+      "id": 184,
       "event_id": 5,
       "name": "Direktur PT. Peruri",
       "phone": "",
@@ -2749,7 +2749,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 172,
+      "id": 185,
       "event_id": 5,
       "name": "Direktur PT. LEN",
       "phone": "",
@@ -2767,7 +2767,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 173,
+      "id": 186,
       "event_id": 5,
       "name": "Kepala Prodi S2 Rekayasa Pertahanan Siber, Unhan RI",
       "phone": "",
@@ -2785,7 +2785,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 174,
+      "id": 187,
       "event_id": 5,
       "name": "Kepala Prodi S1 Teknik Informatika, Unhan RI",
       "phone": "",
@@ -2803,7 +2803,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 175,
+      "id": 188,
       "event_id": 5,
       "name": "Prof. Ir. – J.W. Saputro, M.Sc., MBA., Ph.D.",
       "phone": "",
@@ -2821,7 +2821,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 176,
+      "id": 189,
       "event_id": 5,
       "name": "Rektor Poltek Siber dan Sandi Negara – Laksamana Pertama TNI Ir. Arnoldus Triono, M.M., M.Tr. Opsla., CIQNR.",
       "phone": "",
@@ -2839,7 +2839,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 177,
+      "id": 190,
       "event_id": 5,
       "name": "Guru Besar ITB – Prof. Ir. Syarif Hidayat, M.T., Ph.D.",
       "phone": "",
@@ -2857,7 +2857,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 178,
+      "id": 191,
       "event_id": 5,
       "name": "Rektor Institut Teknologi Tangerang Selatan – Ir. Onno Widodo Purbo, M.Eng., Ph.D.",
       "phone": "",
@@ -2875,7 +2875,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 179,
+      "id": 192,
       "event_id": 5,
       "name": "Guru Besar Bidang Ilmu Keamanan Data FMIPA – Prof. Dr. Drs. Suryadi, M.T.",
       "phone": "",
@@ -2893,7 +2893,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 180,
+      "id": 193,
       "event_id": 5,
       "name": "Ketua Lembaga Kerjasama dan Urusan International Universitas Gunadarma – Dr. rer. nat. I Made Wiryana, S.Si., S.Kom., M.AppSc.",
       "phone": "",
@@ -2911,7 +2911,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 181,
+      "id": 194,
       "event_id": 5,
       "name": "Rektor Universitas Pradita – Prof. Dr. Ir. R. Eko Indrajit, M.Sc., M.B.A., M.Phil., M.A.",
       "phone": "",
@@ -2929,7 +2929,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 182,
+      "id": 195,
       "event_id": 5,
       "name": "Rektor Institut Ilmu Sosial dan Manajemen STIAMI – Prof. Dr. Hj. Sylviana Murni, S.H., M.Si.",
       "phone": "",
@@ -2947,7 +2947,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 183,
+      "id": 196,
       "event_id": 5,
       "name": "Rektor Universitas Telkom – Prof. Dr. Suyanto, S.T., M.Sc.",
       "phone": "",
@@ -2965,7 +2965,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 184,
+      "id": 197,
       "event_id": 5,
       "name": "Wakil Rektor Bidang Kemahasiswaan dan Kerjasama – Ir. Abdul Wahab Bangkona, M.Sc.",
       "phone": "",
@@ -2983,7 +2983,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 185,
+      "id": 198,
       "event_id": 5,
       "name": "Direktur dan Guru Besar UPI – Prof. Dr. H. Karim Suryadi, M.Si.",
       "phone": "",
@@ -3001,7 +3001,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 186,
+      "id": 199,
       "event_id": 5,
       "name": "Guru Besar Universitas Nusa Putra – Prof. Ir. Teddy Mantoro, M.Sc., Ph.D.",
       "phone": "",
@@ -3019,7 +3019,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 187,
+      "id": 200,
       "event_id": 5,
       "name": "Sekjen PB PJSI",
       "phone": "",
@@ -3037,7 +3037,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 188,
+      "id": 201,
       "event_id": 5,
       "name": "Waketum PJSI DKI JKT",
       "phone": "",
@@ -3055,7 +3055,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 189,
+      "id": 202,
       "event_id": 5,
       "name": "Sekum PJSI DKI JKT",
       "phone": "",
@@ -3073,7 +3073,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 190,
+      "id": 203,
       "event_id": 5,
       "name": "Ka Sekretariat PJSI DKI JKT",
       "phone": "",
@@ -3091,7 +3091,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 191,
+      "id": 204,
       "event_id": 5,
       "name": "Ketua Pengkot PJSI DKI JKT",
       "phone": "",
@@ -3109,7 +3109,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 192,
+      "id": 205,
       "event_id": 5,
       "name": "BapakTommy Paulus Hermawan Ketua umum PB Pertacami",
       "phone": "",
@@ -3127,7 +3127,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 193,
+      "id": 206,
       "event_id": 5,
       "name": "PT. Veloce Indonesia Jaya (VELSICURO) – Bapak Ilyas",
       "phone": "",
@@ -3145,7 +3145,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 194,
+      "id": 207,
       "event_id": 5,
       "name": "PT. Rizki Tujuhbelas Kelola (R-17)",
       "phone": "",
@@ -3163,7 +3163,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 195,
+      "id": 208,
       "event_id": 5,
       "name": "PT. DataXet Sonar – Bapak Junianto Setiawan Thei",
       "phone": "",
@@ -3181,7 +3181,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 196,
+      "id": 209,
       "event_id": 5,
       "name": "PT. Lintas Arta – Bapak M. Fitrah",
       "phone": "",
@@ -3199,7 +3199,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 197,
+      "id": 210,
       "event_id": 5,
       "name": "PT. Cytec – Bapak Ali Riza",
       "phone": "",
@@ -3217,7 +3217,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 198,
+      "id": 211,
       "event_id": 5,
       "name": "Pimpinan PT. DXT",
       "phone": "",
@@ -3235,7 +3235,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 199,
+      "id": 212,
       "event_id": 5,
       "name": "Pimpinan PT. TKMT",
       "phone": "",
@@ -3253,7 +3253,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 200,
+      "id": 213,
       "event_id": 5,
       "name": "Pimpinan Redaksi Metro TV",
       "phone": "",
@@ -3271,7 +3271,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 201,
+      "id": 214,
       "event_id": 5,
       "name": "Pimpinan Redaksi Harian Kompas dan Kompas.id – Bapak Haryo D.",
       "phone": "",
@@ -3289,7 +3289,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 202,
+      "id": 215,
       "event_id": 5,
       "name": "Pimpinan Redaksi Kompas TV",
       "phone": "",
@@ -3307,7 +3307,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 203,
+      "id": 216,
       "event_id": 5,
       "name": "Pimpinan Redaksi Sinpo TV",
       "phone": "",
@@ -3325,7 +3325,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 204,
+      "id": 217,
       "event_id": 5,
       "name": "Pimpinan Redaksi Nusantara TV",
       "phone": "",
@@ -3343,7 +3343,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 205,
+      "id": 218,
       "event_id": 5,
       "name": "Pimpinan Bertuah Group",
       "phone": "",
@@ -3361,7 +3361,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 206,
+      "id": 219,
       "event_id": 5,
       "name": "Pimpinan PT. Anoa Group",
       "phone": "",
@@ -3379,7 +3379,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 207,
+      "id": 220,
       "event_id": 5,
       "name": "PT. Bangun Solusi Prima",
       "phone": "",
@@ -3397,7 +3397,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 208,
+      "id": 221,
       "event_id": 5,
       "name": "PT. Meta Global Solusindo – Bapak Inayat",
       "phone": "",
@@ -3415,7 +3415,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 209,
+      "id": 222,
       "event_id": 5,
       "name": "PT. Telkom – Bapak Adhi Yusri",
       "phone": "",
@@ -3433,7 +3433,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 210,
+      "id": 223,
       "event_id": 5,
       "name": "Bapak Michael",
       "phone": "",
@@ -3451,7 +3451,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 211,
+      "id": 224,
       "event_id": 5,
       "name": "Direktur PT. Infina Solusi Semesta – Bapak Oktora Irahadi",
       "phone": "",
@@ -3469,7 +3469,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 212,
+      "id": 225,
       "event_id": 5,
       "name": "Opung M. Tumanggor",
       "phone": "6281388028142",
@@ -3487,7 +3487,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 213,
+      "id": 226,
       "event_id": 5,
       "name": "PT. Perisai Sentra Nusantara – Bapak H. Muhamad Hafidz",
       "phone": "",
@@ -3505,7 +3505,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 214,
+      "id": 227,
       "event_id": 5,
       "name": "Bapak Afde",
       "phone": "",
@@ -3523,7 +3523,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 215,
+      "id": 228,
       "event_id": 5,
       "name": "Bapak Ramlan Hutapea",
       "phone": "",
@@ -3541,7 +3541,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 216,
+      "id": 229,
       "event_id": 5,
       "name": "PT. Aplikanusa Lintasarta",
       "phone": "",
@@ -3559,7 +3559,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 217,
+      "id": 230,
       "event_id": 5,
       "name": "Bapak Agit",
       "phone": "",
@@ -3577,7 +3577,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 218,
+      "id": 231,
       "event_id": 5,
       "name": "PT. Samasta Kreasi Abadi",
       "phone": "",
@@ -3595,7 +3595,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 219,
+      "id": 232,
       "event_id": 5,
       "name": "PT. Belpin Blessin Indonesia",
       "phone": "",
@@ -3613,7 +3613,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 220,
+      "id": 233,
       "event_id": 5,
       "name": "Kencana Group – Bapak Albert",
       "phone": "",
@@ -3631,7 +3631,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 221,
+      "id": 234,
       "event_id": 5,
       "name": "PT. Setia Tama Projectile – Bapak Aji & Ibu Lala Amalia",
       "phone": "",
@@ -3649,7 +3649,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 222,
+      "id": 235,
       "event_id": 5,
       "name": "PT. Internusa Pasific Perkasa – Bapak Surianto Tanoto & Fabian Andrianto Cornellis",
       "phone": "",
@@ -3667,7 +3667,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 223,
+      "id": 236,
       "event_id": 5,
       "name": "PT. Tri Kreasi Mandiri Teknologi – Bapak Mario Romano",
       "phone": "",
@@ -3685,7 +3685,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 224,
+      "id": 237,
       "event_id": 5,
       "name": "Bapak Robby",
       "phone": "",
@@ -3703,7 +3703,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 225,
+      "id": 238,
       "event_id": 5,
       "name": "Bapak Thomas",
       "phone": "971566343263",
@@ -3721,7 +3721,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 226,
+      "id": 239,
       "event_id": 5,
       "name": "Bapak Herbert",
       "phone": "",
@@ -3739,7 +3739,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 227,
+      "id": 240,
       "event_id": 5,
       "name": "Bapak Iwan",
       "phone": "",
@@ -3757,7 +3757,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 228,
+      "id": 241,
       "event_id": 5,
       "name": "Bapak Irawan",
       "phone": "",
@@ -3775,7 +3775,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 229,
+      "id": 242,
       "event_id": 5,
       "name": "President Director LSware Inc. – Mr. Kim Min So",
       "phone": "",
@@ -3793,7 +3793,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 230,
+      "id": 243,
       "event_id": 5,
       "name": "Vice President LSware Inc. – Mr. Lee",
       "phone": "",
@@ -3811,7 +3811,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 231,
+      "id": 244,
       "event_id": 5,
       "name": "President Director LSware Indonesia – Mr. Kim Mansun",
       "phone": "",
@@ -3829,7 +3829,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 232,
+      "id": 245,
       "event_id": 5,
       "name": "Manager Business Overseas – Mr. Kim Chung Geun",
       "phone": "",
@@ -3847,7 +3847,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 233,
+      "id": 246,
       "event_id": 5,
       "name": "Brigjen Pol – Teguh Yuswardhie",
       "phone": "",
@@ -3865,7 +3865,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 234,
+      "id": 247,
       "event_id": 5,
       "name": "Bapak Arief Safei, S.Kom Direktur CV. Matahari Terbit",
       "phone": "",
@@ -3883,7 +3883,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 235,
+      "id": 248,
       "event_id": 5,
       "name": "Staf CV. Matahari Terbit",
       "phone": "",
@@ -3901,7 +3901,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 236,
+      "id": 249,
       "event_id": 5,
       "name": "Perusahaan ANOA",
       "phone": "",
@@ -3919,7 +3919,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 237,
+      "id": 250,
       "event_id": 5,
       "name": "Rasmito",
       "phone": "",
@@ -3937,7 +3937,7 @@
       "updated_at": "2026-10-06 16:15:00"
     },
     {
-      "id": 238,
+      "id": 251,
       "event_id": 5,
       "name": "Yudi - PT Djarum",
       "phone": "",
@@ -3953,6 +3953,204 @@
       "rsvp_status": "Belum Konfirmasi",
       "notes": "",
       "updated_at": "2026-10-06 16:15:00"
+    },
+    {
+      "id": 252,
+      "event_id": 5,
+      "name": "Bpk Rizki Kresno - Dirut PT. Solusi Bangun Indonesia",
+      "phone": "",
+      "category": "Pejabat Luar",
+      "qr_token": "JHHTQTMLX67G",
+      "qr_image": "/qr/qr_JHHTQTMLX67G.png",
+      "attendance_status": "PENDING",
+      "arrival_time": null,
+      "created_at": "2026-10-07 03:38:54",
+      "source": "",
+      "contact_person": "",
+      "invitation_status": "Belum Dikirim",
+      "rsvp_status": "Belum Konfirmasi",
+      "notes": "",
+      "updated_at": "2026-10-07 03:38:54"
+    },
+    {
+      "id": 253,
+      "event_id": 5,
+      "name": "Bpk Pri Gustari - Dirut PT Semen Padang",
+      "phone": "",
+      "category": "Pejabat Luar",
+      "qr_token": "SH2ZMDPQ792R",
+      "qr_image": "/qr/qr_SH2ZMDPQ792R.png",
+      "attendance_status": "PENDING",
+      "arrival_time": null,
+      "created_at": "2026-10-07 03:38:54",
+      "source": "",
+      "contact_person": "",
+      "invitation_status": "Belum Dikirim",
+      "rsvp_status": "Belum Konfirmasi",
+      "notes": "",
+      "updated_at": "2026-10-07 03:38:54"
+    },
+    {
+      "id": 254,
+      "event_id": 5,
+      "name": "Bpk Gatot Mardiana - PT Dirut Semen Gresik",
+      "phone": "",
+      "category": "Pejabat Luar",
+      "qr_token": "W4YUCVYUSY5W",
+      "qr_image": "/qr/qr_W4YUCVYUSY5W.png",
+      "attendance_status": "PENDING",
+      "arrival_time": null,
+      "created_at": "2026-10-07 03:38:54",
+      "source": "",
+      "contact_person": "",
+      "invitation_status": "Belum Dikirim",
+      "rsvp_status": "Belum Konfirmasi",
+      "notes": "",
+      "updated_at": "2026-10-07 03:38:54"
+    },
+    {
+      "id": 255,
+      "event_id": 5,
+      "name": "Bpk Sy Suherman Yahya\nDirut PT Semen Baturaja (Persero) Tbk",
+      "phone": "",
+      "category": "Pejabat Luar",
+      "qr_token": "7TCZAVGCFFJB",
+      "qr_image": "/qr/qr_7TCZAVGCFFJB.png",
+      "attendance_status": "PENDING",
+      "arrival_time": null,
+      "created_at": "2026-10-07 03:38:55",
+      "source": "",
+      "contact_person": "",
+      "invitation_status": "Belum Dikirim",
+      "rsvp_status": "Belum Konfirmasi",
+      "notes": "",
+      "updated_at": "2026-10-07 03:38:55"
+    },
+    {
+      "id": 256,
+      "event_id": 5,
+      "name": "Bpk Anis - Dirut PT Tonasa Indonesia",
+      "phone": "",
+      "category": "Pejabat Luar",
+      "qr_token": "U4ZP6JT7A893",
+      "qr_image": "/qr/qr_U4ZP6JT7A893.png",
+      "attendance_status": "PENDING",
+      "arrival_time": null,
+      "created_at": "2026-10-07 03:38:55",
+      "source": "",
+      "contact_person": "",
+      "invitation_status": "Belum Dikirim",
+      "rsvp_status": "Belum Konfirmasi",
+      "notes": "",
+      "updated_at": "2026-10-07 03:38:55"
+    },
+    {
+      "id": 257,
+      "event_id": 5,
+      "name": "AKP Titin",
+      "phone": "",
+      "category": "Pejabat Luar",
+      "qr_token": "KBGLSHSUY89Y",
+      "qr_image": "/qr/qr_KBGLSHSUY89Y.png",
+      "attendance_status": "PENDING",
+      "arrival_time": null,
+      "created_at": "2026-10-07 03:38:55",
+      "source": "",
+      "contact_person": "",
+      "invitation_status": "Belum Dikirim",
+      "rsvp_status": "Belum Konfirmasi",
+      "notes": "",
+      "updated_at": "2026-10-07 03:38:55"
+    },
+    {
+      "id": 258,
+      "event_id": 5,
+      "name": "David Febryan",
+      "phone": "",
+      "category": "Sahabat Satsiber",
+      "qr_token": "BA7XV863YJQ8",
+      "qr_image": "/qr/qr_BA7XV863YJQ8.png",
+      "attendance_status": "PENDING",
+      "arrival_time": null,
+      "created_at": "2026-10-07 03:38:55",
+      "source": "",
+      "contact_person": "",
+      "invitation_status": "Belum Dikirim",
+      "rsvp_status": "Belum Konfirmasi",
+      "notes": "",
+      "updated_at": "2026-10-07 03:38:55"
+    },
+    {
+      "id": 259,
+      "event_id": 5,
+      "name": "Komjen Pol Asep Edi Suheri-Irwasum Polri",
+      "phone": "",
+      "category": "Pejabat Luar",
+      "qr_token": "CPC8XC8UCUU9",
+      "qr_image": "/qr/qr_CPC8XC8UCUU9.png",
+      "attendance_status": "PENDING",
+      "arrival_time": null,
+      "created_at": "2026-10-07 03:38:55",
+      "source": "",
+      "contact_person": "",
+      "invitation_status": "Belum Dikirim",
+      "rsvp_status": "Belum Konfirmasi",
+      "notes": "",
+      "updated_at": "2026-10-07 03:38:55"
+    },
+    {
+      "id": 260,
+      "event_id": 5,
+      "name": "Komjen Pol Dadang Hartanto - Kapolda Metro Jaya",
+      "phone": "",
+      "category": "Pejabat Luar",
+      "qr_token": "7CVK2EM6Y62W",
+      "qr_image": "/qr/qr_7CVK2EM6Y62W.png",
+      "attendance_status": "PENDING",
+      "arrival_time": null,
+      "created_at": "2026-10-07 03:38:55",
+      "source": "",
+      "contact_person": "",
+      "invitation_status": "Belum Dikirim",
+      "rsvp_status": "Belum Konfirmasi",
+      "notes": "",
+      "updated_at": "2026-10-07 03:38:55"
+    },
+    {
+      "id": 261,
+      "event_id": 5,
+      "name": "Kombes Pol Victor Mackbon - Dirkrimsus PMJ",
+      "phone": "",
+      "category": "Pejabat Luar",
+      "qr_token": "7SEQFYYX74FB",
+      "qr_image": "/qr/qr_7SEQFYYX74FB.png",
+      "attendance_status": "PENDING",
+      "arrival_time": null,
+      "created_at": "2026-10-07 03:38:55",
+      "source": "",
+      "contact_person": "",
+      "invitation_status": "Belum Dikirim",
+      "rsvp_status": "Belum Konfirmasi",
+      "notes": "",
+      "updated_at": "2026-10-07 03:38:55"
+    },
+    {
+      "id": 262,
+      "event_id": 5,
+      "name": "Babe JHL",
+      "phone": "",
+      "category": "Sahabat Satsiber",
+      "qr_token": "D9CPDDYLBKAE",
+      "qr_image": "/qr/qr_D9CPDDYLBKAE.png",
+      "attendance_status": "PENDING",
+      "arrival_time": null,
+      "created_at": "2026-10-07 03:38:55",
+      "source": "",
+      "contact_person": "",
+      "invitation_status": "Belum Dikirim",
+      "rsvp_status": "Belum Konfirmasi",
+      "notes": "",
+      "updated_at": "2026-10-07 03:38:55"
     }
   ],
   "users": [
@@ -3961,18 +4159,27 @@
       "name": "Administrator",
       "email": "admin@digitalinvite.com",
       "password": "$2b$10$nL6864te9qlzEmTtmbBJ5eIGJNAWPBQmp/18z5qcdU/8fgpvwc8y2",
+      "created_at": "2026-10-06 07:07:46",
       "role": "Admin",
-      "status": "ACTIVE",
-      "created_at": "2026-10-06 07:07:46"
+      "status": "ACTIVE"
     },
     {
       "id": 2,
+      "name": "Tim Undangan",
+      "email": "timundangan@digitalinvite.com",
+      "password": "$2b$10$LCkRiIKSGgxLCTz6LJjKleWxc4qeBVLRBPkGD8N5hz1t90dAf8H16",
+      "created_at": "2026-10-06 11:15:36",
+      "role": "User",
+      "status": "ACTIVE"
+    },
+    {
+      "id": 3,
       "name": "Operator Tamu",
       "email": "operator@digitalinvite.com",
       "password": "$2b$10$h7tNXpwWLO3zCCiirzcAF.FPYzPphMCc12kgyh8Y8UVvahxsa87lC",
+      "created_at": "2026-10-07 01:25:10",
       "role": "User",
-      "status": "ACTIVE",
-      "created_at": "2026-10-06 11:15:36"
+      "status": "ACTIVE"
     }
   ]
 }
