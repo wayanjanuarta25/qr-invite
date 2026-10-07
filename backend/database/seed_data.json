@@ -4159,27 +4159,27 @@
       "name": "Administrator",
       "email": "admin@digitalinvite.com",
       "password": "$2b$10$nL6864te9qlzEmTtmbBJ5eIGJNAWPBQmp/18z5qcdU/8fgpvwc8y2",
-      "created_at": "2026-10-06 07:07:46",
       "role": "Admin",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "created_at": "2026-10-06 07:07:46"
     },
     {
       "id": 2,
       "name": "Tim Undangan",
       "email": "timundangan@digitalinvite.com",
       "password": "$2b$10$LCkRiIKSGgxLCTz6LJjKleWxc4qeBVLRBPkGD8N5hz1t90dAf8H16",
-      "created_at": "2026-10-06 11:15:36",
       "role": "User",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "created_at": "2026-10-06 11:15:36"
     },
     {
-      "id": 3,
+      "id": 4,
       "name": "Operator Tamu",
       "email": "operator@digitalinvite.com",
       "password": "$2b$10$h7tNXpwWLO3zCCiirzcAF.FPYzPphMCc12kgyh8Y8UVvahxsa87lC",
-      "created_at": "2026-10-07 01:25:10",
       "role": "User",
-      "status": "ACTIVE"
+      "status": "ACTIVE",
+      "created_at": "2026-10-07 04:51:28"
     }
   ]
 }

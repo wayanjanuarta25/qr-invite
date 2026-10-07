@@ -12,5 +12,7 @@ router.post('/', userController.createUser);
 router.put('/:id', userController.updateUser);
 router.delete('/:id', userController.deleteUser);
 router.get('/logs', userController.getActivityLogs);
+router.get('/export/json', userController.exportUsersJson);
+router.post('/import/json', userController.importUsersJson);
 
 module.exports = router;

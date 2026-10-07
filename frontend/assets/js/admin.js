@@ -38,6 +38,11 @@ document.addEventListener('alpine:init', () => {
 
     // Modals
     isDuplicateModalOpen: false,
+    isUserDuplicateModalOpen: false,
+    isResolvingUserDuplicates: false,
+    pendingUserRestoreJson: null,
+    userDuplicateList: [],
+    userDuplicateDecisions: {},
     isResolvingDuplicates: false,
     pendingRestoreJson: null,
     restoreDuplicateList: [],
@@ -1637,8 +1642,10 @@ document.addEventListener('alpine:init', () => {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        const nowStr = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Asia/Jakarta' }).format(new Date()).replace(/ /g, '_').replace(/:/g, '-');
-        a.download = `backup_database_qr_invite_${nowStr}.json`;
+        const d = new Date();
+        const pad = n => String(n).padStart(2, '0');
+        const nowStr = [d.getFullYear(), pad(d.getMonth()+1), pad(d.getDate())].join('-') + '_' + pad(d.getHours()) + '-' + pad(d.getMinutes());
+        a.download = `daftar_tamu_backup_${nowStr}.json`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -1881,6 +1888,130 @@ document.addEventListener('alpine:init', () => {
         await this.loadActivityLogs();
       } catch (err) {
         App.toast(err.message || 'Gagal menghapus akun.', 'error');
+      }
+    },
+
+    // ==========================================
+    // EXPORT & IMPORT JSON MANAGEMENT AKUN
+    // ==========================================
+    async exportUsersJson() {
+      try {
+        App.toast('Menyiapkan file export data akun...', 'info');
+        const res = await App.api('/api/users/export/json');
+        if (!res.success || !res.users) {
+          throw new Error(res.error || 'Gagal mengekspor data akun.');
+        }
+
+        const d = new Date();
+        const pad = n => String(n).padStart(2, '0');
+        const nowStr = [d.getFullYear(), pad(d.getMonth()+1), pad(d.getDate())].join('-') + '_' + pad(d.getHours()) + '-' + pad(d.getMinutes());
+        const filename = `management_akun_backup_${nowStr}.json`;
+
+        const blob = new Blob([JSON.stringify(res, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        App.toast(`Berhasil mengekspor ${res.users.length} akun ke file ${filename}!`, 'success');
+      } catch (err) {
+        console.error('exportUsersJson error:', err);
+        App.toast('Gagal mengekspor data akun: ' + err.message, 'error');
+      }
+    },
+
+    async importUsersJson(e) {
+      const file = e.target.files ? e.target.files[0] : null;
+      if (!file) return;
+
+      if (!confirm(`Apakah Anda yakin ingin mengimpor data akun dari file "${file.name}"?`)) {
+        e.target.value = '';
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = async (evt) => {
+        try {
+          const json = JSON.parse(evt.target.result);
+          const users = Array.isArray(json) ? json : (json.users || []);
+          if (!users || !Array.isArray(users) || users.length === 0) {
+            App.toast('Format file JSON tidak valid atau data akun kosong.', 'error');
+            return;
+          }
+
+          App.toast('Mengecek data akun backup...', 'info');
+          const res = await App.api('/api/users/import/json', {
+            method: 'POST',
+            body: JSON.stringify({
+              users,
+              defaultStrategy: 'ask'
+            })
+          });
+
+          if (res.hasDuplicates && res.duplicates && res.duplicates.length > 0) {
+            // Terdapat email akun yang sudah terdaftar
+            this.pendingUserRestoreJson = users;
+            this.userDuplicateList = res.duplicates;
+            this.userDuplicateDecisions = {};
+            // Default: pertahankan data lama (existing)
+            res.duplicates.forEach(d => {
+              this.userDuplicateDecisions[d.index] = 'existing';
+            });
+            this.isUserDuplicateModalOpen = true;
+            this.$nextTick(() => { if (window.lucide) lucide.createIcons(); });
+            return;
+          }
+
+          App.toast(res.message || 'Import data akun berhasil!', 'success');
+          await this.loadUsers();
+          await this.loadActivityLogs();
+        } catch (err) {
+          console.error('importUsersJson error:', err);
+          App.toast('Gagal mengimpor akun: ' + err.message, 'error');
+        } finally {
+          e.target.value = '';
+        }
+      };
+      reader.readAsText(file);
+    },
+
+    setAllUserDuplicateDecisions(choice) {
+      if (!this.userDuplicateList) return;
+      this.userDuplicateList.forEach(d => {
+        this.userDuplicateDecisions[d.index] = choice;
+      });
+    },
+
+    async confirmAndExecuteUserRestore() {
+      if (!this.pendingUserRestoreJson) return;
+      this.isResolvingUserDuplicates = true;
+      try {
+        const res = await App.api('/api/users/import/json', {
+          method: 'POST',
+          body: JSON.stringify({
+            users: this.pendingUserRestoreJson,
+            duplicateDecisions: this.userDuplicateDecisions,
+            defaultStrategy: 'custom'
+          })
+        });
+
+        App.toast(res.message || 'Import akun selesai!', 'success');
+        this.isUserDuplicateModalOpen = false;
+        this.pendingUserRestoreJson = null;
+        this.userDuplicateList = [];
+        this.userDuplicateDecisions = {};
+
+        await this.loadUsers();
+        await this.loadActivityLogs();
+      } catch (err) {
+        console.error('confirmAndExecuteUserRestore error:', err);
+        App.toast('Gagal menyelesaikan import akun: ' + err.message, 'error');
+      } finally {
+        this.isResolvingUserDuplicates = false;
       }
     },
 

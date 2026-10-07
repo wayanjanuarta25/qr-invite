@@ -1548,13 +1548,37 @@
           <p class="text-xs text-slate-500 mt-1">Kelola pengguna sistem, peran (Admin / User), serta status aktifasi akun.</p>
         </div>
 
-        <button 
-          @click="openAddUserModal()"
-          class="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold shadow-md shadow-red-600/20 transition-all cursor-pointer"
-        >
-          <i data-lucide="user-plus" class="w-4 h-4"></i>
-          <span>Tambah Akun Baru</span>
-        </button>
+        <div class="flex flex-wrap items-center gap-2">
+          <!-- Tombol Export JSON Akun -->
+          <button 
+            type="button"
+            @click="exportUsersJson()"
+            title="Download seluruh data akun pengguna dalam format JSON"
+            class="inline-flex items-center space-x-1.5 px-3 py-2.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold shadow-sm transition-all cursor-pointer"
+          >
+            <i data-lucide="download" class="w-4 h-4 text-purple-600"></i>
+            <span>Export JSON</span>
+          </button>
+
+          <!-- Tombol Import JSON Akun -->
+          <label 
+            title="Import data akun dari file cadangan JSON"
+            class="inline-flex items-center space-x-1.5 px-3 py-2.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 text-xs font-bold shadow-sm transition-all cursor-pointer"
+          >
+            <i data-lucide="upload-cloud" class="w-4 h-4"></i>
+            <span>Import JSON</span>
+            <input type="file" accept=".json" class="hidden" @change="importUsersJson($event)">
+          </label>
+
+          <!-- Tombol Tambah Akun Baru -->
+          <button 
+            @click="openAddUserModal()"
+            class="inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold shadow-md shadow-red-600/20 transition-all cursor-pointer"
+          >
+            <i data-lucide="user-plus" class="w-4 h-4"></i>
+            <span>Tambah Akun Baru</span>
+          </button>
+        </div>
       </div>
 
       <!-- Users Table -->
@@ -2737,6 +2761,160 @@
         >
           <i data-lucide="check" class="w-4 h-4"></i>
           <span x-text="isResolvingDuplicates ? 'Memproses...' : 'Terapkan Pilihan & Pulihkan Data'"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+    <!-- MODAL RESOLUSI DUPLIKAT AKUN (IMPORT JSON USER) -->
+  <div 
+    x-show="isUserDuplicateModalOpen" 
+    x-cloak
+    class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4"
+  >
+    <div 
+      @click.away="if(!isResolvingUserDuplicates) isUserDuplicateModalOpen = false"
+      class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh]"
+    >
+      <!-- Header -->
+      <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-purple-50/70">
+        <div class="flex items-center space-x-2.5">
+          <div class="w-9 h-9 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center shadow-xs">
+            <i data-lucide="users" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-slate-900">Konfirmasi Akun Pengguna Ganda (Duplikat)</h3>
+            <p class="text-[11px] text-slate-500">
+              Ditemukan <span class="font-bold text-purple-700" x-text="userDuplicateList.length"></span> email akun yang sudah terdaftar di sistem.
+            </p>
+          </div>
+        </div>
+        <button 
+          type="button"
+          x-show="!isResolvingUserDuplicates"
+          @click="isUserDuplicateModalOpen = false" 
+          class="text-slate-400 hover:text-slate-600 p-1 rounded-lg"
+        >
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="px-5 py-3 bg-slate-50 border-b border-slate-200/80 flex flex-wrap items-center justify-between gap-2.5 text-xs">
+        <span class="text-slate-600 font-medium text-[11px]">Pilih tindakan untuk semua akun:</span>
+        <div class="flex items-center space-x-2">
+          <button 
+            type="button" 
+            @click="setAllUserDuplicateDecisions('existing')"
+            class="px-2.5 py-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-100 text-slate-700 font-semibold text-[11px] transition-colors cursor-pointer flex items-center space-x-1"
+          >
+            <i data-lucide="shield" class="w-3.5 h-3.5 text-slate-500"></i>
+            <span>Pertahankan Data Lama</span>
+          </button>
+          <button 
+            type="button" 
+            @click="setAllUserDuplicateDecisions('new')"
+            class="px-2.5 py-1.5 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-bold text-[11px] transition-colors shadow-xs cursor-pointer flex items-center space-x-1"
+          >
+            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+            <span>Gunakan Data Baru</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- List Duplikat Akun -->
+      <div class="p-5 space-y-3.5 overflow-y-auto flex-1 text-xs">
+        <template x-for="(item, idx) in userDuplicateList" :key="idx">
+          <div class="border border-slate-200 rounded-xl p-3.5 bg-white shadow-xs space-y-2.5 transition-all hover:border-purple-300">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+              <span class="font-bold text-slate-900 flex items-center space-x-1.5">
+                <span class="w-5 h-5 rounded-full bg-slate-100 text-slate-600 text-[10px] flex items-center justify-center font-mono" x-text="idx + 1"></span>
+                <span class="font-mono text-purple-700" x-text="item.email"></span>
+              </span>
+            </div>
+
+            <!-- Comparison Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-[11px]">
+              <!-- Data Lama -->
+              <div 
+                @click="userDuplicateDecisions[item.index] = 'existing'"
+                :class="userDuplicateDecisions[item.index] === 'existing' ? 'border-blue-500 bg-blue-50/50 ring-2 ring-blue-500/20' : 'border-slate-200 bg-slate-50/50 hover:border-slate-300'"
+                class="border rounded-xl p-3 cursor-pointer transition-all flex flex-col justify-between"
+              >
+                <div>
+                  <div class="flex items-center justify-between mb-1.5">
+                    <span class="font-bold text-blue-700 flex items-center space-x-1">
+                      <i data-lucide="database" class="w-3 h-3"></i>
+                      <span>Data Akun Saat Ini</span>
+                    </span>
+                    <input 
+                      type="radio" 
+                      :name="'user_decision_' + item.index" 
+                      value="existing"
+                      x-model="userDuplicateDecisions[item.index]" 
+                      class="text-blue-600 focus:ring-blue-500 h-3.5 w-3.5"
+                    >
+                  </div>
+                  <div class="space-y-0.5 text-slate-600">
+                    <div><span class="font-medium text-slate-400">Nama:</span> <span class="font-semibold text-slate-800" x-text="item.existingUser.name"></span></div>
+                    <div><span class="font-medium text-slate-400">Role:</span> <span class="font-semibold" x-text="item.existingUser.role"></span></div>
+                    <div><span class="font-medium text-slate-400">Status:</span> <span x-text="item.existingUser.status"></span></div>
+                  </div>
+                </div>
+                <div class="mt-2 text-[10px] text-blue-600 font-medium">✓ Pertahankan akun lama</div>
+              </div>
+
+              <!-- Data Baru -->
+              <div 
+                @click="userDuplicateDecisions[item.index] = 'new'"
+                :class="userDuplicateDecisions[item.index] === 'new' ? 'border-purple-500 bg-purple-50/50 ring-2 ring-purple-500/20' : 'border-slate-200 bg-slate-50/50 hover:border-slate-300'"
+                class="border rounded-xl p-3 cursor-pointer transition-all flex flex-col justify-between"
+              >
+                <div>
+                  <div class="flex items-center justify-between mb-1.5">
+                    <span class="font-bold text-purple-700 flex items-center space-x-1">
+                      <i data-lucide="file-up" class="w-3 h-3"></i>
+                      <span>Data dari File JSON</span>
+                    </span>
+                    <input 
+                      type="radio" 
+                      :name="'user_decision_' + item.index" 
+                      value="new"
+                      x-model="userDuplicateDecisions[item.index]" 
+                      class="text-purple-600 focus:ring-purple-500 h-3.5 w-3.5"
+                    >
+                  </div>
+                  <div class="space-y-0.5 text-slate-600">
+                    <div><span class="font-medium text-slate-400">Nama:</span> <span class="font-semibold text-slate-800" x-text="item.newUser.name"></span></div>
+                    <div><span class="font-medium text-slate-400">Role:</span> <span class="font-semibold" x-text="item.newUser.role"></span></div>
+                    <div><span class="font-medium text-slate-400">Status:</span> <span x-text="item.newUser.status"></span></div>
+                  </div>
+                </div>
+                <div class="mt-2 text-[10px] text-purple-700 font-medium">✓ Perbarui dengan data baru</div>
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
+
+      <!-- Footer Buttons -->
+      <div class="px-5 py-3.5 border-t border-slate-100 flex items-center justify-between bg-slate-50">
+        <button 
+          type="button" 
+          @click="isUserDuplicateModalOpen = false" 
+          :disabled="isResolvingUserDuplicates"
+          class="px-4 py-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-100 text-xs font-semibold cursor-pointer disabled:opacity-50"
+        >
+          Batal Import
+        </button>
+        <button 
+          type="button" 
+          @click="confirmAndExecuteUserRestore()" 
+          :disabled="isResolvingUserDuplicates"
+          class="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold shadow-md shadow-purple-600/20 cursor-pointer flex items-center space-x-1.5 disabled:opacity-50"
+        >
+          <i data-lucide="check" class="w-4 h-4"></i>
+          <span x-text="isResolvingUserDuplicates ? 'Memproses...' : 'Terapkan Pilihan & Import Akun'"></span>
         </button>
       </div>
     </div>
